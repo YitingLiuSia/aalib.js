@@ -38,3 +38,15 @@ select:focus {
     border-color: #7b7d82;
     outline: none;
 }
+
+@font-face {
+    font-family: 'Sora';
+    src: url('./resources/sora-otf/Sora-Regular.ttf') format('truetype');
+    font-weight: 400;
+  }
+  
+  @font-face {
+    font-family: 'Sora';
+    src: url('./resources/sora-otf/Sora-Bold.ttf') format('truetype');
+    font-weight: 700;
+  }
