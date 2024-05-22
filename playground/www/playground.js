@@ -6909,8 +6909,8 @@
                 var n = o(this, (t.__proto__ || Object.getPrototypeOf(t)).call(this, Object.assign({}, {
                     tagName: "pre",
                     fontSize: 7,
-                    background: "#fff",
-                    color: "#000"
+                    background:'new rbga(0,0,0,0)',
+                    color: "#000000"
                 }, e)));
                 return n.el = n.options.el || document.createElement(n.options.tagName), n.el.style.fontSize = n.options.fontSize + "px", n.el.style.fontFamily = n.options.fontFamily, n.el.style.backgroundColor = n.options.background, n
             }
@@ -7086,7 +7086,7 @@
                     charWidth: 4.2,
                     width: 400,
                     height: 300,
-                    background: "#fff",
+                    background: 'new rbga(0,0,0,0)',
                     color: "#000"
                 }, e)));
                 return n.el = n.options.el || document.createElement("canvas"), n.el.width = n.options.width, n.el.height = n.options.height, n.el.style.backgroundColor = n.options.background, n.ctx = n.el.getContext("2d"), n.ctx.textBaseline = "top", n.ctx.textAlign = "start", n.ctx.font = n.options.fontSize + "px " + n.options.fontFamily, n
