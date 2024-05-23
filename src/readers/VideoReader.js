@@ -5,11 +5,28 @@ export default class VideoReader extends AbstractReader {
     constructor(video, captureFrame, options) {
         super();
 
-        this.video = video;
+        if (typeof video === 'string') {
+            // Assume video is a URL
+            console.log("start creating video");
+            this.video = this.createVideoElement(video);
+        } else {
+            // Assume video is a video element
+            this.video = video;
+        }
+
         this.options = Object.assign({}, { autoplay: false }, options);
         this.video.autoplay = this.options.autoplay;
 
         this.captureFrame = captureFrame;
+    }
+
+    createVideoElement(url) {
+        const video = document.createElement('video');
+        video.src = url;
+        video.crossOrigin = 'anonymous';
+        video.controls = true; // Optional: Adds video controls for debugging
+        document.body.appendChild(video); // Optional: Appends video to the DOM for visibility
+        return video;
     }
 
     onRead(observer) {
@@ -29,20 +46,33 @@ export default class VideoReader extends AbstractReader {
             const { src, error: { code, message } } = video;
 
             video.removeEventListener("play", this.playbackLoop);
-            observer.error(`Error occurred while trying to play ${ src }: : ${ code }, ${ message }`);
+            observer.error(`Error occurred while trying to play ${src}: ${code}, ${message}`);
         };
 
         video.addEventListener("error", this.onError);
         video.addEventListener("play", this.playbackLoop);
+
+        if (this.options.autoplay) {
+            video.play();
+        }
     }
 
     onDispose() {
         this.video.removeEventListener("play", this.playbackLoop);
         this.video.removeEventListener("error", this.onError);
+        if (this.video.parentNode) {
+            this.video.parentNode.removeChild(this.video); // Remove video element from DOM
+        }
     }
 
     static fromVideoElement(video, options) {
         const reader = new VideoReader(video, createVideoCapture(), options);
+        return reader.read();
+    }
+
+    static fromURL(url, options) {
+        const reader = new VideoReader(url, createVideoCapture(), options);
+        console.log(`read from url ${url}`);
         return reader.read();
     }
 }
