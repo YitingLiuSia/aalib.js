@@ -17,7 +17,9 @@ export class CanvasRenderer extends BaseRenderer {
             width: 400,
             height: 300,
             background: "#fff",
-            color: "#000"
+            colorOne: "#000",
+            colorTwo: "#000",
+            colorThree: "#000"
         }, options));
 
         this.el = this.options.el || document.createElement("canvas");

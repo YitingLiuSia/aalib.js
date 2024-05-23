@@ -35,7 +35,6 @@ export default class VideoReader extends AbstractReader {
 
         this.onError = () => {
             const { src, error: { code, message } } = video;
-
             video.removeEventListener("play", this.playbackLoop);
             observer.error(`Error occurred while trying to play ${src}: ${code}, ${message}`);
         };

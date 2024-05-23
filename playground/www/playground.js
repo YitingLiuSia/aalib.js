@@ -5999,6 +5999,50 @@
                         t.target.composing || e.$set(e.model, "color", t.target.value)
                     }
                 }
+            })]),e._v(" "), n("InputRow", {
+                attrs: {
+                    title: "Text Color 2:"
+                }
+            }, [n("input", {
+                directives: [{
+                    name: "model",
+                    rawName: "v-model",
+                    value: e.model.color,
+                    expression: "model.color"
+                }],
+                attrs: {
+                    type: "color"
+                },
+                domProps: {
+                    value: e.model.color
+                },
+                on: {
+                    input: function(t) {
+                        t.target.composing || e.$set(e.model, "colorTwo", t.target.value)
+                    }
+                }
+            })]),e._v(" "), n("InputRow", {
+                attrs: {
+                    title: "Text Color3:"
+                }
+            }, [n("input", {
+                directives: [{
+                    name: "model",
+                    rawName: "v-model",
+                    value: e.model.color,
+                    expression: "model.color"
+                }],
+                attrs: {
+                    type: "color"
+                },
+                domProps: {
+                    value: e.model.color
+                },
+                on: {
+                    input: function(t) {
+                        t.target.composing || e.$set(e.model, "colorThree", t.target.value)
+                    }
+                }
             })]), e._v(" "), n("InputRow", {
                 staticClass: "charset-selector",
                 attrs: {
