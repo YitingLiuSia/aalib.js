@@ -5546,15 +5546,16 @@
 }, function(e, t, n) {
     "use strict";
     var r = function() {
-            var e = this,
-                t = e.$createElement,
-                n = e._self._c || t;
-            return n("PipelineSection", {
-                staticClass: "reader-selector",
-                attrs: {
-                    title: "Reader"
-                }
-            }, [n("select", {
+        var e = this,
+            t = e.$createElement,
+            n = e._self._c || t;
+        return n("PipelineSection", {
+            staticClass: "reader-selector",
+            attrs: {
+                title: "Reader"
+            }
+        }, [
+            n("select", {
                 directives: [{
                     name: "model",
                     rawName: "v-model",
@@ -5581,92 +5582,137 @@
                         value: t.type
                     }
                 }, [e._v("\n            " + e._s(t.name) + "\n        ")])
-            })), e._v(" "), n("template", {
+            })),
+            e._v(" "),
+            n("template", {
                 slot: "content"
-            }, [e.imageReaderSelected ? n("div", {
-                staticClass: "image-reader-settings settings-section"
-            }, [n("InputRow", {
-                attrs: {
-                    title: "Select predefined image:"
-                }
-            }, [n("select", {
-                directives: [{
-                    name: "model",
-                    rawName: "v-model",
-                    value: e.model.url,
-                    expression: "model.url"
-                }],
-                on: {
-                    change: function(t) {
-                        var n = Array.prototype.filter.call(t.target.options, function(e) {
-                            return e.selected
-                        }).map(function(e) {
-                            return "_value" in e ? e._value : e.value
-                        });
-                        e.$set(e.model, "url", t.target.multiple ? n : n[0])
-                    }
-                }
-            }, e._l(e.images, function(t) {
-                return n("option", {
-                    domProps: {
-                        value: t.value
-                    }
-                }, [e._v("\n                        " + e._s(t.text) + "\n                    ")])
-            }))]), e._v(" "), n("div", {
-                staticClass: "or-separator"
-            }, [e._v("or")]), e._v(" "), n("div", {
-                staticClass: "upload-section"
-            }, [e._v("\n                Upload an image:\n                "), n("input", {
-                attrs: {
-                    type: "file",
-                    accept: "image/*"
-                },
-                on: {
-                    change: e.fileInputChanged
-                }
-            })])], 1) : e._e(), e._v(" "), e.videoReaderSelected ? n("div", {
-                staticClass: "video-reader-settings settings-section"
-            }, [n("InputRow", {
-                attrs: {
-                    title: "Select predefined video:"
-                }
-            }, [n("select", {
-                directives: [{
-                    name: "model",
-                    rawName: "v-model",
-                    value: e.model.url,
-                    expression: "model.url"
-                }],
-                on: {
-                    change: function(t) {
-                        var n = Array.prototype.filter.call(t.target.options, function(e) {
-                            return e.selected
-                        }).map(function(e) {
-                            return "_value" in e ? e._value : e.value
-                        });
-                        e.$set(e.model, "url", t.target.multiple ? n : n[0])
-                    }
-                }
-            }, e._l(e.videos, function(t) {
-                return n("option", {
-                    domProps: {
-                        value: t.value
-                    }
-                }, [e._v("\n                        " + e._s(t.text) + "\n                    ")])
-            }))])], 1) : e._e(), e._v(" "), n("fieldset", {
-                staticClass: "preview"
-            }, [n("legend", [e._v("Preview")]), e._v(" "), e.imageReaderSelected ? n("img", {
-                staticClass: "preview-image",
-                attrs: {
-                    src: e.model.url
-                }
-            }) : e._e(), e._v(" "), e.videoReaderSelected ? n("video", {
-                staticClass: "preview-video",
-                attrs: {
-                    src: e.model.url,
-                    controls: ""
-                }
-            }) : e._e()])])], 2)
+            }, [
+                e.imageReaderSelected ? n("div", {
+                    staticClass: "image-reader-settings settings-section"
+                }, [
+                    n("InputRow", {
+                        attrs: {
+                            title: "Select predefined image:"
+                        }
+                    }, [
+                        n("select", {
+                            directives: [{
+                                name: "model",
+                                rawName: "v-model",
+                                value: e.model.url,
+                                expression: "model.url"
+                            }],
+                            on: {
+                                change: function(t) {
+                                    var n = Array.prototype.filter.call(t.target.options, function(e) {
+                                        return e.selected
+                                    }).map(function(e) {
+                                        return "_value" in e ? e._value : e.value
+                                    });
+                                    e.$set(e.model, "url", t.target.multiple ? n : n[0])
+                                }
+                            }
+                        }, e._l(e.images, function(t) {
+                            return n("option", {
+                                domProps: {
+                                    value: t.value
+                                }
+                            }, [e._v("\n                        " + e._s(t.text) + "\n                    ")])
+                        }))
+                    ]),
+                    e._v(" "),
+                    n("div", {
+                        staticClass: "or-separator"
+                    }, [e._v("or")]),
+                    e._v(" "),
+                    n("div", {
+                        staticClass: "upload-section"
+                    }, [e._v("\n                Upload an image:\n                "), n("input", {
+                        attrs: {
+                            type: "file",
+                            accept: "image/*"
+                        },
+                        on: {
+                            change: e.fileInputChanged
+                        }
+                    })])
+                ], 1) : e._e(),
+                e._v(" "),
+                e.videoReaderSelected ? n("div", {
+                    staticClass: "video-reader-settings settings-section"
+                }, [
+                    n("InputRow", {
+                        attrs: {
+                            title: "Select predefined video:"
+                        }
+                    }, [
+                        n("select", {
+                            directives: [{
+                                name: "model",
+                                rawName: "v-model",
+                                value: e.model.url,
+                                expression: "model.url"
+                            }],
+                            on: {
+                                change: function(t) {
+                                    var n = Array.prototype.filter.call(t.target.options, function(e) {
+                                        return e.selected
+                                    }).map(function(e) {
+                                        return "_value" in e ? e._value : e.value
+                                    });
+                                    e.$set(e.model, "url", t.target.multiple ? n : n[0])
+                                }
+                            }
+                        }, e._l(e.videos, function(t) {
+                            return n("option", {
+                                domProps: {
+                                    value: t.value
+                                }
+                            }, [e._v("\n                        " + e._s(t.text) + "\n                    ")])
+                        }))
+                    ]),
+                    e._v(" "),
+                    n("div", {
+                        staticClass: "or-separator"
+                    }, [e._v("or")]),
+                    e._v(" "),
+                    n("div", {
+                        staticClass: "upload-section"
+                    }, [e._v("\n                Upload a video:\n                "), n("input", {
+                        attrs: {
+                            type: "file",
+                            accept: "video/*"
+                        },
+                        on: {
+                            change: e.fileInputChanged
+                        }
+                    })])
+                ], 1) : e._e(),
+                e._v(" "),
+                n("fieldset", {
+                    staticClass: "preview"
+                }, [
+                    n("legend", [e._v("Preview")]),
+                    e._v(" "),
+                    e.imageReaderSelected ? n("img", {
+                        staticClass: "preview-image",
+                        attrs: {
+                            src: e.model.url
+                        }
+                    }) : e._e(),
+                    e._v(" "),
+                    e.videoReaderSelected ? n("video", {
+                        staticClass: "preview-video",
+                        attrs: {
+                            src: e.model.url,
+                            controls: ""
+                        }
+                    }) : e._e()
+                ])
+            ])
+        ], 2)
+  
+    
         },
         o = [],
         i = {
@@ -7399,10 +7445,15 @@
             value: "./assets/monica.jpg",
             text: "Monica"
         }],
-        reader: {
+        reader: [{
             type: a.g.IMAGE_READER,
             url: "./assets/marylin.jpg"
-        },
+        },{
+            // added video reader
+            type: a.g.VIDEO_READER,
+            url: "./assets/marylin.jpg"
+
+        }],
         preFilters: (o = {}, r(o, a.d.INVERSE_FILTER, {
             title: "Inverse",
             widget: "checkbox",
@@ -7465,10 +7516,10 @@
             value: s.SIMPLE_CHARSET.join(""),
             title: "Simple"
         }, {
-            value: s.ASCII_CHARSET.join("SIA/"),
+            value: "SIA/",
             title: "SIA/"
         }, {
-            value: s.SIMPLE_CHARSET.join("/"),
+            value: "/",
             title: "/"
         }],
         fonts: ["Sora", "Inconsolata", "Ubuntu Mono", "Roboto Mono", "Source Code Pro", "Cutive Mono", "monospace"]
