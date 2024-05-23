@@ -7281,7 +7281,7 @@
             var e = a({}, r.a);
             return e.reader = {
                 type: o.e,
-                url: "assets/marylin.jpg"
+                url: "./assets/marylin.jpg"
             }, e.aa = {
                 width: 400,
                 height: 120,
@@ -7292,7 +7292,7 @@
             var e = a({}, r.a);
             return e.reader = {
                 type: o.e,
-                url: "assets/evangeline.jpg"
+                url: "./assets/evangeline.jpg"
             }, e.aa = {
                 width: 400,
                 height: 123,
@@ -7303,7 +7303,7 @@
             var e = a({}, r.a);
             return e.reader = {
                 type: o.e,
-                url: "assets/monica.jpg"
+                url: "./assets/monica.jpg"
             }, e.aa = {
                 width: 330,
                 height: 117,
@@ -7314,7 +7314,7 @@
             var e = a({}, r.a);
             return e.reader = {
                 type: o.e,
-                url: "assets/mona.png"
+                url: "./assets/mona.png"
             }, e.aa = {
                 width: 170,
                 height: 130,
@@ -7325,7 +7325,7 @@
             var e = a({}, r.a);
             return e.reader = {
                 type: o.i,
-                url: "assets/cat-1280x720.mp4"
+                url: "./assets/cat-1280x720.mp4"
             }, e.aa = {
                 width: 260,
                 height: 80,
@@ -7336,7 +7336,7 @@
             var e = a({}, r.a);
             return e.reader = {
                 type: o.i,
-                url: "assets/bbb_720x480.mp4"
+                url: "./assets/bbb_720x480.mp4"
             }, e.aa = {
                 width: 260,
                 height: 85,
@@ -7374,34 +7374,34 @@
             name: "Canvas"
         }],
         predefinedVideos: [{
-            value: "assets/bbb_720x480.mp4",
+            value: "./assets/bbb_720x480.mp4",
             text: "Big Buck Bunny 480p"
         }, {
-            value: "assets/Test_052224.mp4",
+            value: "./assets/Test_052224.mp4",
             text: "Sia Test Mov"
         }],
         predefinedImages: [{
-            value: "assets/wave.jpg",
+            value: "./assets/wave.jpg",
             text: "Sia Wave"
         }, {
-            value: "assets/mona.png",
+            value: "./assets/mona.png",
             text: "Mona"
         }, {
-            value: "assets/marylin.jpg",
+            value: "./assets/marylin.jpg",
             text: "Marylin"
         }, {
-            value: "assets/lenna.png",
+            value: "./assets/lenna.png",
             text: "Lenna"
         }, {
-            value: "assets/evangeline.jpg",
+            value: "./assets/evangeline.jpg",
             text: "Evangeline"
         }, {
-            value: "assets/monica.jpg",
+            value: "./assets/monica.jpg",
             text: "Monica"
         }],
         reader: {
             type: a.g.IMAGE_READER,
-            url: "assets/marylin.jpg"
+            url: "./assets/marylin.jpg"
         },
         preFilters: (o = {}, r(o, a.d.INVERSE_FILTER, {
             title: "Inverse",
