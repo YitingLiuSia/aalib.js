@@ -4,16 +4,15 @@ import AAImage from "../core/AAImage";
 export default class VideoReader extends AbstractReader {
     constructor(video, captureFrame, options) {
         super();
-
-        if (typeof video === 'string') {
-            // Assume video is a URL
-            console.log("start creating video");
-            this.video = this.createVideoElement(video);
-        } else {
-            // Assume video is a video element
-            this.video = video;
-        }
-
+        // if (typeof video === 'string') {
+        //     // Assume video is a URL
+        //     console.log("start creating video");
+        //     this.video = this.createVideoElement(video);
+        // } else {
+        //     // Assume video is a video element
+        //     this.video = video;
+        // }
+        this.video = video;
         this.options = Object.assign({}, { autoplay: false }, options);
         this.video.autoplay = this.options.autoplay;
 

@@ -6956,7 +6956,7 @@
                     tagName: "pre",
                     fontSize: 7,
                     background:'new rbga(0,0,0,0)',
-                    color: "#000000"
+                    color: "#000"
                 }, e)));
                 return n.el = n.options.el || document.createElement(n.options.tagName), n.el.style.fontSize = n.options.fontSize + "px", n.el.style.fontFamily = n.options.fontFamily, n.el.style.backgroundColor = n.options.background, n
             }
