@@ -5980,7 +5980,76 @@
                 //         t.target.composing || e.$set(e.model, "background", t.target.value)
                 //     }
                 // }
-            })]), 
+            })]), e._v(" "), n("InputRow", {
+                attrs: {
+                    title: "Gradient Color:"
+                }
+            }, [n("input", {
+                directives: [{
+                    name: "model",
+                    rawName: "v-model",
+                    value: e.model.gradient[0],
+                    expression: "model.gradient[0]"
+                }],
+                attrs: {
+                    type: "color"
+                },
+                domProps: {
+                    value: e.model.gradient[0]
+                },
+                on: {
+                    input: function(t) {
+                        t.target.composing || e.$set(e.model.gradient[0], "gradient", t.target.value)
+                        console.log("input is ",t);
+                    }
+                }
+            })]),e._v(" "), n("InputRow", {
+                attrs: {
+                    title: "Gradient Color:"
+                }
+            }, [n("input", {
+                directives: [{
+                    name: "model",
+                    rawName: "v-model",
+                    value: e.model.gradient[1],
+                    expression: "model.gradient[1]"
+                }],
+                attrs: {
+                    type: "color"
+                },
+                domProps: {
+                    value: e.model.gradient[1]
+                },
+                on: {
+                    input: function(t) {
+                        t.target.composing || e.$set(e.model.gradient[1], "gradient", t.target.value)
+                        console.log("input is ",t);
+                    }
+                }
+            })]),e._v(" "), n("InputRow", {
+                attrs: {
+                    title: "Gradient Color:"
+                }
+            }, [n("input", {
+                directives: [{
+                    name: "model",
+                    rawName: "v-model",
+                    value: e.model.gradient[2],
+                    expression: "model.gradient[2]"
+                }],
+                attrs: {
+                    type: "color"
+                },
+                domProps: {
+                    value: e.model.gradient[2]
+                },
+                on: {
+                    input: function(t) {
+                        t.target.composing || e.$set(e.model.gradient[2], "gradient", t.target.value)
+                        console.log("input is ",t);
+                    }
+                }
+            })]),
             e._v(" "), n("InputRow", {
                 attrs: {
                     title: "Text Color:"
@@ -7136,10 +7205,11 @@
                     charWidth: 4.2,
                     width: 400,
                     height: 300,
+                    gradient: ["#FF0000", "#00FF00", "#0000FF"], // Red to green to blue gradient
                     background: 'new rbga(0,0,0,0)',
                     color: "#000"
                 }, e)));
-                return n.el = n.options.el || document.createElement("canvas"), n.el.width = n.options.width, n.el.height = n.options.height, n.el.style.backgroundColor = n.options.background, n.ctx = n.el.getContext("2d"), n.ctx.textBaseline = "top", n.ctx.textAlign = "start", n.ctx.font = n.options.fontSize + "px " + n.options.fontFamily, n
+                return n.el = n.options.el || document.createElement("canvas"), n.el.width = n.options.width, n.el.height = n.options.height, n.el.gradient = n.options.gradient, n.el.style.backgroundColor = n.options.background, n.ctx = n.el.getContext("2d"), n.ctx.textBaseline = "top", n.ctx.textAlign = "start", n.ctx.font = n.options.fontSize + "px " + n.options.fontFamily, n
             }
             return i(t, e), l(t, [{
                 key: "render",
@@ -7151,6 +7221,15 @@
                 value: function() {
                     this.ctx.clearRect(0, 0, this.el.width, this.el.height)
                 }
+            },{
+                    key: "createGradient",
+                    value: function(colors) {
+                        const gradient = this.ctx.createLinearGradient(0, 0, this.el.width, this.el.height);
+                        colors.forEach((color, index) => {
+                            gradient.addColorStop(index / (colors.length - 1), color);
+                        });
+                        this.gradient = gradient;
+                    }
             }]), t
         }(p.default)
 }, function(e, t, n) {
@@ -7501,6 +7580,7 @@
         renderer: {
             type: a.h.CANVAS_RENDERER,// default for canvas renderer
            // background: "#FFFFFF",
+           gradient: ["#FF0000", "#00FF00", "#0000FF"], // Red to green to blue gradient
             color: "#000000",
             charset: s.ASCII_CHARSET.join(""),
             fontSize: 7,

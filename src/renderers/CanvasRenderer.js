@@ -17,18 +17,33 @@ export class CanvasRenderer extends BaseRenderer {
             width: 400,
             height: 300,
             background: "#fff",
-            color: "#000"
+            color: "#000",
+            gradient: null // Adding gradient option
         }, options));
 
         this.el = this.options.el || document.createElement("canvas");
         this.el.width = this.options.width;
         this.el.height = this.options.height;
-        this.el.style.backgroundColor = this.options.background;
 
         this.ctx = this.el.getContext("2d");
         this.ctx.textBaseline = "top";
         this.ctx.textAlign = "start";
         this.ctx.font = this.options.fontSize + "px " + this.options.fontFamily;
+
+        if (this.options.gradient) {
+            this.createGradient();
+        } else {
+            this.el.style.backgroundColor = this.options.background;
+        }
+    }
+
+    createGradient() {
+        console.log("create gradient");
+        const gradient = this.ctx.createLinearGradient(0, 0, this.el.width, this.el.height);
+        this.options.gradient.forEach((color, index) => {
+            gradient.addColorStop(index / (this.options.gradient.length - 1), color);
+        });
+        this.gradient = gradient;
     }
 
     render(image) {
@@ -46,7 +61,12 @@ export class CanvasRenderer extends BaseRenderer {
     }
 
     clearCanvas() {
-        this.ctx.clearRect(0, 0, this.el.width, this.el.height);
+        if (this.gradient) {
+            this.ctx.fillStyle = this.gradient;
+        } else {
+            this.ctx.fillStyle = this.options.background;
+        }
+        this.ctx.fillRect(0, 0, this.el.width, this.el.height);
     }
 }
 
