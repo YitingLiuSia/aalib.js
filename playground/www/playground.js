@@ -6347,7 +6347,7 @@
     ]), r.locals && (e.exports = r.locals);
     n(1)("ddb42700", r, !0)
 }, function(e, t, n) {
-    t = e.exports = n(0)(void 0), t.push([e.i, "@import url(https://fonts.googleapis.com/css?family=Lato|Inconsolata|Roboto+Mono|Source+Code+Pro|Ubuntu+Mono|Cutive+Mono);", ""]), t.push([e.i, "*{box-sizing:border-box}body,pre{margin:0;padding:0}input:not([type=file]),select{border:1px solid #a1a6af;border-radius:4px;background-color:#fff;height:23px}input:not([type=file]){padding:0 5px;vertical-align:middle;font-size:14px}input:disabled{background:hsla(0,0%,39%,.1)}input:focus,select:focus{border-color:#7b7d82;outline:none}", ""])
+    t = e.exports = n(0)(void 0), t.push([e.i, "@import url(https://fonts.googleapis.com/css?family=Sora&display=swap|Danfo|Lato|Inconsolata|Roboto+Mono|Source+Code+Pro|Ubuntu+Mono|Cutive+Mono);", ""]), t.push([e.i, "*{box-sizing:border-box}body,pre{margin:0;padding:0}input:not([type=file]),select{border:1px solid #a1a6af;border-radius:4px;background-color:#fff;height:23px}input:not([type=file]){padding:0 5px;vertical-align:middle;font-size:14px}input:disabled{background:hsla(0,0%,39%,.1)}input:focus,select:focus{border-color:#7b7d82;outline:none}", ""])
 }, function(e, t, n) {
     "use strict";
     var r = function() {
@@ -7448,11 +7448,6 @@
         reader: [{
             type: a.g.IMAGE_READER,
             url: "./assets/marylin.jpg"
-        },{
-            // added video reader
-            type: a.g.VIDEO_READER,
-            url: "./assets/marylin.jpg"
-
         }],
         preFilters: (o = {}, r(o, a.d.INVERSE_FILTER, {
             title: "Inverse",
@@ -7522,7 +7517,7 @@
             value: "/",
             title: "/"
         }],
-        fonts: ["Sora", "Inconsolata", "Ubuntu Mono", "Roboto Mono", "Source Code Pro", "Cutive Mono", "monospace"]
+        fonts: ["Sora", "Danfo","Inconsolata", "Ubuntu Mono", "Roboto Mono", "Source Code Pro", "Cutive Mono", "monospace"]
     }
 }]);
 //# sourceMappingURL=playground.js.map
