@@ -5953,31 +5953,35 @@
                         value: t.type
                     }
                 }, [e._v("\n            " + e._s(t.name) + "\n        ")])
-            })), e._v(" "), n("template", {
+            })), 
+            e._v(" "), n("template", {
                 slot: "content"
-            }, [n("InputRow", {
-                attrs: {
-                    title: "Background color:"
-                }
-            }, [n("input", {
+            }, 
+            [n("", /**"InputRow" */ { 
+                // attrs: {
+                //     title: "Background color:"
+                // }
+            }, [n("", //"input"
+            {
                 directives: [{
                     name: "model",
                     rawName: "v-model",
                     value: e.model.background,
                     expression: "model.background"
                 }],
-                attrs: {
-                    type: "color"
-                },
-                domProps: {
-                    value: e.model.background
-                },
-                on: {
-                    input: function(t) {
-                        t.target.composing || e.$set(e.model, "background", t.target.value)
-                    }
-                }
-            })]), e._v(" "), n("InputRow", {
+                // attrs: {
+                //     type: "color"
+                // },
+                // domProps: {
+                //     value: e.model.background
+                // },
+                // on: {
+                //     input: function(t) {
+                //         t.target.composing || e.$set(e.model, "background", t.target.value)
+                //     }
+                // }
+            })]), 
+            e._v(" "), n("InputRow", {
                 attrs: {
                     title: "Text Color:"
                 }
@@ -7412,10 +7416,12 @@
             type: a.g.VIDEO_READER,
             name: "Video"
         }],
-        renderers: [{
-            type: a.h.HTML_RENDERER,
-            name: "HTML"
-        }, {
+        renderers: [
+        //     {
+        //     type: a.h.HTML_RENDERER,
+        //     name: "HTML"
+        // },
+         {
             type: a.h.CANVAS_RENDERER,
             name: "Canvas"
         }],
@@ -7493,12 +7499,12 @@
             value: 1
         }), i),
         renderer: {
-            type: a.h.HTML_RENDERER,
-            background: "#FFFFFF",
+            type: a.h.CANVAS_RENDERER,// default for canvas renderer
+           // background: "#FFFFFF",
             color: "#000000",
             charset: s.ASCII_CHARSET.join(""),
             fontSize: 7,
-            fontFamily: "Ubuntu Mono",
+            fontFamily: "Sora",
             lineHeight: 7,
             charWidth: 4.2,
             width: 1400,
@@ -7517,7 +7523,7 @@
             value: "/",
             title: "/"
         }],
-        fonts: ["Sora", "Danfo","Inconsolata", "Ubuntu Mono", "Roboto Mono", "Source Code Pro", "Cutive Mono", "monospace"]
+        fonts: ["Sora","Danfo","Inconsolata", "Ubuntu Mono", "Roboto Mono", "Source Code Pro", "Cutive Mono", "monospace"]
     }
 }]);
 //# sourceMappingURL=playground.js.map
