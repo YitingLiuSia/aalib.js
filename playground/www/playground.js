@@ -5999,7 +5999,7 @@
                     },
                     on: {
                         input: function (t) {
-                            t.target.composing || e.$set(e.model.gradient[0], "gradient", t.target.value)
+                            t.target.composing || e.$set(e.model.gradient, "gradient", t.target.value)
                             console.log("input is ", t);
                         }
                     }
@@ -6022,7 +6022,7 @@
                     },
                     on: {
                         input: function (t) {
-                            t.target.composing || e.$set(e.model.gradient[1], "gradient", t.target.value)
+                            t.target.composing || e.$set(e.model.gradient, "gradient", t.target.value)
                             console.log("input is ", t);
                         }
                     }
@@ -6045,7 +6045,7 @@
                     },
                     on: {
                         input: function (t) {
-                            t.target.composing || e.$set(e.model.gradient[2], "gradient", t.target.value)
+                            t.target.composing || e.$set(e.model.gradient, "gradient", t.target.value)
                             console.log("input is ", t);
                         }
                     }
@@ -7205,8 +7205,8 @@
                     charWidth: 4.2,
                     width: 400,
                     height: 300,
-                    gradient: ["#B0D4FC", "#FFCCDB", "#FFE2CC"], // Red to green to blue gradient
-                    background: 'rgba(0,0,0,0)', // Corrected to 'rgba'
+                    gradient: ["#B0D4FC", "#FFCCDB", "#FFE2CC"], // sia branding color
+                    background: 'rgba(0,0,0,0)',
                     color: "#000"
                 }, e)));
                 n.el = n.options.el || document.createElement("canvas");
