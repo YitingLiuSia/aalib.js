@@ -469,7 +469,7 @@
             function e(t) {
                 r(this, e), this.options = Object.assign({}, {
                     charset: l,
-                    fontFamily: "monospace"
+                    fontFamily: "Sora"//"monospace"
                 }, t), this.fontmap = e.buildFont(this.options.charset, {
                     fontFamily: this.options.fontFamily
                 }), this.matchChar = o(this.matchChar.bind(this))
@@ -7003,7 +7003,7 @@
     function i(e) {
         var t = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : {},
             n = t.fontFamily,
-            r = void 0 === n ? "monospace" : n,
+            r = void 0 === n ? "Sora&display=swap" : n,//"monospace"
             o = s(),
             i = o.canvas,
             a = o.ctx;
@@ -7504,7 +7504,7 @@
             color: "#000000",
             charset: s.ASCII_CHARSET.join(""),
             fontSize: 7,
-            fontFamily: "Sora",
+            fontFamily: "Sora&display=swap",
             lineHeight: 7,
             charWidth: 4.2,
             width: 1400,
@@ -7523,7 +7523,7 @@
             value: "/",
             title: "/"
         }],
-        fonts: ["Sora","Danfo","Inconsolata", "Ubuntu Mono", "Roboto Mono", "Source Code Pro", "Cutive Mono", "monospace"]
+        fonts: ["Sora&display=swap","Danfo","Inconsolata", "Ubuntu Mono", "Roboto Mono", "Source Code Pro", "Cutive Mono", "monospace"]
     }
 }]);
 //# sourceMappingURL=playground.js.map
