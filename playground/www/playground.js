@@ -6420,7 +6420,7 @@
     ]), r.locals && (e.exports = r.locals);
     n(1)("ddb42700", r, !0)
 }, function (e, t, n) {
-    t = e.exports = n(0)(void 0), t.push([e.i, "@import url(https://fonts.googleapis.com/css?family=Rubik+Mono+One|Lato|Inconsolata|Roboto+Mono|Source+Code+Pro|Ubuntu+Mono|Cutive+Mono);", ""]), t.push([e.i, "*{box-sizing:border-box}body,pre{margin:0;padding:0}input:not([type=file]),select{border:1px solid #a1a6af;border-radius:4px;background-color:#fff;height:23px}input:not([type=file]){padding:0 5px;vertical-align:middle;font-size:14px}input:disabled{background:hsla(0,0%,39%,.1)}input:focus,select:focus{border-color:#7b7d82;outline:none}", ""])
+    t = e.exports = n(0)(void 0), t.push([e.i, "@import url(https://fonts.googleapis.com/css?family=Open+Sans&display=swap|Sora|Kode+Mono|Rubik+Mono+One|Lato|Inconsolata|Roboto+Mono|Source+Code+Pro|Ubuntu+Mono|Cutive+Mono);", ""]), t.push([e.i, "*{box-sizing:border-box}body,pre{margin:0;padding:0}input:not([type=file]),select{border:1px solid #a1a6af;border-radius:4px;background-color:#fff;height:23px}input:not([type=file]){padding:0 5px;vertical-align:middle;font-size:14px}input:disabled{background:hsla(0,0%,39%,.1)}input:focus,select:focus{border-color:#7b7d82;outline:none}", ""])
 }, function (e, t, n) {
     "use strict";
     var r = function () {
@@ -7617,7 +7617,7 @@
             value: s.SIMPLE_CHARSET.join(""),
             title: "Simple"
         }],
-        fonts: ["Sora", "Rubik Mono One", "Inconsolata", "Ubuntu Mono", "Roboto Mono", "Source Code Pro", "Cutive Mono", "monospace"]
+        fonts: ["Kode Mono","Open+Sans&display=swap","Sora", "Rubik Mono One", "Inconsolata", "Ubuntu Mono", "Roboto Mono", "Source Code Pro", "Cutive Mono", "monospace"]
     }
 }]);
 //# sourceMappingURL=playground.js.map

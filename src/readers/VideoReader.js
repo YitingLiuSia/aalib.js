@@ -63,7 +63,6 @@ export default class VideoReader extends AbstractReader {
 
     static fromURL(url, options) {
         const reader = new VideoReader(url, createVideoCapture(), options);
-        console.log(`read from url ${url}`);
         return reader.read();
     }
 }

@@ -38,7 +38,6 @@ export class CanvasRenderer extends BaseRenderer {
     }
 
     createGradient() {
-        console.log("create gradient")
         const gradient = this.ctx.createLinearGradient(0, 0, this.el.width, this.el.height);
         this.options.gradient.forEach((color, index) => {
             gradient.addColorStop(index / (this.options.gradient.length - 1), color);

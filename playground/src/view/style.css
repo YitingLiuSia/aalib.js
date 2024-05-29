@@ -1,9 +1,19 @@
-@import url("https://fonts.googleapis.com/css?family=Danfo|Lato|Inconsolata|Roboto+Mono|Source+Code+Pro|Ubuntu+Mono|Cutive+Mono");
-@font-face {
-    font-family: 'Sora';
+@import url("https://fonts.googleapis.com/css?family=Open+Sans&display=swap|Kode+Mono|Sora|Danfo|Lato|Inconsolata|Roboto+Mono|Source+Code+Pro|Ubuntu+Mono|Cutive+Mono");
+
+/* @font-face {
+    font-family: 'Open Sans', sans-serif;
+    src: url('../../../resources/kode-mono/KodeMono-Regular.ttf') format('truetype');
+  } */
+/* @font-face {
+    font-family: 'Sora', sans-serif;
     src: url('../../../resources/sora-otf/Sora-Regular.otf') format('opentype');
     font-weight: 400;
   }
+
+  @font-face {
+    font-family: 'Kode Mono', sans-serif;
+    src: url('../../../resources/kode-mono/KodeMono-Regular.ttf') format('truetype');
+  } */
 
 * {
     box-sizing: border-box;
@@ -41,32 +51,4 @@ input:focus,
 select:focus {
     border-color: #7b7d82;
     outline: none;
-}
-
-
-/* 
-  
-  @font-face {
-    font-family: 'Sora';
-    src: url('../../www/assets/sora-otf/Sora-Bold.otf') format('truetype');
-    font-weight: 700;
-  } */
-  
-  /*
- */
-
- .danfo {
-  font-family: "Danfo", serif;
-  font-optical-sizing: auto;
-  font-weight: 400;
-  font-style: normal;
-  font-variation-settings:
-    "ELSH" 0;
-}
-
- .sora {
-  font-family: "Sora", sans-serif;
-  font-optical-sizing: auto;
-  font-weight: 400;
-  font-style: normal;
 }
