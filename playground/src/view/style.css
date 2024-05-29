@@ -1,5 +1,9 @@
-@import url("https://fonts.googleapis.com/css?family=Sora&display=swap|Danfo|Lato|Inconsolata|Roboto+Mono|Source+Code+Pro|Ubuntu+Mono|Cutive+Mono");
-
+@import url("https://fonts.googleapis.com/css?family=Danfo|Lato|Inconsolata|Roboto+Mono|Source+Code+Pro|Ubuntu+Mono|Cutive+Mono");
+@font-face {
+    font-family: 'Sora';
+    src: url('../../../resources/sora-otf/Sora-Regular.otf') format('opentype');
+    font-weight: 400;
+  }
 
 * {
     box-sizing: border-box;
@@ -39,11 +43,8 @@ select:focus {
     outline: none;
 }
 
-/* @font-face {
-    font-family: 'Sora';
-    src: url('../../www/assets/sora-otf/Sora-Regular.otf') format('truetype');
-    font-weight: 400;
-  }
+
+/* 
   
   @font-face {
     font-family: 'Sora';

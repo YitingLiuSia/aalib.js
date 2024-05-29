@@ -5,16 +5,15 @@
     <title>aalib.js :: Evangeline</title>
     <link rel="stylesheet" type="text/css" href="style.css">
 </head>
-<body class="inverse">
+<body >
     <script type="text/javascript" src="../dist/aalib.js"></script>
     <script type="text/javascript">
         aalib.read.image.fromURL("../resources/evangeline.jpg")
-            .map(aalib.aa({ width: 450, height: 133, colored: false }))
-            .map(aalib.filter.desaturate())
-            .map(aalib.filter.inverse())
-            .map(aalib.render.html({ background: "new rgba(0,0,0,)", color: 'yellow', fontFamily: "Sora" }))
+            .map(aalib.aa({ width: 200  , height: 59, colored: false }))
+            .map(aalib.render.html({  background: "new rgba(0,0,0,)", color: 'red', fontFamily: "Sora" }))
             .do(function (el) {
                 document.body.appendChild(el);
+
             })
             .subscribe();
     </script>
