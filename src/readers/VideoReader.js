@@ -57,13 +57,17 @@ export default class VideoReader extends AbstractReader {
     }
 
     static fromVideoElement(video, options) {
+        console.log("read from video element");
         const reader = new VideoReader(video, createVideoCapture(), options);
         return reader.read();
+
     }
 
     static fromURL(url, options) {
+        console.log(`read from url ${url}`);
         const reader = new VideoReader(url, createVideoCapture(), options);
         return reader.read();
+
     }
 }
 

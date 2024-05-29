@@ -100,6 +100,7 @@ function localImage() {
                 filePicker.parentNode.insertBefore(el, filePicker.nextSibling);
             })
             .subscribe();
+
     }
 }
 
