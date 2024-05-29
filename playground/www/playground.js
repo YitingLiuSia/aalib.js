@@ -469,7 +469,7 @@
             function e(t) {
                 r(this, e), this.options = Object.assign({}, {
                     charset: l,
-                    fontFamily: "Sora"//"monospace"
+                    fontFamily: "Sora&display=swap"//"monospace"
                 }, t), this.fontmap = e.buildFont(this.options.charset, {
                     fontFamily: this.options.fontFamily
                 }), this.matchChar = o(this.matchChar.bind(this))
@@ -7072,7 +7072,7 @@
     function i(e) {
         var t = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : {},
             n = t.fontFamily,
-            r = void 0 === n ? "Sora&display=swap" : n,//"monospace"
+            r = void 0 === n ? "Sora" : n,//"monospace"
             o = s(),
             i = o.canvas,
             a = o.ctx;
@@ -7434,8 +7434,8 @@
             }, e.aa = {
                 width: 400,
                 height: 120,
-                colored: !0
-            }, e.postFilters[o.f].enabled = !0, e.renderer.background = "#000", e.renderer.fontFamily = "Ubuntu Mono", e
+                colored: 0
+            }, e.postFilters[o.f].enabled = !0, e.renderer.background = "#000", e.renderer.fontFamily = "Sora", e //"Ubuntu Mono", e
         },
         evangeline: function () {
             var e = a({}, r.a);
@@ -7604,7 +7604,7 @@
             color: "#000000",
             charset: s.ASCII_CHARSET.join(""),
             fontSize: 7,
-            fontFamily: "Sora&display=swap",
+            fontFamily: "Sora",
             lineHeight: 7,
             charWidth: 4.2,
             width: 1400,
@@ -7616,14 +7616,8 @@
         }, {
             value: s.SIMPLE_CHARSET.join(""),
             title: "Simple"
-        }, {
-            value: "SIA/",
-            title: "SIA/"
-        }, {
-            value: "/",
-            title: "/"
         }],
-        fonts: ["Sora&display=swap", "Danfo", "Inconsolata", "Ubuntu Mono", "Roboto Mono", "Source Code Pro", "Cutive Mono", "monospace"]
+        fonts: ["Sora", "Danfo", "Inconsolata", "Ubuntu Mono", "Roboto Mono", "Source Code Pro", "Cutive Mono", "monospace"]
     }
 }]);
 //# sourceMappingURL=playground.js.map

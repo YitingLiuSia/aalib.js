@@ -51,15 +51,19 @@ select:focus {
     font-weight: 700;
   } */
   
-  .danfo-regular {
-    font-family: "Danfo", serif;
-    font-optical-sizing: auto;
-    font-weight: 400;
-    font-style: normal;
-    font-variation-settings:
-      "ELSH" 0;
-  }
-.sora-regular {
+  /*
+ */
+
+ .danfo {
+  font-family: "Danfo", serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+  font-variation-settings:
+    "ELSH" 0;
+}
+
+ .sora {
   font-family: "Sora", sans-serif;
   font-optical-sizing: auto;
   font-weight: 400;
