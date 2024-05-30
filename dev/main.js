@@ -10,8 +10,10 @@ import brightness from "../src/filters/brightness";
 import linear from "../src/filters/linear";
 
 import aa from "../src/aa";
+import aalib from "../dist/aalib.js";
 
 import html, { ASCII_CHARSET } from "../src/renderers/HTMLRenderer";
+
 import videoCanvas from "../src/renderers/CanvasRenderer";
 
 import { appendToBody } from "./utils";
@@ -44,10 +46,34 @@ function mona() {
         ImageReader.fromURL(RES.MONA), // Reads the image from a URL.
         aa({ width: 200, height: 160, colored: false }), // Converts the image to ASCII art with specified dimensions and color settings.
         html({ charset }), // Renders the ASCII art as HTML using the specified charset.
+        render({canvas}),
+        appendToBody
+    );
+
+}
+
+function monaCanvas() {
+    pipeline( 
+        ImageReader.fromURL(RES.MONA), // Reads the image from a URL.
+        contrast(contrastEle.value),
+        aa({ width: 500, height: 180 }),
+        brightness(brightnessEle.value),
+        html({charset}),
+        renderHTMLToCanvas,
         appendToBody
     );
 }
 
+function renderHTMLToCanvas(htmlContent) {
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = htmlContent;
+    document.body.appendChild(tempDiv); // Temporarily append to body to render correctly
+
+    return html2canvas(tempDiv).then(canvas => {
+        document.body.removeChild(tempDiv); // Remove the temporary div
+        return canvas; // Return the canvas for further use in the pipeline
+    });
+}
 function monaUpdate() {
     console.log("contrast value is ",contrastEle.value);
     console.log("brightnessEle value is ",brightnessEle.value);
@@ -61,7 +87,7 @@ function monaUpdate() {
         htmlOutput => {
             const existingElement = document.getElementById('mona-image');
             if (existingElement) {
-                existingElement.innerHTML = htmlOutput.innerHTML; // Updates the existing HTML to replace the old one.
+                existingElement.outerHTML = htmlOutput.outerHTML; // Updates the existing HTML to replace the old one.
             } else {
                 htmlOutput.id = 'mona-image';
                 appendToBody(htmlOutput); // Appends the resulting HTML to the body of the document if it does not already exist.
@@ -244,7 +270,7 @@ document.getElementById('imageInput').addEventListener('change', function (event
                 // Image is loaded and can be manipulated or displayed
                 aalib.read.image.fromURL(img.src)
                     .map(aalib.aa({ width: 200, height: 59, colored: false }))
-                    .map(aalib.render.html({ background: "new rgba(0,0,0,)", color: 'red', fontFamily: "Sora" }))
+                    .map(aalib.render.canvas({ background: "rgba(0,0,0,0)", color: 'red', fontFamily: "Sora" }))
                     .do(function (el) {
                         document.body.appendChild(el);
                     })
@@ -387,7 +413,7 @@ let fontBackground = document.getElementById("font-background");
 // contrastEle.onchange =()=> aalib.filter.contrast(contrastEle.value);
 
 
-brightnessEle.onchange=mona;
+brightnessEle.onchange=monaCanvas;
 desaturation.onchange=monaUpdate;
 contrastEle.onchange =monaUpdate;
 
