@@ -33,16 +33,44 @@ function pipeline(...args) {
         .reduce((acc, it) => acc.map(it), src)
         .subscribe();
 }
-
+/**
+ * Function to process and display the "Mona" image using a pipeline of operations.
+ * This function utilizes a pipeline to streamline the process of reading an image,
+ * applying ASCII art transformation, rendering it to HTML, and finally appending it to the body of the document.
+ */
+// still adds more images on input 
 function mona() {
     pipeline(
-        ImageReader.fromURL(RES.MONA),
-        aa({ width: 200, height: 160, colored: false }),
-        html({ charset }),
+        ImageReader.fromURL(RES.MONA), // Reads the image from a URL.
+        aa({ width: 200, height: 160, colored: false }), // Converts the image to ASCII art with specified dimensions and color settings.
+        html({ charset }), // Renders the ASCII art as HTML using the specified charset.
         appendToBody
     );
 }
 
+function monaUpdate() {
+    console.log("contrast value is ",contrastEle.value);
+    console.log("brightnessEle value is ",brightnessEle.value);
+
+    pipeline(
+        ImageReader.fromURL(RES.MONA), // Reads the image from a URL.
+        aa({ width: 200, height: 160, colored: false }), // Converts the image to ASCII art with specified dimensions and color settings.
+        contrast(contrastEle.value),
+        brightness(brightnessEle.value),      
+        html({ charset }), // Renders the ASCII art as HTML using the specified charset.
+        htmlOutput => {
+            const existingElement = document.getElementById('mona-image');
+            if (existingElement) {
+                existingElement.innerHTML = htmlOutput.innerHTML; // Updates the existing HTML to replace the old one.
+            } else {
+                htmlOutput.id = 'mona-image';
+                appendToBody(htmlOutput); // Appends the resulting HTML to the body of the document if it does not already exist.
+            }
+        }
+
+   );
+
+}
 
 function idata() {
     const drawingCanvas = document.createElement("canvas");
@@ -115,6 +143,7 @@ function bbb() {
         .subscribe();
 }
 
+// media recorder and video exporter 
 let videoCanvasElement = document.getElementById('video-scene');
 let mediaRecorder;
 let recordedChunks = [];
@@ -159,6 +188,7 @@ function stopRecording() {
     console.log("Recording stopped");
 }
 
+// video input 
 function fromVideoFile(file) {
     return new Promise((resolve, reject) => {
         const video = document.createElement('video');
@@ -179,7 +209,7 @@ function fromVideoFile(file) {
         };
     });
 }
-
+// video input 
 document.getElementById('videoInput').addEventListener('change', function (event) {
     const file = event.target.files[0];
     if (file) {
@@ -200,6 +230,7 @@ document.getElementById('videoInput').addEventListener('change', function (event
     }
 });
 
+// image input 
 document.getElementById('imageInput').addEventListener('change', function (event) {
     const file = event.target.files[0];
     if (file && file.type.startsWith('image/')) {
@@ -207,7 +238,6 @@ document.getElementById('imageInput').addEventListener('change', function (event
 
         reader.onload = function (e) {
             const img = new Image();
-
             img.src = e.target.result;
             img.alt = 'Uploaded Image';
             img.onload = function () {
@@ -218,7 +248,7 @@ document.getElementById('imageInput').addEventListener('change', function (event
                     .do(function (el) {
                         document.body.appendChild(el);
                     })
-                    .subscribe(); // Optionally, you can now process the image further
+                    .subscribe(); 
 
             };
         };
@@ -234,7 +264,6 @@ document.getElementById('imageInput').addEventListener('change', function (event
 });
 
 // gradient
-
 class GradientInfo {
     constructor(color1, color2, color3, colorPosition1, colorPosition2, colorPosition3) {
         this.color1 = color1;
@@ -279,7 +308,6 @@ function updateGradient(){
     gradientCanvasCTX.fillRect(0, 0, gcWidth, gcHeight);
 }
 
-
 function loadGradient(){
     console.log("load gradient");
     colorPosition1.value = gradientInfo.colorPosition1;
@@ -296,36 +324,10 @@ function saveGradient() {
     gradientInfo.color1 = color1.value;
     gradientInfo.color2 = color2.value;
     gradientInfo.color3 = color3.value;
-
     gradientInfo.colorPosition1 = colorPosition1.value;
     gradientInfo.colorPosition2 = colorPosition2.value;
     gradientInfo.colorPosition3 = colorPosition3.value;
 
-
-    console.log("gradientInfo", gradientInfo);
-    console.log("gradientInfo.color1", gradientInfo.color1);
-
-}
-
-
-function loadPresavedGradient() {
-    if(gradientInfo){
-
-        color1.value = gradientInfo.color1;
-        color2.value = gradientInfo.color2;
-        color3.value = gradientInfo.color3;
-
-        colorPosition1.value = gradientInfo.colorPosition1;
-        colorPosition2.value = gradientInfo.colorPosition2;
-        colorPosition3.value = gradientInfo.colorPosition3;
-
-        updateGradient();
-    }
-    // if (savedGradient) {
-    //     let presavedColorElement = document.getElementById("presave-gradient-color");
-    //     presavedColorElement.value = savedGradient;
-    //     updateGradient(); // Update the canvas with the loaded gradient
-    // }
 }
 
 function saveGradientToFile() {
@@ -354,14 +356,11 @@ function loadGradientFromFile(file) {
         gradientInfo.colorPosition1 = data.colorPosition1;
         gradientInfo.colorPosition2 = data.colorPosition2;
         gradientInfo.colorPosition3 = data.colorPosition3;
-       loadGradient();
+        loadGradient();
         updateGradient();
-
         console.log("Gradient loaded from file.");
-
     };
     reader.readAsText(file);
-
 }
 
 const fileInput = document.getElementById('gradient-file-input');
@@ -373,13 +372,28 @@ fileInput.addEventListener('change', function() {
     }
 
 });
-document.body.appendChild(fileInput);
 
 
+let desaturation = document.getElementById("desaturation");
+let brightnessEle = document.getElementById("brightness");
+let contrastEle = document.getElementById("contrast");
+let fontDropdown = document.getElementById("font-dropdown");
+let fontSize = document.getElementById("font-size");
+let fontColor = document.getElementById("font-color");
+let fontBackground = document.getElementById("font-background");
 
+// brightnessEle.onchange=()=>    aalib.image.filter.brightness(brightnessEle.value);
+// desaturation.onchange=()=>    aalib.filter.desaturation(desaturation.value);
+// contrastEle.onchange =()=> aalib.filter.contrast(contrastEle.value);
+
+
+brightnessEle.onchange=mona;
+desaturation.onchange=monaUpdate;
+contrastEle.onchange =monaUpdate;
 
 
 // mona();
+// monaUpdate();
 // bbb();
 // idata();
 // localImage();
