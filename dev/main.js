@@ -57,42 +57,6 @@ function monaCanvas() {
         el => appendToID(el, "generated-image"));
 }
 
-
-function renderHTMLToCanvas(htmlContent) {
-    const tempDiv = document.createElement('div');
-    tempDiv.innerHTML = htmlContent;
-    document.body.appendChild(tempDiv); // Temporarily append to body to render correctly
-
-    return html2canvas(tempDiv).then(canvas => {
-        document.body.removeChild(tempDiv); // Remove the temporary div
-        return canvas; // Return the canvas for further use in the pipeline
-    });
-}
-function monaUpdate() {
-    console.log("contrast value is ",contrastEle.value);
-    console.log("brightnessEle value is ",brightnessEle.value);
-
-    loadImageFromURL(resource(RES.MONA), true);
-
-//     pipeline(
-
-//         ImageReader.fromURL(RES.MONA), // Reads the image from a URL.
-//         aa({ width: 200, height: 160, colored: false }), // Converts the image to ASCII art with specified dimensions and color settings.
-//         contrast(contrastEle.value),
-//         brightness(brightnessEle.value),      
-//         html({ charset }), // Renders the ASCII art as HTML using the specified charset.
-//         htmlOutput => {
-//             const existingElement = document.getElementById('mona-image');
-//             if (existingElement) {
-//                 existingElement.outerHTML = htmlOutput.outerHTML; // Updates the existing HTML to replace the old one.
-//             } else {
-//                 htmlOutput.id = 'mona-image';
-//                 appendToBody(htmlOutput); // Appends the resulting HTML to the body of the document if it does not already exist.
-//             }
-//         }
-//    );
-}
-
 function idata() {
     const drawingCanvas = document.createElement("canvas");
     drawingCanvas.width = "320";
@@ -444,18 +408,7 @@ let fontSize = document.getElementById("font-size");
 let fontColor = document.getElementById("font-color");
 let fontBackground = document.getElementById("font-background");
 
-// brightnessEle.onchange=()=>    aalib.image.filter.brightness(brightnessEle.value);
-// desaturation.onchange=()=>    aalib.filter.desaturation(desaturation.value);
-// contrastEle.onchange =()=> aalib.filter.contrast(contrastEle.value);
-
-
 brightnessEle.onchange=monaCanvas;
 desaturation.onchange=monaCanvas;
 contrastEle.onchange =monaCanvas;
 
-
-// mona();
-// monaUpdate();
-// bbb();
-// idata();
-// localImage();
