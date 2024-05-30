@@ -8,7 +8,8 @@ import inverse from "../src/filters/inverse";
 import contrast from "../src/filters/contrast";
 import brightness from "../src/filters/brightness";
 import linear from "../src/filters/linear";
-
+import { appendToID } from "./utils";
+import { GenerateID } from "./utils";
 import aa from "../src/aa";
 import aalib from "../dist/aalib.js";
 
@@ -30,16 +31,11 @@ const RES = {
 
 function pipeline(...args) {
     const src = args.shift();
-
     args
         .reduce((acc, it) => acc.map(it), src)
         .subscribe();
 }
-/**
- * Function to process and display the "Mona" image using a pipeline of operations.
- * This function utilizes a pipeline to streamline the process of reading an image,
- * applying ASCII art transformation, rendering it to HTML, and finally appending it to the body of the document.
- */
+
 // still adds more images on input 
 function mona() {
     pipeline(
@@ -49,20 +45,18 @@ function mona() {
         render({canvas}),
         appendToBody
     );
-
 }
 
 function monaCanvas() {
     pipeline( 
         ImageReader.fromURL(RES.MONA), // Reads the image from a URL.
-        contrast(contrastEle.value),
-        aa({ width: 500, height: 180 }),
-        brightness(brightnessEle.value),
-        html({charset}),
-        renderHTMLToCanvas,
-        appendToBody
-    );
+        contrast(0.2),
+        aa({ width: 500, height: 300 }),
+        brightness(10),
+        videoCanvas({charset, background:"black"}),
+        el => appendToID(el, "generated-image"));
 }
+
 
 function renderHTMLToCanvas(htmlContent) {
     const tempDiv = document.createElement('div');
@@ -78,24 +72,25 @@ function monaUpdate() {
     console.log("contrast value is ",contrastEle.value);
     console.log("brightnessEle value is ",brightnessEle.value);
 
-    pipeline(
-        ImageReader.fromURL(RES.MONA), // Reads the image from a URL.
-        aa({ width: 200, height: 160, colored: false }), // Converts the image to ASCII art with specified dimensions and color settings.
-        contrast(contrastEle.value),
-        brightness(brightnessEle.value),      
-        html({ charset }), // Renders the ASCII art as HTML using the specified charset.
-        htmlOutput => {
-            const existingElement = document.getElementById('mona-image');
-            if (existingElement) {
-                existingElement.outerHTML = htmlOutput.outerHTML; // Updates the existing HTML to replace the old one.
-            } else {
-                htmlOutput.id = 'mona-image';
-                appendToBody(htmlOutput); // Appends the resulting HTML to the body of the document if it does not already exist.
-            }
-        }
+    loadImageFromURL(resource(RES.MONA), true);
 
-   );
+//     pipeline(
 
+//         ImageReader.fromURL(RES.MONA), // Reads the image from a URL.
+//         aa({ width: 200, height: 160, colored: false }), // Converts the image to ASCII art with specified dimensions and color settings.
+//         contrast(contrastEle.value),
+//         brightness(brightnessEle.value),      
+//         html({ charset }), // Renders the ASCII art as HTML using the specified charset.
+//         htmlOutput => {
+//             const existingElement = document.getElementById('mona-image');
+//             if (existingElement) {
+//                 existingElement.outerHTML = htmlOutput.outerHTML; // Updates the existing HTML to replace the old one.
+//             } else {
+//                 htmlOutput.id = 'mona-image';
+//                 appendToBody(htmlOutput); // Appends the resulting HTML to the body of the document if it does not already exist.
+//             }
+//         }
+//    );
 }
 
 function idata() {
@@ -231,12 +226,10 @@ function fromVideoFile(file) {
         video.autoplay = true;  // Set autoplay to true to start playing automatically
         video.muted = true;     // Mute the video to allow autoplay in most browsers
         video.loop = true;      // Optional: Loop the video
-
         video.onloadedmetadata = () => {
             document.getElementById('video-container').appendChild(video);  // Append to a specific container
             resolve(video);
         };
-
         video.onerror = () => {
             reject(new Error("Failed to load video"));
         };
@@ -273,6 +266,14 @@ function loadImageFromURL(img, isCanvas){
         .map(  aalib.render.canvas(requirements))
         .do(function (el) {
             document.body.appendChild(el);
+
+            // el.id = 'mona-image'; // Set a unique ID for the element
+            // const existingElement = document.getElementById('mona-image');
+            // if (existingElement) {
+            //     document.body.replaceChild(el, existingElement);
+            // } else {
+            //     document.body.appendChild(el);
+            // }
         })
         .subscribe(); 
     }else{
@@ -281,8 +282,17 @@ function loadImageFromURL(img, isCanvas){
         .map(aalib.render.html(requirements))
         .do(function (el) {
             document.body.appendChild(el);
+
+            // el.id = 'mona-image'; // Set a unique ID for the element
+            // const existingElement = document.getElementById('mona-image');
+            // if (existingElement) {
+            //     console.log("should replace chi")
+            //     document.body.replaceChild(el, existingElement);
+            // } else {
+            //     document.body.appendChild(el);
+            // }
         })
-        .subscribe();
+        .subscribe(); 
     }
 }
 
@@ -440,8 +450,8 @@ let fontBackground = document.getElementById("font-background");
 
 
 brightnessEle.onchange=monaCanvas;
-desaturation.onchange=monaUpdate;
-contrastEle.onchange =monaUpdate;
+desaturation.onchange=monaCanvas;
+contrastEle.onchange =monaCanvas;
 
 
 // mona();
