@@ -1,71 +1,84 @@
 <!DOCTYPE html>
 <html>
+
 <head lang="en">
     <meta charset="UTF-8">
     <title>aalib.js</title>
     <script type="text/javascript" defer src="bundle.js"></script>
-   
-   <link rel="stylesheet" href="style.css">
+
+    <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
 
     <h1>Preset</h1>
-    <h2>Font Selection</h2> 
-    
+    <h2>Font Selection</h2>
+
     <p>Font Size</p>
     <input type="text" id="textInput" value="">
 
-   <h2>Filters</h2>
+    <h2>Filters</h2>
     <p>Brightness</p>
     <div class="slidecontainer">
-        <span class="min">0</span> <input type="range" id="brightness" min="0" max="255" step="0.1" value="100" class="myRange"><span class="max">255</span>
+        <span class="min">0</span> <input type="range" id="brightness" min="0" max="255" step="0.1" value="100"
+            class="myRange"><span class="max">255</span>
     </div>
 
     <p>Contrast</p>
     <div class="slidecontainer">
-        <span class="min">0</span> <input type="range" id="brightness" min="0" max="255" step="0.1" value="100" class="myRange"><span class="max">255</span>
+        <span class="min">0</span> <input type="range" id="brightness" min="0" max="255" step="0.1" value="100"
+            class="myRange"><span class="max">255</span>
     </div>
 
     <p>Saturation</p>
     <div class="slidecontainer">
-        <span class="min">0</span> <input type="range" id="brightness" min="0" max="255" step="0.1" value="100" class="myRange"><span class="max">255</span>
+        <span class="min">0</span> <input type="range" id="brightness" min="0" max="255" step="0.1" value="100"
+            class="myRange"><span class="max">255</span>
     </div>
 
+    <div class="gradient-container">
     <h2>Gradient</h2>
     <input id="presave-gradient-color" type="color" value="#000000">
 
-    <input type="file" id="gradient-file-input" accept="application/json">
-
-
 
     <div id="gradient-picker">
-        <canvas id="gradient-canvas" width="200" height="200"></canvas>
+        <canvas id="gradient-canvas" width="200" height="50"></canvas>
     </div>
 
-    <input type="color" id="color1" value="">
-    <input type="number" id="position1" min="0"   max="100"     value="20"> 
+<div class="container">   
+     <input type="color" id="color1" value="">
+    <input type="number" id="position1" min="0" max="100" value="20">
     <input type="color" id="color2" value="">
     <input type="number" id="position2" value="80">
     <input type="color" id="color3" value="">
     <input type="number" id="position3" value="100">
-  
-    <button id="save-gradient">Save Gradient</button>
-    <h1> Import Video</h1>
-    <p>Video Settings</p>
+</div>
 
-    <input type="file" id="videoInput" accept="video/*">
-    <div id="video-container"></div>
-    
-    <button id="startRecording">Start Recording</button>
-    <button id="stopAndDownload">Stop and Download</button>
-    <canvas id="video-scene"></canvas>
+    <div style="display: flex; align-items: center;">
+        <button id="save-gradient">Save Gradient</button>
+        <input type="file" id="gradient-file-input" accept="application/json">
+    </div>
+ </div>
 
-    <h1>Import Image</h1>
+    <div class="import-container" id="video-import">
+        <h1> Import Video</h1>
+        <p>Video Settings</p>
 
-    <p>Image Settings</p>
-    <input type="file" id="imageInput" accept="image/*">
-    <div id="image-container"></div>
+        <input type="file" id="videoInput" accept="video/*">
+        <div id="video-container"></div>
 
+        <button id="startRecording">Start Recording</button>
+        <button id="stopAndDownload">Stop and Download</button>
+        <canvas id="video-scene"></canvas>
+    </div>
+
+    <div class="import-container" id="image-import">
+        <h1>Import Image</h1>
+        <p>Image Settings</p>
+        <input type="file" id="imageInput" accept="image/*">
+        <div id="image-container"></div>
+    </div>
 </body>
+
 </html>

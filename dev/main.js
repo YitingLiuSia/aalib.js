@@ -280,6 +280,16 @@ function updateGradient(){
 }
 
 
+function loadGradient(){
+    console.log("load gradient");
+    colorPosition1.value = gradientInfo.colorPosition1;
+    colorPosition2.value = gradientInfo.colorPosition2;
+    colorPosition3.value = gradientInfo.colorPosition3;
+    color1.value = gradientInfo.color1;
+    color2.value = gradientInfo.color2;
+    color3.value = gradientInfo.color3;
+
+}
 
 function saveGradient() {
     savedGradient = gradientCanvasCTX.fillStyle;
@@ -336,13 +346,15 @@ function loadGradientFromFile(file) {
     const reader = new FileReader();
     reader.onload = function(event) {
         const data = JSON.parse(event.target.result);
-        gradientInfo.color1 = data.color1.value;
-        gradientInfo.color2 = data.color2.value;
-        gradientInfo.color3 = data.color3.value;
+        console.log(" data",data);
+        gradientInfo.color1 = data.color1;
+        gradientInfo.color2 = data.color2;
+        gradientInfo.color3 = data.color3;
 
-        gradientInfo.colorPosition1 = data.colorPosition1.value;
-        gradientInfo.colorPosition2 = data.colorPosition2.value;
-        gradientInfo.colorPosition3 = data.colorPosition3.value;
+        gradientInfo.colorPosition1 = data.colorPosition1;
+        gradientInfo.colorPosition2 = data.colorPosition2;
+        gradientInfo.colorPosition3 = data.colorPosition3;
+       loadGradient();
         updateGradient();
 
         console.log("Gradient loaded from file.");

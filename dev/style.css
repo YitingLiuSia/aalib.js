@@ -1,12 +1,12 @@
-canvas {
-    border: 1px solid red;
-}
+body{
 
-canvas, pre {
-    font-size: 7px;
-    display: block;
-    text-align: center;
-    border: 1px solid #efefef;
+    margin: 10px;
+    display: flex;
+    flex-direction: column  ;
+    align-items: start;
+    justify-content: left;
+
+
 }
 
 #gradient-canvas {
