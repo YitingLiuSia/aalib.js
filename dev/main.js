@@ -176,6 +176,13 @@ let recordedChunks = [];
 setupMediaRecorder(videoCanvasElement);
 document.getElementById('startRecording').addEventListener('click', startRecording);
 document.getElementById('stopAndDownload').addEventListener('click', stopRecording);
+const imageDropdown = document.getElementById('image-dropdown');
+let isCanvas = true; 
+
+imageDropdown.onchange = function(){
+    isCanvas = this.value === "canvas";
+    console.log("iscanvas", isCanvas);
+}
 
 function setupMediaRecorder(canvas) {
     const stream = canvas.captureStream(25); // Capture at 25 fps
@@ -257,6 +264,28 @@ document.getElementById('videoInput').addEventListener('change', function (event
 });
 
 // image input 
+function loadImageFromURL(img, isCanvas){
+    const aaReq = { width: 200, height: 59, colored: false };
+    const requirements = {background: "rgba(0,0,0,0)", color: 'red', fontFamily: "Sora" };
+    if(isCanvas){
+        aalib.read.image.fromURL(img.src)
+        .map(aalib.aa(aaReq))
+        .map(  aalib.render.canvas(requirements))
+        .do(function (el) {
+            document.body.appendChild(el);
+        })
+        .subscribe(); 
+    }else{
+        aalib.read.image.fromURL(img.src)
+        .map(aalib.aa(aaReq ))
+        .map(aalib.render.html(requirements))
+        .do(function (el) {
+            document.body.appendChild(el);
+        })
+        .subscribe();
+    }
+}
+
 document.getElementById('imageInput').addEventListener('change', function (event) {
     const file = event.target.files[0];
     if (file && file.type.startsWith('image/')) {
@@ -268,15 +297,10 @@ document.getElementById('imageInput').addEventListener('change', function (event
             img.alt = 'Uploaded Image';
             img.onload = function () {
                 // Image is loaded and can be manipulated or displayed
-                aalib.read.image.fromURL(img.src)
-                    .map(aalib.aa({ width: 200, height: 59, colored: false }))
-                    .map(aalib.render.canvas({ background: "rgba(0,0,0,0)", color: 'red', fontFamily: "Sora" }))
-                    .do(function (el) {
-                        document.body.appendChild(el);
-                    })
-                    .subscribe(); 
-
+                console.log("image on load isCanvas is ",isCanvas);
+                loadImageFromURL(img,isCanvas);
             };
+
         };
 
         reader.onerror = function () {
@@ -288,6 +312,8 @@ document.getElementById('imageInput').addEventListener('change', function (event
         console.error('File is not an image');
     }
 });
+
+
 
 // gradient
 class GradientInfo {
