@@ -8,12 +8,11 @@
 </head>
 
 <body>
-    <div>
-
-    </div>
+  
     <script type="text/javascript" src="../dist/aalib.js"></script>
 
-    <p> Import Video</p>
+    <h1> Import Video</h1>
+    <p>Video Settings</p>
     <input type="file" id="videoInput" accept="video/*">
     <div id="video-container"></div>
     
@@ -21,8 +20,9 @@
     <button id="stopAndDownload">Stop and Download</button>
     <canvas id="video-scene"></canvas>
 
+    <h1>Import Image</h1>
 
-    <p>Import Image</p>
+    <p>Image Settings</p>
     <input type="file" id="imageInput" accept="image/*">
     <div id="image-container"></div>
 
@@ -93,12 +93,9 @@
             const file = event.target.files[0];
             if (file) {
                 fromVideoFile(file).then(video => {
-
                     console.log("video", video);
-
                     aalib.read.video.fromVideoElement(video)
                         .map(aalib.aa({ width: 165, height: 68 }))
-
                         .map(aalib.render.canvas({
                             width: 696,
                             height: 476,
@@ -144,10 +141,6 @@
                 console.error('File is not an image');
             }
         });
-
-
-
-
 
     </script>
 </body>
