@@ -22,6 +22,12 @@ import { appendToBody } from "./utils";
 const charset = ASCII_CHARSET;
 const resource = filename => `../resources/${ filename }`;
 
+const FONTS = {
+    Sora: resource("sora-otf/Sora-Regular.otf"),
+    Kode: resource("kode-mono/KodeMono-Regular.ttf"),
+    OpenSans: resource("open-sans/OpenSans-Regular.ttf")
+}
+
 const RES = {
     MONA: resource("mona.png"),
     LENNA: resource("lenna.png"),
@@ -35,6 +41,7 @@ function pipeline(...args) {
         .reduce((acc, it) => acc.map(it), src)
         .subscribe();
 }
+
 
 // still adds more images on input 
 function mona() {
@@ -210,7 +217,7 @@ document.getElementById('videoInput').addEventListener('change', function (event
                 .map(aalib.render.canvas({
                     width: 696,
                     height: 476,
-                    fontFamily: "Sora",
+                    fontFamily: `"${currentFont}", sans-serif`,
                     el: document.querySelector("#video-scene")
                 }))
                 .subscribe();
@@ -223,7 +230,7 @@ document.getElementById('videoInput').addEventListener('change', function (event
 // image input 
 function loadImageFromURL(img, isCanvas){
     const aaReq = { width: 200, height: 59, colored: false };
-    const requirements = {background: "rgba(0,0,0,0)", color: 'red', fontFamily: "Sora" };
+    const requirements = {background: "rgba(0,0,0,0)", color: 'red', fontFamily: currentFont };
     if(isCanvas){
         aalib.read.image.fromURL(img.src)
         .map(aalib.aa(aaReq))
@@ -407,6 +414,24 @@ let fontDropdown = document.getElementById("font-dropdown");
 let fontSize = document.getElementById("font-size");
 let fontColor = document.getElementById("font-color");
 let fontBackground = document.getElementById("font-background");
+
+function selectFont(fontName) {
+    const font = FONTS[fontName];
+    if (!font) {
+        console.error(`Font ${fontName} is not available.`);
+        return;
+    }
+    return font;
+}
+
+let currentFont; 
+
+fontDropdown.onchange = (e) => {
+    currentFont = selectFont(e.target.value);
+    console.log("current font ", currentFont);
+    // apply font in the text for the image and video reader 
+};
+
 
 brightnessEle.onchange=monaCanvas;
 desaturation.onchange=monaCanvas;
