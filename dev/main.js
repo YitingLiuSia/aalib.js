@@ -355,6 +355,12 @@ colorPosition3.onchange = updateGradient;
 saveGradientButton.onclick =saveGradientToFile;
 let gradient;
 
+let loadPresetButton = document.getElementById("load-preset");
+let savePresetButton = document.getElementById("save-preset");
+
+loadPresetButton.onclick= loadPreetFromFile;
+savePresetButton.onclick= savePresetToFile;
+
 function updateGradient(){
     console.log("update gradient");
     gradient = gradientCanvasCTX.createLinearGradient(0, 0, gcWidth, 0);
@@ -448,7 +454,6 @@ function saveGradientToFile() {
 
 // needs to update in the preset info values as well - UI 
 function loadPreetFromFile(file){
-
     const reader = new FileReader();
     reader.onload = function(event){
         const data = JSON.parse(event.target.result);
@@ -466,9 +471,8 @@ function loadPreetFromFile(file){
         loadPreset();
         console.log("Preset loaded from file.");
     }
-
-
 }
+
 function loadGradientFromFile(file) {
     const reader = new FileReader();
     reader.onload = function(event) {
@@ -477,7 +481,6 @@ function loadGradientFromFile(file) {
         gradientInfo.color1 = data.color1;
         gradientInfo.color2 = data.color2;
         gradientInfo.color3 = data.color3;
-
         gradientInfo.colorPosition1 = data.colorPosition1;
         gradientInfo.colorPosition2 = data.colorPosition2;
         gradientInfo.colorPosition3 = data.colorPosition3;
