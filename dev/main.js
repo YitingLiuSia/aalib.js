@@ -231,10 +231,12 @@ document.getElementById('videoInput').addEventListener('change', function (event
 function loadImageFromURL(img, isCanvas){
     const aaReq = { width: 200, height: 59, colored: false };
     const requirements = {background: "rgba(0,0,0,0)", color: 'red', fontFamily: currentFont };
+   
+    console.log("loading image with current font ",currentFont);
     if(isCanvas){
         aalib.read.image.fromURL(img.src)
         .map(aalib.aa(aaReq))
-        .map(  aalib.render.canvas(requirements))
+        .map(aalib.render.canvas(requirements))
         .do(function (el) {
             document.body.appendChild(el);
 
@@ -427,7 +429,7 @@ function selectFont(fontName) {
 let currentFont; 
 
 fontDropdown.onchange = (e) => {
-    currentFont = selectFont(e.target.value);
+    currentFont =e.target.value;
     console.log("current font ", currentFont);
     // apply font in the text for the image and video reader 
 };
