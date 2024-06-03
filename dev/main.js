@@ -357,9 +357,25 @@ let gradient;
 
 let loadPresetButton = document.getElementById("load-preset");
 let savePresetButton = document.getElementById("save-preset");
+let desaturate = document.getElementById("desaturate");
+let brightness = document.getElementById("brightness");
+let contrast = document.getElementById("contrast");
+let inverse = document.getElementById("inverse");
+let desaturation = document.getElementById("desaturation");
+let brightnessEle = document.getElementById("brightness");
+let contrastEle = document.getElementById("contrast");
+let fontDropdown = document.getElementById("font-dropdown");
+let fontSize = document.getElementById("font-size");
+let charWidth = document.getElementById("charWidth");
+let lineHeight = document.getElementById("lineHeight");
 
 loadPresetButton.onclick= loadPreetFromFile;
 savePresetButton.onclick= savePresetToFile;
+desaturate.onchange=(e)=>{
+    presetInfo.desaturate = e.target.value;
+    console.log("preset info is ", presetInfo.desaturate);
+
+}
 
 function updateGradient(){
     console.log("update gradient");
@@ -371,6 +387,41 @@ function updateGradient(){
     gradientCanvasCTX.fillRect(0, 0, gcWidth, gcHeight);
 }
 
+function updatePreset(){
+    console.log("update preset");
+    if(desaturate.value!=presetInfo.desaturate){
+        desaturate.value = presetInfo.desaturate;
+    }
+    if(brightnessEle.value!=presetInfo.brightness){
+        brightnessEle.value = presetInfo.brightness;
+    }
+    if(contrastEle.value!=presetInfo.contrast){
+        contrastEle.value = presetInfo.contrast;
+    }
+    if(desaturation.value!=presetInfo.desaturation){
+        desaturation.value = presetInfo.desaturation;
+    }
+    if(inverse.value!=presetInfo.inverse){
+        inverse.value = presetInfo.inverse;     
+    }
+    if(fontSize.value!=presetInfo.fontSize){
+        fontSize.value = presetInfo.fontSize;
+    }
+    if(fontFamily.value!=presetInfo.fontFamily){
+        fontFamily.value = presetInfo.fontFamily;
+    }
+    if(lineHeight.value!=presetInfo.lineHeight){
+        lineHeight.value = presetInfo.lineHeight;
+    }
+    if(charWidth.value!=presetInfo.charWidth){
+        charWidth.value = presetInfo.charWidth;
+    }
+    if(gradientInfo!=presetInfo.gradientInfo){
+        gradientInfo = presetInfo.gradientInfo;
+    }
+    console.log("preset info is ", presetInfo);
+
+}
 function loadGradient(){
     console.log("load gradient");
     colorPosition1.value = gradientInfo.colorPosition1;
@@ -379,7 +430,6 @@ function loadGradient(){
     color1.value = gradientInfo.color1;
     color2.value = gradientInfo.color2;
     color3.value = gradientInfo.color3;
-
 }
 
 function saveGradient() {
@@ -423,7 +473,6 @@ function savePreset(){
 
 
 function savePresetToFile(){
-
     savePreset();
     const presetData = JSON.stringify(presetInfo);
     const blob = new Blob([presetData], {type:'application/json'});
@@ -501,13 +550,7 @@ fileInput.addEventListener('change', function() {
 
 });
 
-let desaturation = document.getElementById("desaturation");
-let brightnessEle = document.getElementById("brightness");
-let contrastEle = document.getElementById("contrast");
-let fontDropdown = document.getElementById("font-dropdown");
-let fontSize = document.getElementById("font-size");
-let charWidth = document.getElementById("charWidth");
-let lineHeight = document.getElementById("lineHeight");
+
 
 charWidth.onselect=(e)=>{
     presetInfo.charWidth = e.target.value;
