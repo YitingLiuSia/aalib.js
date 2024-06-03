@@ -23,7 +23,7 @@ const charset = ASCII_CHARSET;
 const resource = filename => `../resources/${ filename }`;
 
 const FONTS = {
-    Sora: resource("sora-otf/Sora-Regular.otf"),
+    Sora: resource("sora-ttf/Sora-Regular.ttf"),
     Kode: resource("kode-mono/KodeMono-Regular.ttf"),
     OpenSans: resource("open-sans/OpenSans-Regular.ttf")
 }
