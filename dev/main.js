@@ -316,11 +316,11 @@ class GradientInfo {
 }
 
 class PresetInfo {
-    constructor(inverse, desaturate, brightness, contrast, desaturation, gradientInfo, fontSize, fontFamily, lineHeight,charWidth) {
-        this.inverse = inverse;
+    constructor(inverseEle, desaturate, brightnessEle, contrastEle, desaturation, gradientInfo, fontSize, fontFamily, lineHeight,charWidth) {
+        this.inverseEle = inverseEle;
         this.desaturate = desaturate;
-        this.brightness = brightness;
-        this.contrast = contrast;
+        this.brightnessEle = brightnessEle;
+        this.contrastEle = contrastEle;
         this.desaturation = desaturation;
         this.gradientInfo = gradientInfo;
         this.fontSize = fontSize;
@@ -346,6 +346,7 @@ let saveGradientButton = document.getElementById("save-gradient");
 let savedGradient;
 let gradientInfo = new GradientInfo();
 let presetInfo = new PresetInfo();
+let fontFamily = "Sora";
 color1.onchange = updateGradient;
 color2.onchange = updateGradient;
 color3.onchange = updateGradient;
@@ -358,18 +359,15 @@ let gradient;
 let loadPresetButton = document.getElementById("load-preset");
 let savePresetButton = document.getElementById("save-preset");
 let desaturate = document.getElementById("desaturate");
-let brightness = document.getElementById("brightness");
-let contrast = document.getElementById("contrast");
-let inverse = document.getElementById("inverse");
+let inverseEle = document.getElementById("inverse");
 let desaturation = document.getElementById("desaturation");
 let brightnessEle = document.getElementById("brightness");
 let contrastEle = document.getElementById("contrast");
 let fontDropdown = document.getElementById("font-dropdown");
-let fontSize = document.getElementById("font-size");
+let fontSize = document.getElementById("fontSize");
 let charWidth = document.getElementById("charWidth");
 let lineHeight = document.getElementById("lineHeight");
 
-loadPresetButton.onclick= loadPreetFromFile;
 savePresetButton.onclick= savePresetToFile;
 desaturate.onchange=(e)=>{
     presetInfo.desaturate = e.target.value;
@@ -392,23 +390,23 @@ function updatePreset(){
     if(desaturate.value!=presetInfo.desaturate){
         desaturate.value = presetInfo.desaturate;
     }
-    if(brightnessEle.value!=presetInfo.brightness){
-        brightnessEle.value = presetInfo.brightness;
+    if(brightnessEle.value!=presetInfo.brightnessEle){
+        brightnessEle.value = presetInfo.brightnessEle;
     }
-    if(contrastEle.value!=presetInfo.contrast){
-        contrastEle.value = presetInfo.contrast;
+    if(contrastEle.value!=presetInfo.contrastEle){
+        contrastEle.value = presetInfo.contrastEle;
     }
     if(desaturation.value!=presetInfo.desaturation){
         desaturation.value = presetInfo.desaturation;
     }
-    if(inverse.value!=presetInfo.inverse){
-        inverse.value = presetInfo.inverse;     
+    if(inverseEle.value!=presetInfo.inverseEle){
+        inverseEle.value = presetInfo.inverseEle;     
     }
     if(fontSize.value!=presetInfo.fontSize){
         fontSize.value = presetInfo.fontSize;
     }
-    if(fontFamily.value!=presetInfo.fontFamily){
-        fontFamily.value = presetInfo.fontFamily;
+    if(fontFamily!=presetInfo.fontFamily){
+        fontFamily = presetInfo.fontFamily;
     }
     if(lineHeight.value!=presetInfo.lineHeight){
         lineHeight.value = presetInfo.lineHeight;
@@ -445,32 +443,33 @@ function saveGradient() {
 
 function loadPreset(){
     console.log("load preset");
-    presetInfo.inverse = inverse.value;
-    presetInfo.desaturate = desaturate.value;
-    presetInfo.brightness = brightness.value;
-    presetInfo.contrast = contrast.value;
-    presetInfo.desaturation = desaturation.value;
-    presetInfo.gradientInfo = gradientInfo;
-    presetInfo.fontSize = fontSize.value;
-    presetInfo.fontFamily = fontFamily.value;
-    presetInfo.lineHeight = lineHeight.value;
-    presetInfo.charWidth = charWidth.value;
-}
-
-function savePreset(){
-    inverse.value = presetInfo.inverse;
+    inverseEle.value = presetInfo.inverseEle;
     desaturate.value = presetInfo.desaturate;
-    brightness.value = presetInfo.brightness;
-    contrast.value = presetInfo.contrast;
+    brightnessEle.value = presetInfo.brightnessEle;
+    contrastEle.value = presetInfo.contrastEle;
     desaturation.value = presetInfo.desaturation;
     gradientInfo = presetInfo.gradientInfo;
     fontSize.value = presetInfo.fontSize;
-    fontFamily.value = presetInfo.fontFamily;
+    fontFamily = presetInfo.fontFamily;
     lineHeight.value = presetInfo.lineHeight;
     charWidth.value = presetInfo.charWidth;
 
 }
+function savePreset(){
+    console.log("save preset ", presetInfo);
+    presetInfo.inverseEle = inverseEle.value;
+    presetInfo.desaturate = desaturate.value;
+    presetInfo.brightnessEle = brightnessEle.value;
+    presetInfo.contrastEle = contrastEle.value;
+    presetInfo.desaturation = desaturation.value;
+    presetInfo.gradientInfo = gradientInfo;
+    saveGradient();
+    presetInfo.fontSize = fontSize.value;
+    presetInfo.fontFamily = fontFamily;
+    presetInfo.lineHeight = lineHeight.value;
+    presetInfo.charWidth = charWidth.value;
 
+}
 
 function savePresetToFile(){
     savePreset();
@@ -507,19 +506,21 @@ function loadPreetFromFile(file){
     reader.onload = function(event){
         const data = JSON.parse(event.target.result);
         console.log("data",data);
-        presetInfo.brightness = brightnessEle.value;
+        presetInfo.brightnessEle = brightnessEle.value;
         presetInfo.desaturation = desaturation.value;
-        presetInfo.contrast = contrastEle.value;
+        presetInfo.contrastEle = contrastEle.value;
         presetInfo.desaturate = desaturate.value;
-        presetInfo.inverse = inverse.value;
+        presetInfo.inverseEle = inverseEle.value;
         presetInfo.gradientInfo = gradientInfo;
         presetInfo.fontSize = fontSize.value;
-        presetInfo.fontFamily = fontFamily.value;
+        presetInfo.fontFamily = fontFamily;
         presetInfo.lineHeight = lineHeight.value;
         presetInfo.charWidth = charWidth.value;
         loadPreset();
         console.log("Preset loaded from file.");
     }
+    reader.readAsText(file);
+
 }
 
 function loadGradientFromFile(file) {
@@ -550,6 +551,15 @@ fileInput.addEventListener('change', function() {
 
 });
 
+
+const presetFileInput = document.getElementById('load-preset');
+presetFileInput.type = 'file';
+presetFileInput.addEventListener('change', function() {
+    if (this.files && this.files[0]) {
+        console.log("file", this.files[0]);
+        loadPreetFromFile(this.files[0]);
+    }
+});
 
 
 charWidth.onselect=(e)=>{
