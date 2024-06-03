@@ -356,7 +356,6 @@ colorPosition3.onchange = updateGradient;
 saveGradientButton.onclick =saveGradientToFile;
 let gradient;
 
-let loadPresetButton = document.getElementById("load-preset");
 let savePresetButton = document.getElementById("save-preset");
 let desaturate = document.getElementById("desaturate");
 let inverseEle = document.getElementById("inverse");
@@ -449,6 +448,7 @@ function loadPreset(){
     contrastEle.value = presetInfo.contrastEle;
     desaturation.value = presetInfo.desaturation;
     gradientInfo = presetInfo.gradientInfo;
+    loadGradient();
     fontSize.value = presetInfo.fontSize;
     fontFamily = presetInfo.fontFamily;
     lineHeight.value = presetInfo.lineHeight;
@@ -506,21 +506,20 @@ function loadPreetFromFile(file){
     reader.onload = function(event){
         const data = JSON.parse(event.target.result);
         console.log("data",data);
-        presetInfo.brightnessEle = brightnessEle.value;
-        presetInfo.desaturation = desaturation.value;
-        presetInfo.contrastEle = contrastEle.value;
-        presetInfo.desaturate = desaturate.value;
-        presetInfo.inverseEle = inverseEle.value;
-        presetInfo.gradientInfo = gradientInfo;
-        presetInfo.fontSize = fontSize.value;
-        presetInfo.fontFamily = fontFamily;
-        presetInfo.lineHeight = lineHeight.value;
-        presetInfo.charWidth = charWidth.value;
+        presetInfo.brightnessEle = data.brightnessEle.value;
+        presetInfo.desaturation = data.desaturation.value;
+        presetInfo.contrastEle = data.contrastEle.value;
+        presetInfo.desaturate = data.desaturate.value;
+        presetInfo.inverseEle = data.inverseEle.value;
+        presetInfo.gradientInfo = data.gradientInfo;
+        presetInfo.fontSize = data.fontSize.value;
+        presetInfo.fontFamily = data.fontFamily;
+        presetInfo.lineHeight = data.lineHeight.value;
+        presetInfo.charWidth = data.charWidth.value;
         loadPreset();
         console.log("Preset loaded from file.");
     }
     reader.readAsText(file);
-
 }
 
 function loadGradientFromFile(file) {
@@ -548,7 +547,6 @@ fileInput.addEventListener('change', function() {
         console.log("file", this.files[0]);
         loadGradientFromFile(this.files[0]);
     }
-
 });
 
 
@@ -561,7 +559,14 @@ presetFileInput.addEventListener('change', function() {
     }
 });
 
-
+inverseEle.onchange = (e) => {
+    presetInfo.inverseEle = e.target.checked;
+    console.log("Inverse element is now", presetInfo.inverseEle ? "enabled" : "disabled");
+}
+desaturate.onchange=(e)=>{
+    presetInfo.desaturate = e.target.checked;
+    console.log("Desaturate element is now", presetInfo.desaturate ? "enabled" : "disabled");
+}
 charWidth.onselect=(e)=>{
     presetInfo.charWidth = e.target.value;
     console.log("preset info is ", presetInfo.charWidth);
