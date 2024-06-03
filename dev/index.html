@@ -14,14 +14,11 @@
     <button>Load Preset</button>
     <button>Save Preset</button>
 </div>
-
     <h2>Filters</h2>
-    <div>
-        <span>Inverse</span>
-    <input type="checkbox" id="toggle"></div>
-
+    <div><span>Inverse</span>
+    <input id="inverse" type="checkbox" id="toggle"></div>
     <div><span>Desaturate</span>
-    <input type="checkbox" id="toggle"></div>
+    <input id="desaturate" type="checkbox" id="toggle"></div>
     <p>Brightness</p>
     <div class="slidecontainer">
         <span class="min">0</span> <input type="range" id="brightness" min="0" max="1" step="0.1" value="0"
@@ -50,8 +47,22 @@
         <option value="Kode">Kode-Mono</option>
         <option value="OpenSans">Open-Sans</option>
     </select>
+    <div>
     <p>Font Size</p>
-    <input type="text" id="textInput" value="">
+    <input id="fontSize" type="text" id="textInput" value="">
+</div>
+<div>
+    <p>Font Selection</p>
+    <input id="fontSelection" type="text" id="textInput" value="">
+</div>    
+<div>
+    <p>Line Height</p>
+    <input id="lineHeight" type="text" id="textInput" value="">
+</div>
+<div>
+    <p>Character Width</p>
+    <input id="charWidth" type="text" id="textInput" value="">
+</div>
 
     <p>Charset</p>
 

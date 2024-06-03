@@ -313,6 +313,23 @@ class GradientInfo {
         this.colorPosition3 = colorPosition3;
     }
 }
+
+class PresetInfo {
+    constructor(inverse, desaturate, brightness, contrast, desaturation, gradientInfo, fontSize, fontFamily, fontColor, fontBackground) {
+        this.inverse = inverse;
+        this.desaturate = desaturate;
+        this.brightness = brightness;
+        this.contrast = contrast;
+        this.desaturation = desaturation;
+        this.gradientInfo = gradientInfo;
+        this.fontSize = fontSize
+    }
+}
+
+
+
+
+}
 let gradientCanvas = document.getElementById("gradient-canvas");
 let gradientCanvasCTX = gradientCanvas.getContext('2d');
 
@@ -328,6 +345,7 @@ let colorPosition3 = document.getElementById('position3');
 let saveGradientButton = document.getElementById("save-gradient");
 let savedGradient;
 let gradientInfo = new GradientInfo();
+let presetInfo = new PresetInfo();
 color1.onchange = updateGradient;
 color2.onchange = updateGradient;
 color3.onchange = updateGradient;
