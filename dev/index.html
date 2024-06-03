@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head lang="en">
     <meta charset="UTF-8">
     <title>Sia ASCII tool</title>
@@ -7,18 +8,20 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.3.2/html2canvas.min.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
- 
+
 <body>
     <h1>Preset</h1>
-<div>
-    <button>Load Preset</button>
-    <button>Save Preset</button>
-</div>
+    <div>
+        <button>Load Preset</button>
+        <button>Save Preset</button>
+    </div>
     <h2>Filters</h2>
     <div><span>Inverse</span>
-    <input id="inverse" type="checkbox" id="toggle"></div>
+        <input id="inverse" type="checkbox" id="toggle">
+    </div>
     <div><span>Desaturate</span>
-    <input id="desaturate" type="checkbox" id="toggle"></div>
+        <input id="desaturate" type="checkbox" id="toggle">
+    </div>
     <p>Brightness</p>
     <div class="slidecontainer">
         <span class="min">0</span> <input type="range" id="brightness" min="0" max="1" step="0.1" value="0"
@@ -36,55 +39,47 @@
             class="myRange"><span class="max">1</span>
     </div>
     <div class="gradient-container">
-    <h2>Gradient</h2>
-    <input type="file" id="gradient-file-input" accept="application/json">
-    <div id="gradient-picker">
-        <canvas id="gradient-canvas" width="200" height="50"></canvas>
-    </div>
-    <h2>Font Selection</h2>
-    <select id="font-dropdown">
-        <option value="Sora">Sora</option>
-        <option value="Kode">Kode-Mono</option>
-        <option value="OpenSans">Open-Sans</option>
-    </select>
-    <div>
-    <p>Font Size</p>
-    <input id="fontSize" type="text" id="textInput" value="">
-</div>
-<div>
-    <p>Font Selection</p>
-    <input id="fontSelection" type="text" id="textInput" value="">
-</div>    
-<div>
-    <p>Line Height</p>
-    <input id="lineHeight" type="text" id="textInput" value="">
-</div>
-<div>
-    <p>Character Width</p>
-    <input id="charWidth" type="text" id="textInput" value="">
-</div>
+        <h2>Gradient</h2>
+        <input type="file" id="gradient-file-input" accept="application/json">
+        <div id="gradient-picker">
+            <canvas id="gradient-canvas" width="200" height="50"></canvas>
+        </div>
+        <h2>Font Selection</h2>
+        <select id="font-dropdown">
+            <option value="Sora">Sora</option>
+            <option value="Kode">Kode-Mono</option>
+            <option value="OpenSans">Open-Sans</option>
+        </select>
+        <div>
+            <p>Font Size</p>
+            <input id="fontSize" type="text" id="textInput" value="">
+        </div>
+       
+            <p>Line Height</p>
+            <input id="lineHeight" type="text" id="textInput" value="">
+        </div>
+        <div>
+            <p>Character Width</p>
+            <input id="charWidth" type="text" id="textInput" value="">
+        </div>
 
-   <p>Charset</p>
-   <select id="charset">
-       <option value="sia">SIA/</option>
-       <option value="/">/</option>
-       <option value="ascii">ASCII</option>
-   </select>
+        <p>Charset</p>
+        <select id="charset">
+            <option value="sia">SIA/</option>
+            <option value="/">/</option>
+            <option value="ascii">ASCII</option>
+        </select>
 
-
-
-
-
-<div class="container">   
-     <input type="color" id="color1" value="">
-    <input type="number" id="position1" min="0" max="100" value="20">
-    <input type="color" id="color2" value="">
-    <input type="number" id="position2" value="80">
-    <input type="color" id="color3" value="">
-    <input type="number" id="position3" value="100">
-</div>
+        <div class="container">
+            <input type="color" id="color1" value="">
+            <input type="number" id="position1" min="0" max="100" value="20">
+            <input type="color" id="color2" value="">
+            <input type="number" id="position2" value="80">
+            <input type="color" id="color3" value="">
+            <input type="number" id="position3" value="100">
+        </div>
         <button id="save-gradient">Save Gradient</button>
- </div>
+    </div>
 
     <div class="import-container" id="video-import">
         <h1> Import Video</h1>

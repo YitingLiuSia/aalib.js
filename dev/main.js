@@ -18,6 +18,7 @@ import html, { ASCII_CHARSET } from "../src/renderers/HTMLRenderer";
 import videoCanvas from "../src/renderers/CanvasRenderer";
 
 import { appendToBody } from "./utils";
+import { json } from "body-parser";
 
 const charset = ASCII_CHARSET;
 const resource = filename => `../resources/${ filename }`;
@@ -315,21 +316,20 @@ class GradientInfo {
 }
 
 class PresetInfo {
-    constructor(inverse, desaturate, brightness, contrast, desaturation, gradientInfo, fontSize, fontFamily, fontColor, fontBackground) {
+    constructor(inverse, desaturate, brightness, contrast, desaturation, gradientInfo, fontSize, fontFamily, lineHeight,charWidth) {
         this.inverse = inverse;
         this.desaturate = desaturate;
         this.brightness = brightness;
         this.contrast = contrast;
         this.desaturation = desaturation;
         this.gradientInfo = gradientInfo;
-        this.fontSize = fontSize
+        this.fontSize = fontSize;
+        this.fontFamily = fontFamily;
+        this.lineHeight = lineHeight;
+        this.charWidth = charWidth;
     }
 }
 
-
-
-
-}
 let gradientCanvas = document.getElementById("gradient-canvas");
 let gradientCanvasCTX = gradientCanvas.getContext('2d');
 
@@ -387,6 +387,51 @@ function saveGradient() {
 
 }
 
+function loadPreset(){
+    console.log("load preset");
+    presetInfo.inverse = inverse.value;
+    presetInfo.desaturate = desaturate.value;
+    presetInfo.brightness = brightness.value;
+    presetInfo.contrast = contrast.value;
+    presetInfo.desaturation = desaturation.value;
+    presetInfo.gradientInfo = gradientInfo;
+    presetInfo.fontSize = fontSize.value;
+    presetInfo.fontFamily = fontFamily.value;
+    presetInfo.lineHeight = lineHeight.value;
+    presetInfo.charWidth = charWidth.value;
+}
+
+function savePreset(){
+    inverse.value = presetInfo.inverse;
+    desaturate.value = presetInfo.desaturate;
+    brightness.value = presetInfo.brightness;
+    contrast.value = presetInfo.contrast;
+    desaturation.value = presetInfo.desaturation;
+    gradientInfo = presetInfo.gradientInfo;
+    fontSize.value = presetInfo.fontSize;
+    fontFamily.value = presetInfo.fontFamily;
+    lineHeight.value = presetInfo.lineHeight;
+    charWidth.value = presetInfo.charWidth;
+
+}
+
+
+function savePresetToFile(){
+
+    savePreset();
+    const presetData = JSON.stringify(presetInfo);
+    const blob = new Blob([presetData], {type:'application/json'});
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'presetInfo.json';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    console.log("Preset saved to file.");
+}
+
+
 function saveGradientToFile() {
     saveGradient();
     const gradientData = JSON.stringify(gradientInfo);
@@ -401,6 +446,29 @@ function saveGradientToFile() {
     console.log("Gradient saved to file.");
 }
 
+// needs to update in the preset info values as well - UI 
+function loadPreetFromFile(file){
+
+    const reader = new FileReader();
+    reader.onload = function(event){
+        const data = JSON.parse(event.target.result);
+        console.log("data",data);
+        presetInfo.brightness = brightnessEle.value;
+        presetInfo.desaturation = desaturation.value;
+        presetInfo.contrast = contrastEle.value;
+        presetInfo.desaturate = desaturate.value;
+        presetInfo.inverse = inverse.value;
+        presetInfo.gradientInfo = gradientInfo;
+        presetInfo.fontSize = fontSize.value;
+        presetInfo.fontFamily = fontFamily.value;
+        presetInfo.lineHeight = lineHeight.value;
+        presetInfo.charWidth = charWidth.value;
+        loadPreset();
+        console.log("Preset loaded from file.");
+    }
+
+
+}
 function loadGradientFromFile(file) {
     const reader = new FileReader();
     reader.onload = function(event) {
@@ -430,14 +498,22 @@ fileInput.addEventListener('change', function() {
 
 });
 
-
 let desaturation = document.getElementById("desaturation");
 let brightnessEle = document.getElementById("brightness");
 let contrastEle = document.getElementById("contrast");
 let fontDropdown = document.getElementById("font-dropdown");
 let fontSize = document.getElementById("font-size");
-let fontColor = document.getElementById("font-color");
-let fontBackground = document.getElementById("font-background");
+let charWidth = document.getElementById("charWidth");
+let lineHeight = document.getElementById("lineHeight");
+
+charWidth.onselect=(e)=>{
+    presetInfo.charWidth = e.target.value;
+    console.log("preset info is ", presetInfo.charWidth);
+}
+
+lineHeight.onselect=(e)=>{
+    presetInfo.lineHeight = e.target.value;
+}
 
 function selectFont(fontName) {
     const font = FONTS[fontName];
