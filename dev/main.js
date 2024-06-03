@@ -42,6 +42,10 @@ function pipeline(...args) {
         .subscribe();
 }
 
+// adding other elements 
+
+
+
 
 // still adds more images on input 
 function mona() {
