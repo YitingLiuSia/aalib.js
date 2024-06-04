@@ -39,96 +39,15 @@ function pipeline(...args) {
 }
 
 // still adds more images on input 
-function mona() {
-    pipeline(
-        ImageReader.fromURL(RES.MONA), // Reads the image from a URL.
-        aa({ width: 200, height: 160, colored: false }), // Converts the image to ASCII art with specified dimensions and color settings.
-        html({ charset }), // Renders the ASCII art as HTML using the specified charset.
-        render({canvas}),
-        appendToBody
-    );
-}
-
-function monaCanvas() {
-    pipeline( 
-        ImageReader.fromURL(RES.MONA), // Reads the image from a URL.
-        contrast(0.2),
-        aa({ width: 500, height: 300 }),
-        brightness(10),
-        videoCanvas({charset, background:"black"}),
-        el => appendToID(el, "generated-image"));
-}
-
-function idata() {
-    const drawingCanvas = document.createElement("canvas");
-    drawingCanvas.width = "320";
-    drawingCanvas.height = "240";
-    appendToBody(drawingCanvas);
-
-    const ctx = drawingCanvas.getContext("2d");
-    ctx.fillStyle = "#222";
-    ctx.fillRect(0, 0, 160, 240);
-    ctx.fillStyle = "#eee";
-    ctx.fillRect(160, 0, 160, 240);
-    ctx.fillStyle = "#999";
-    ctx.fillRect(160-40, 120-40, 80, 80);
-
-    ImageDataReader.fromCanvas(drawingCanvas)
-        .map(aa({ width: 80, height: 25, colored: false }))
-        .map(html({ charset }))
-        .do(appendToBody)
-        .subscribe();
-}
-
-function localImage() {
-    const filePicker = document.createElement("input");
-    filePicker.type = "file";
-    filePicker.addEventListener("change", createFileHandler(createAA));
-
-    appendToBody(filePicker);
-
-    function createFileHandler(createAA) {
-        return (e) => {
-            const file = e.target.files[0];
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                createAA(e.target.result);
-            };
-
-            reader.readAsDataURL(file);
-        };
-    }
-
-    function createAA(imageUrl) {
-        ImageReader.fromURL(imageUrl)
-            .map(aa({ width: 210, height: 105, colored: false }))
-            .map(html({ charset }))
-            .do((el) => {
-                filePicker.parentNode.insertBefore(el, filePicker.nextSibling);
-            })
-            .subscribe();
-    }
-}
-
-function bbb() {
-    const scene = document.createElement("canvas");
-    const video = document.createElement("video");
-    video.src = "../resources/bbb_720x480_30mb.mp4";
-    video.controls = true;
-
-    appendToBody(video);
-    appendToBody(scene);
-
-    VideoReader.fromVideoElement(video, { autoplay: false })
-        .map(aa({ width: 165, height: 68, colored: true }))
-        .map(videoCanvas({
-            charset,
-            width: 696,
-            height: 476,
-            el: scene
-        }))
-        .subscribe();
-}
+// function mona() {
+//     pipeline(
+//         ImageReader.fromURL(RES.MONA), // Reads the image from a URL.
+//         aa({ width: 200, height: 160, colored: false }), // Converts the image to ASCII art with specified dimensions and color settings.
+//         html({ charset }), // Renders the ASCII art as HTML using the specified charset.
+//         render({canvas}),
+//         appendToBody
+//     );
+// }
 
 // media recorder and video exporter 
 let videoCanvasElement = document.getElementById('video-scene');
@@ -211,8 +130,8 @@ document.getElementById('videoInput').addEventListener('change', function (event
             aalib.read.video.fromVideoElement(video)
                 .map(aalib.aa({ width: 165, height: 68 }))
                 .map(aalib.render.canvas({
-                    width: 696,
-                    height: 476,
+                    width: video.width,//696,
+                    height: video.height,//476,
                     fontFamily: `"${currentFont}", sans-serif`,
                     el: document.querySelector("#video-scene")
                 }))
@@ -225,6 +144,7 @@ document.getElementById('videoInput').addEventListener('change', function (event
 
 // image input 
 // image size is the same, but the ascii squished the size 
+// the image is not resized proprtionally but it is closer 
 function loadImageFromURL(img, isCanvas){
     console.log("image size is ", img.width, img.height);
     const aspectRatio = img.width / img.height;
@@ -232,10 +152,10 @@ function loadImageFromURL(img, isCanvas){
     const aaWidth = Math.round(aaHeight * aspectRatio); // Maintain aspect ratio for ASCII art width
     const aaReq = { width: aaWidth, height: aaHeight, colored: false };
     const canvasOptions = {
-        fontSize: 7,
+        fontSize: fontSize.value,
         fontFamily: "monospace",
-        lineHeight: 7,
-        charWidth: 4.2,
+        lineHeight: lineHeight.value,
+        charWidth: charWidth.value,
         width: img.width,  // Use original image width for canvas
         height: img.height, // Use original image height for canvas
         background: "rgba(0,0,0,0)",
@@ -243,7 +163,7 @@ function loadImageFromURL(img, isCanvas){
     };
     console.log("loading image with current font ", currentFont);
     if (isCanvas) {
-        aalib.read.image.fromURL(img.src)
+       const canvas = aalib.read.image.fromURL(img.src)
         .map(aalib.aa(aaReq))
         .map(aalib.render.canvas(canvasOptions))
         .do(function (el) {
@@ -257,6 +177,7 @@ function loadImageFromURL(img, isCanvas){
             // }
         })
         .subscribe(); 
+        
     } else {
         aalib.read.image.fromURL(img.src)
         .map(aalib.aa(aaReq))
@@ -277,7 +198,10 @@ function loadImageFromURL(img, isCanvas){
         .subscribe(); 
     }
 }
-
+function processImage(img) {
+    console.log("image on load isCanvas is ", isCanvas);
+    loadImageFromURL(img, isCanvas);
+}
 function handleImageInputChange(event) {
     const file = event.target.files[0];
     if (file && file.type.startsWith('image/')) {
@@ -288,8 +212,8 @@ function handleImageInputChange(event) {
             img.alt = 'Uploaded Image';
             img.onload = function () {
                 // Image is loaded and can be manipulated or displayed
-                console.log("image on load isCanvas is ", isCanvas);
-                loadImageFromURL(img, isCanvas);
+                currentImage = img; // Store the current image
+                processImage(img);
             };
         };
 
@@ -304,7 +228,6 @@ function handleImageInputChange(event) {
 }
 
 document.getElementById('imageInput').addEventListener('change', handleImageInputChange);
-
 
 // gradient
 class GradientInfo {
@@ -332,6 +255,7 @@ class PresetInfo {
         this.charWidth = charWidth;
     }
 }
+let currentImage; // To hold the current image element
 
 let gradientCanvas = document.getElementById("gradient-canvas");
 let gradientCanvasCTX = gradientCanvas.getContext('2d');
@@ -355,7 +279,6 @@ colorPosition2.onchange = updateGradient;
 colorPosition3.onchange = updateGradient;
 saveGradientButton.onclick =saveGradientToFile;
 let gradient;
-
 let savePresetButton = document.getElementById("save-preset");
 let desaturate = document.getElementById("desaturate");
 let inverseEle = document.getElementById("inverse");
@@ -386,17 +309,15 @@ savePresetButton.onclick= savePresetToFile;
 
 desaturate.onchange=(e)=>{
     presetInfo.desaturate = e.target.value;
+    console.log("current image is ",currentImage);
+    if(currentImage){
+        console.log("process current image -desaturate");
+        processImage(currentImage);
+    }
     console.log("preset info is ", presetInfo.desaturate);
 
 }
-// called after updatePreset and apply it to the image or video 
-function applyPreset(){
 
-    
-
-
-    
-}
 function updateGradient(){
     console.log("update gradient");
     gradient = gradientCanvasCTX.createLinearGradient(0, 0, gcWidth, 0);
@@ -453,7 +374,6 @@ function loadGradient(){
 }
 
 function saveGradient() {
-    savedGradient = gradientCanvasCTX.fillStyle;
     gradientInfo.color1 = color1.value;
     gradientInfo.color2 = color2.value;
     gradientInfo.color3 = color3.value;
@@ -474,7 +394,6 @@ function loadPreset(){
     gradientInfo = presetInfo.gradientInfo;
     loadGradient();
     updateGradient();
-    // loadSliderValues(presetInfo);
 updatePreset();
     console.log("preset info is ", presetInfo);
     brightnessValue.innerHTML = presetInfo.brightnessEle;
@@ -536,7 +455,7 @@ function loadPreetFromFile(file){
     const reader = new FileReader();
     reader.onload = function(event){
         const data = JSON.parse(event.target.result);
-        console.log("data",data);
+        // console.log("data",data);
         presetInfo.brightnessEle = data.brightnessEle;
         presetInfo.desaturation = data.desaturation;
         presetInfo.contrastEle = data.contrastEle;
@@ -557,7 +476,7 @@ function loadGradientFromFile(file) {
     const reader = new FileReader();
     reader.onload = function(event) {
         const data = JSON.parse(event.target.result);
-        console.log(" data",data);
+        // console.log(" data",data);
         gradientInfo.color1 = data.color1;
         gradientInfo.color2 = data.color2;
         gradientInfo.color3 = data.color3;
@@ -590,15 +509,19 @@ presetFileInput.addEventListener('change', function() {
     }
 });
 
-
-function loadSliderValues(presetInfo){
-    brightnessValue.innerHTML = presetInfo.brightnessEle;
-    contrastValue.innerHTML = presetInfo.contrastEle;
-    desaturationValue.innerHTML = presetInfo.desaturation;
-}
-
+// Event listener for brightness changes
+brightnessEle.addEventListener('input', (e) => {
+    brightnessValue.innerHTML = e.target.value;
+    if (currentImage) {
+        processImage(currentImage); // Reprocess the image with the new brightness value
+    }
+});
 inverseEle.onchange = (e) => {
     presetInfo.inverseEle = e.target.checked;
+    if (currentImage) {
+        console.log("process current image -inverseEle ");
+        processImage(currentImage); // Reprocess the image with the new brightness value
+    }
     console.log("Inverse element is now", presetInfo.inverseEle ? "enabled" : "disabled");
 }
 desaturate.onchange=(e)=>{
@@ -632,7 +555,5 @@ fontDropdown.onchange = (e) => {
 };
 
 
-brightnessEle.onchange=monaCanvas;
-desaturation.onchange=monaCanvas;
-contrastEle.onchange =monaCanvas;
+
 
