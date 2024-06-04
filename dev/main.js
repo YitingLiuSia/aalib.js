@@ -453,7 +453,6 @@ function loadPreset(){
     fontFamily = presetInfo.fontFamily;
     lineHeight.value = presetInfo.lineHeight;
     charWidth.value = presetInfo.charWidth;
-
 }
 function savePreset(){
     console.log("save preset ", presetInfo);
@@ -593,6 +592,21 @@ fontDropdown.onchange = (e) => {
     // apply font in the text for the image and video reader 
 };
 
+let brightnessValue = brightnessEle.parentElement.querySelector(".sliderValue");
+let contrastValue = contrastEle.parentElement.querySelector(".sliderValue");
+let desaturationValue = desaturation.parentElement.querySelector(".sliderValue");
+
+brightnessEle.oninput = (e) => {
+    brightnessValue.innerHTML = e.target.value;
+}
+contrastValue.oninput=(e)=>{
+    console.log("contrast value is ",e.target.value);_
+    contrastValue.innerHTML = e.target.value;
+}
+
+desaturationValue.oninput=(e)=>{
+    desaturationValue.innerHTML = e.target.value;
+}
 
 brightnessEle.onchange=monaCanvas;
 desaturation.onchange=monaCanvas;
