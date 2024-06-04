@@ -1,9 +1,7 @@
 import "rxjs/add/operator/do";
-
 import ImageReader from "../src/readers/ImageReader";
 import VideoReader from "../src/readers/VideoReader";
 import ImageDataReader from "../src/readers/ImageDataReader";
-
 import inverse from "../src/filters/inverse";
 import contrast from "../src/filters/contrast";
 import brightness from "../src/filters/brightness";
@@ -12,11 +10,8 @@ import { appendToID } from "./utils";
 import { GenerateID } from "./utils";
 import aa from "../src/aa";
 import aalib from "../dist/aalib.js";
-
 import html, { ASCII_CHARSET } from "../src/renderers/HTMLRenderer";
-
 import videoCanvas from "../src/renderers/CanvasRenderer";
-
 import { appendToBody } from "./utils";
 import { json } from "body-parser";
 
@@ -42,11 +37,6 @@ function pipeline(...args) {
         .reduce((acc, it) => acc.map(it), src)
         .subscribe();
 }
-
-// adding other elements 
-
-
-
 
 // still adds more images on input 
 function mona() {
@@ -211,6 +201,7 @@ function fromVideoFile(file) {
         };
     });
 }
+
 // video input 
 document.getElementById('videoInput').addEventListener('change', function (event) {
     const file = event.target.files[0];
@@ -233,18 +224,30 @@ document.getElementById('videoInput').addEventListener('change', function (event
 });
 
 // image input 
+// image size is the same, but the ascii squished the size 
 function loadImageFromURL(img, isCanvas){
-    const aaReq = { width: 200, height: 59, colored: false };
-    const requirements = {background: "rgba(0,0,0,0)", color: 'red', fontFamily: currentFont };
-   
-    console.log("loading image with current font ",currentFont);
-    if(isCanvas){
+    console.log("image size is ", img.width, img.height);
+    const aspectRatio = img.width / img.height;
+    const aaHeight =165; // Height for ASCII art
+    const aaWidth = Math.round(aaHeight * aspectRatio); // Maintain aspect ratio for ASCII art width
+    const aaReq = { width: aaWidth, height: aaHeight, colored: false };
+    const canvasOptions = {
+        fontSize: 7,
+        fontFamily: "monospace",
+        lineHeight: 7,
+        charWidth: 4.2,
+        width: img.width,  // Use original image width for canvas
+        height: img.height, // Use original image height for canvas
+        background: "rgba(0,0,0,0)",
+        color: gradient
+    };
+    console.log("loading image with current font ", currentFont);
+    if (isCanvas) {
         aalib.read.image.fromURL(img.src)
         .map(aalib.aa(aaReq))
-        .map(aalib.render.canvas(requirements))
+        .map(aalib.render.canvas(canvasOptions))
         .do(function (el) {
             document.body.appendChild(el);
-
             // el.id = 'mona-image'; // Set a unique ID for the element
             // const existingElement = document.getElementById('mona-image');
             // if (existingElement) {
@@ -254,13 +257,14 @@ function loadImageFromURL(img, isCanvas){
             // }
         })
         .subscribe(); 
-    }else{
+    } else {
         aalib.read.image.fromURL(img.src)
-        .map(aalib.aa(aaReq ))
-        .map(aalib.render.html(requirements))
+        .map(aalib.aa(aaReq))
+        .map(aalib.render.html({
+            canvasOptions
+        }))
         .do(function (el) {
             document.body.appendChild(el);
-
             // el.id = 'mona-image'; // Set a unique ID for the element
             // const existingElement = document.getElementById('mona-image');
             // if (existingElement) {
@@ -274,21 +278,19 @@ function loadImageFromURL(img, isCanvas){
     }
 }
 
-document.getElementById('imageInput').addEventListener('change', function (event) {
+function handleImageInputChange(event) {
     const file = event.target.files[0];
     if (file && file.type.startsWith('image/')) {
         const reader = new FileReader();
-
         reader.onload = function (e) {
             const img = new Image();
             img.src = e.target.result;
             img.alt = 'Uploaded Image';
             img.onload = function () {
                 // Image is loaded and can be manipulated or displayed
-                console.log("image on load isCanvas is ",isCanvas);
-                loadImageFromURL(img,isCanvas);
+                console.log("image on load isCanvas is ", isCanvas);
+                loadImageFromURL(img, isCanvas);
             };
-
         };
 
         reader.onerror = function () {
@@ -299,7 +301,9 @@ document.getElementById('imageInput').addEventListener('change', function (event
     } else {
         console.error('File is not an image');
     }
-});
+}
+
+document.getElementById('imageInput').addEventListener('change', handleImageInputChange);
 
 
 // gradient
@@ -340,7 +344,6 @@ let colorPosition1 = document.getElementById('position1');
 let colorPosition2 = document.getElementById('position2');
 let colorPosition3 = document.getElementById('position3');
 let saveGradientButton = document.getElementById("save-gradient");
-let savedGradient;
 let gradientInfo = new GradientInfo();
 let presetInfo = new PresetInfo();
 let fontFamily = "Sora";
@@ -386,7 +389,14 @@ desaturate.onchange=(e)=>{
     console.log("preset info is ", presetInfo.desaturate);
 
 }
+// called after updatePreset and apply it to the image or video 
+function applyPreset(){
 
+    
+
+
+    
+}
 function updateGradient(){
     console.log("update gradient");
     gradient = gradientCanvasCTX.createLinearGradient(0, 0, gcWidth, 0);
