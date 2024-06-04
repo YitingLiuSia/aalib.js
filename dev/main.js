@@ -302,7 +302,6 @@ document.getElementById('imageInput').addEventListener('change', function (event
 });
 
 
-
 // gradient
 class GradientInfo {
     constructor(color1, color2, color3, colorPosition1, colorPosition2, colorPosition3) {
@@ -332,7 +331,6 @@ class PresetInfo {
 
 let gradientCanvas = document.getElementById("gradient-canvas");
 let gradientCanvasCTX = gradientCanvas.getContext('2d');
-
 let gcWidth = gradientCanvas.width;
 let gcHeight = gradientCanvas.height;
 let color1 = document.getElementById('color1');
@@ -341,7 +339,6 @@ let color3 = document.getElementById('color3');
 let colorPosition1 = document.getElementById('position1');
 let colorPosition2 = document.getElementById('position2');
 let colorPosition3 = document.getElementById('position3');
-
 let saveGradientButton = document.getElementById("save-gradient");
 let savedGradient;
 let gradientInfo = new GradientInfo();
@@ -458,13 +455,22 @@ function saveGradient() {
 
 function loadPreset(){
     console.log("load preset");
-    inverseEle.value = presetInfo.inverseEle;
-    desaturate.value = presetInfo.desaturate;
+    console.log("in load preset, inverse value is ", inverseEle.checked);
+    inverseEle.checked = presetInfo.inverseEle;
+    desaturate.checked = presetInfo.desaturate;
     brightnessEle.value = presetInfo.brightnessEle;
     contrastEle.value = presetInfo.contrastEle;
     desaturation.value = presetInfo.desaturation;
     gradientInfo = presetInfo.gradientInfo;
     loadGradient();
+    updateGradient();
+    // loadSliderValues(presetInfo);
+updatePreset();
+    console.log("preset info is ", presetInfo);
+    brightnessValue.innerHTML = presetInfo.brightnessEle;
+    contrastValue.innerHTML = presetInfo.contrastEle;
+    desaturationValue.innerHTML = presetInfo.desaturation;
+
     fontSize.value = presetInfo.fontSize;
     fontFamily = presetInfo.fontFamily;
     lineHeight.value = presetInfo.lineHeight;
@@ -472,8 +478,8 @@ function loadPreset(){
 }
 function savePreset(){
     console.log("save preset ", presetInfo);
-    presetInfo.inverseEle = inverseEle.value;
-    presetInfo.desaturate = desaturate.value;
+    presetInfo.inverseEle = inverseEle.checked;
+    presetInfo.desaturate = desaturate.checked;
     presetInfo.brightnessEle = brightnessEle.value;
     presetInfo.contrastEle = contrastEle.value;
     presetInfo.desaturation = desaturation.value;
@@ -521,18 +527,18 @@ function loadPreetFromFile(file){
     reader.onload = function(event){
         const data = JSON.parse(event.target.result);
         console.log("data",data);
-        presetInfo.brightnessEle = data.brightnessEle.value;
-        presetInfo.desaturation = data.desaturation.value;
-        presetInfo.contrastEle = data.contrastEle.value;
-        presetInfo.desaturate = data.desaturate.value;
-        presetInfo.inverseEle = data.inverseEle.value;
+        presetInfo.brightnessEle = data.brightnessEle;
+        presetInfo.desaturation = data.desaturation;
+        presetInfo.contrastEle = data.contrastEle;
+        presetInfo.desaturate = data.desaturate;
+        presetInfo.inverseEle = data.inverseEle;
         presetInfo.gradientInfo = data.gradientInfo;
-        presetInfo.fontSize = data.fontSize.value;
+        presetInfo.fontSize = data.fontSize;
         presetInfo.fontFamily = data.fontFamily;
-        presetInfo.lineHeight = data.lineHeight.value;
-        presetInfo.charWidth = data.charWidth.value;
+        presetInfo.lineHeight = data.lineHeight;
+        presetInfo.charWidth = data.charWidth;
+        console.log("preset loaded from file: ",presetInfo);
         loadPreset();
-        console.log("Preset loaded from file.");
     }
     reader.readAsText(file);
 }
@@ -573,6 +579,13 @@ presetFileInput.addEventListener('change', function() {
         loadPreetFromFile(this.files[0]);
     }
 });
+
+
+function loadSliderValues(presetInfo){
+    brightnessValue.innerHTML = presetInfo.brightnessEle;
+    contrastValue.innerHTML = presetInfo.contrastEle;
+    desaturationValue.innerHTML = presetInfo.desaturation;
+}
 
 inverseEle.onchange = (e) => {
     presetInfo.inverseEle = e.target.checked;
