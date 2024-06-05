@@ -14,7 +14,8 @@ import html, { ASCII_CHARSET } from "../src/renderers/HTMLRenderer";
 import videoCanvas from "../src/renderers/CanvasRenderer";
 import { appendToBody } from "./utils";
 import { json } from "body-parser";
-const charset = ASCII_CHARSET;
+const charset_ascii = ASCII_CHARSET;
+const charset_sia = "SIA/";
 const resource = filename => `../resources/${ filename }`;
 
 // loading default presetInfo in resources location on start 
@@ -170,6 +171,7 @@ function loadImageFromURL(img, isCanvas){
         fontFamily: fontFamily,
         lineHeight: lineHeight.value,
         charWidth: charWidth.value,
+        charset: presetInfo.charset,
         width: img.width,  // Use original image width for canvas
         height: img.height, // Use original image height for canvas
         background: "rgba(0,0,0,0)",
@@ -238,7 +240,6 @@ function loadImageAndProcess(url) {
         } else {
             document.body.appendChild(img);
         }
-
     };
     img.onerror = function () {
         console.error('Error loading the image');
@@ -287,7 +288,7 @@ class GradientInfo {
 }
 
 class PresetInfo {
-    constructor(inverseEle, desaturate, brightnessEle, contrastEle, desaturation, gradientInfo, fontSize, fontFamily, lineHeight,charWidth) {
+    constructor(inverseEle, desaturate, brightnessEle, contrastEle, desaturation, gradientInfo, fontSize, fontFamily, lineHeight,charWidth, charset) {
         this.inverseEle = inverseEle;
         this.desaturate = desaturate;
         this.brightnessEle = brightnessEle;
@@ -298,8 +299,10 @@ class PresetInfo {
         this.fontFamily = fontFamily;
         this.lineHeight = lineHeight;
         this.charWidth = charWidth;
+        this.charset = charset;
     }
 }
+
 
 let currentImage; // To hold the current image element
 let gradientCanvas = document.getElementById("gradient-canvas");
@@ -334,7 +337,7 @@ let fontDropdown = document.getElementById("font-dropdown");
 let fontSize = document.getElementById("fontSize");
 let charWidth = document.getElementById("charWidth");
 let lineHeight = document.getElementById("lineHeight");
-
+let charsetSelector = document.getElementById("charset-selector");
 let brightnessValue = brightnessEle.parentElement.querySelector(".sliderValue");
 let contrastValue = contrastEle.parentElement.querySelector(".sliderValue");
 let desaturationValue = desaturation.parentElement.querySelector(".sliderValue");
@@ -359,7 +362,6 @@ brightnessEle.oninput = (e) => {
     updateImage("brightness");
 }
 
-
 contrastEle.oninput=(e)=>{
     contrastValue.value=e.target.value;
     updateImage("desaturation");
@@ -368,7 +370,6 @@ contrastEle.oninput=(e)=>{
 desaturation.oninput=(e)=>{
    desaturationValue.value=e.target.value;
     updateImage("desaturation");
-
 }
 
 savePresetButton.onclick= savePresetToFile;
@@ -393,11 +394,9 @@ function updateGradient(){
     gradientCanvasCTX.fillStyle = gradient;
     gradientCanvasCTX.fillRect(0, 0, gcWidth, gcHeight);
     updateImage("gradient");
-
 }
 
 function updatePreset(){
-    // console.log("update preset");
     if(desaturate.value!=presetInfo.desaturate){
         desaturate.value = presetInfo.desaturate;
     }
@@ -425,12 +424,15 @@ function updatePreset(){
     if(charWidth.value!=presetInfo.charWidth){
         charWidth.value = presetInfo.charWidth;
     }
+    if(charsetSelector.value!=presetInfo.charsetSelector){
+        charsetSelector.value = presetInfo.charsetSelector;
+    }
     if(gradientInfo!=presetInfo.gradientInfo){
         gradientInfo = presetInfo.gradientInfo;
     }
     console.log("preset info is ", presetInfo);
-
 }
+
 function loadGradient(){
     console.log("load gradient");
     colorPosition1.value = gradientInfo.colorPosition1;
@@ -448,7 +450,6 @@ function saveGradient() {
     gradientInfo.colorPosition1 = colorPosition1.value;
     gradientInfo.colorPosition2 = colorPosition2.value;
     gradientInfo.colorPosition3 = colorPosition3.value;
-
 }
 
 function loadPreset(){
@@ -467,12 +468,12 @@ function loadPreset(){
     brightnessValue.innerHTML = presetInfo.brightnessEle;
     contrastValue.innerHTML = presetInfo.contrastEle;
     desaturationValue.innerHTML = presetInfo.desaturation;
-
     fontSize.value = presetInfo.fontSize;
     fontFamily = presetInfo.fontFamily;
     lineHeight.value = presetInfo.lineHeight;
     charWidth.value = presetInfo.charWidth;
 }
+
 function savePreset(){
     console.log("save preset ", presetInfo);
     presetInfo.inverseEle = inverseEle.checked;
@@ -486,8 +487,9 @@ function savePreset(){
     presetInfo.fontFamily = fontFamily;
     presetInfo.lineHeight = lineHeight.value;
     presetInfo.charWidth = charWidth.value;
-
+    presetInfo.charset = charsetSelector.value;
 }
+
 
 function savePresetToFile(){
     savePreset();
@@ -522,7 +524,6 @@ function loadPreetFromFile(file){
     const reader = new FileReader();
     reader.onload = function(event){
         const data = JSON.parse(event.target.result);
-        // console.log("data",data);
         presetInfo.brightnessEle = data.brightnessEle;
         presetInfo.desaturation = data.desaturation;
         presetInfo.contrastEle = data.contrastEle;
@@ -533,6 +534,7 @@ function loadPreetFromFile(file){
         presetInfo.fontFamily = data.fontFamily;
         presetInfo.lineHeight = data.lineHeight;
         presetInfo.charWidth = data.charWidth;
+        presetInfo.charset = data.charset;
         console.log("preset loaded from file: ",presetInfo);
         loadPreset();
     }
@@ -588,28 +590,23 @@ inverseEle.onchange = (e) => {
 desaturate.onchange=(e)=>{
     presetInfo.desaturate = e.target.checked;
     updateImage("desaturate");
-  
-}
-
-function selectFont(fontName) {
-    const font = FONTS[fontName];
-    if (!font) {
-        console.error(`Font ${fontName} is not available.`);
-        return;
-    }
-    return font;
 }
 
 let currentFont; 
-
 fontDropdown.onchange = (e) => {
     currentFont =e.target.value;
     presetInfo.fontFamily = currentFont;
     console.log("current font ", currentFont);
     // apply font in the text for the image and video reader 
-
 };
 
-
-
-
+charsetSelector.onchange=(e)=>{
+    if(e.target.value==="SIA/"){
+        presetInfo.charset =charset_sia;
+    }else{
+        presetInfo.charset =charset_ascii;
+    }
+    console.log("current charset ", e.target.value);
+    console.log("presetinfo charset ", presetInfo.charset);
+    updateImage("charset");
+}
