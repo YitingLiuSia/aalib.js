@@ -196,15 +196,15 @@ function loadImageFromURL(img, isCanvas){
         }
         
         if (isCanvas) {
-
         imageProcessingPipeline.map(aalib.render.canvas(canvasOptions))
         .do(function (el) {// or     .map(aalib.render.html({ el: document.querySelector(".aa-image") }))
-            document.body.appendChild(el);
             el.id = 'processed-image'; // Set a unique ID for the element
             const existingElement = document.getElementById('processed-image');
             if (existingElement) {
-                document.body.replaceChild(el, existingElement);
+                console.log("replace child image");
+                existingElement.parentNode.replaceChild(el, existingElement);
             } else {
+                console.log("append child image");
                 document.body.appendChild(el);
             }
         })
