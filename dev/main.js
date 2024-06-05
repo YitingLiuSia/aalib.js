@@ -37,18 +37,6 @@ function pipeline(...args) {
         .reduce((acc, it) => acc.map(it), src)
         .subscribe();
 }
-
-// still adds more images on input 
-// function mona() {
-//     pipeline(
-//         ImageReader.fromURL(RES.MONA), // Reads the image from a URL.
-//         aa({ width: 200, height: 160, colored: false }), // Converts the image to ASCII art with specified dimensions and color settings.
-//         html({ charset }), // Renders the ASCII art as HTML using the specified charset.
-//         render({canvas}),
-//         appendToBody
-//     );
-// }
-
 // media recorder and video exporter 
 let videoCanvasElement = document.getElementById('video-scene');
 let mediaRecorder;
@@ -148,7 +136,7 @@ document.getElementById('videoInput').addEventListener('change', function (event
 function loadImageFromURL(img, isCanvas){
     console.log("image size is ", img.width, img.height);
     const aspectRatio = img.width / img.height;
-    const aaHeight =165; // Height for ASCII art
+    const aaHeight = 165; // Height for ASCII art
     const aaWidth = Math.round(aaHeight * aspectRatio); // Maintain aspect ratio for ASCII art width
     const aaReq = { width: aaWidth, height: aaHeight, colored: false };
     const canvasOptions = {
@@ -163,7 +151,7 @@ function loadImageFromURL(img, isCanvas){
     };
     console.log("loading image with current font ", currentFont);
     if (isCanvas) {
-       const canvas = aalib.read.image.fromURL(img.src)
+        aalib.read.image.fromURL(img.src)
         .map(aalib.aa(aaReq))
         .map(aalib.render.canvas(canvasOptions))
         .do(function (el) {
@@ -202,19 +190,46 @@ function processImage(img) {
     console.log("image on load isCanvas is ", isCanvas);
     loadImageFromURL(img, isCanvas);
 }
+
+function loadImageAndProcess(url) {
+    const img = new Image();
+    // Force reload by bypassing cache using a unique identifier
+    img.src = url; // Set the source of the image
+    img.onload = function () {
+        if (currentImage && currentImage.src === img.src) {
+            img.id = 'processed-image'; // Set a consistent ID for the image
+            const existingImage = document.getElementById('processed-image');
+            if (existingImage) {
+                document.body.replaceChild(img, existingImage);
+            } else {
+                document.body.appendChild(img);
+            }
+        } else {
+            currentImage = img; // Store the current image
+            processImage(img); // Call the function to process the image
+        }
+    };
+    img.onerror = function () {
+        console.error('Error loading the image');
+    };
+}
+
+let publicCurrentImage;
+function exposeImageUrl(url){
+    console.log("public current image url is ",url);
+    publicCurrentImage = url;
+}
+
+// this should update when the url is the same but when the changes of preset is applied 
 function handleImageInputChange(event) {
     const file = event.target.files[0];
     if (file && file.type.startsWith('image/')) {
         const reader = new FileReader();
         reader.onload = function (e) {
-            const img = new Image();
-            img.src = e.target.result;
-            img.alt = 'Uploaded Image';
-            img.onload = function () {
-                // Image is loaded and can be manipulated or displayed
-                currentImage = img; // Store the current image
-                processImage(img);
-            };
+            const uniqueSuffix = '?nocache=' + new Date().getTime();// this does not work 
+            console.log("uniqueSuffix ",uniqueSuffix);
+            const safeUrl = encodeURI(e.target.result) + uniqueSuffix;
+            loadImageAndProcess(safeUrl);
         };
 
         reader.onerror = function () {
@@ -228,7 +243,6 @@ function handleImageInputChange(event) {
 }
 
 document.getElementById('imageInput').addEventListener('change', handleImageInputChange);
-
 // gradient
 class GradientInfo {
     constructor(color1, color2, color3, colorPosition1, colorPosition2, colorPosition3) {
@@ -256,7 +270,6 @@ class PresetInfo {
     }
 }
 let currentImage; // To hold the current image element
-
 let gradientCanvas = document.getElementById("gradient-canvas");
 let gradientCanvasCTX = gradientCanvas.getContext('2d');
 let gcWidth = gradientCanvas.width;
@@ -394,7 +407,7 @@ function loadPreset(){
     gradientInfo = presetInfo.gradientInfo;
     loadGradient();
     updateGradient();
-updatePreset();
+    updatePreset();
     console.log("preset info is ", presetInfo);
     brightnessValue.innerHTML = presetInfo.brightnessEle;
     contrastValue.innerHTML = presetInfo.contrastEle;
