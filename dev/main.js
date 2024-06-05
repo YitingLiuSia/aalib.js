@@ -463,7 +463,6 @@ function loadPreset(){
     gradientInfo = presetInfo.gradientInfo;
     loadGradient();
     updateGradient();
-
     updatePreset();
     console.log("preset info is ", presetInfo);
     brightnessValue.innerHTML = presetInfo.brightnessEle;
@@ -474,7 +473,11 @@ function loadPreset(){
     lineHeight.value = presetInfo.lineHeight;
     charWidth.value = presetInfo.charWidth;
     charsetSelector.value = presetInfo.charset;
+    console.log("charsetSelector info is ", charsetSelector);
+    console.log("charsetSelector info is ", charsetSelector.value);
+    console.log("presetInfo info is ", presetInfo.charset);
 }
+
 
 
 function savePreset(){
@@ -603,12 +606,14 @@ fontDropdown.onchange = (e) => {
 };
 
 charsetSelector.onchange=(e)=>{
-    if(e.target.value==="SIA/"){
-        presetInfo.charset =charset_sia;
-    }else{
-        presetInfo.charset =charset_ascii;
-    }
+    presetInfo.charset=e.target.value;
+    // if(e.target.value==="SIA/"){
+    //     presetInfo.charset =charset_sia;
+    // }else{
+    //     presetInfo.charset =charset_ascii;
+    // }
     console.log("current charset ", e.target.value);
     console.log("presetinfo charset ", presetInfo.charset);
     updateImage("charset");
 }
+
