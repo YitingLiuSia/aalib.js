@@ -144,7 +144,7 @@ document.getElementById('videoInput').addEventListener('change', function (event
                 .map(aalib.render.canvas({
                     width: video.width,//696,
                     height: video.height,//476,
-                    fontFamily: `"${currentFont}", sans-serif`,
+                    fontFamily: `"${presetInfo.fontFamily}", sans-serif`,
                     el: document.querySelector("#video-scene")
                 }))
                 .subscribe();
@@ -163,9 +163,10 @@ function loadImageFromURL(img, isCanvas){
     const aaHeight = 165; // Height for ASCII art
     const aaWidth = Math.round(aaHeight * aspectRatio); // Maintain aspect ratio for ASCII art width
     const aaReq = { width: aaWidth, height: aaHeight, colored: false };
+    console.log("presetInfo.fontFamily font in load image from url is ",fontFamily, presetInfo.fontFamily);
     const canvasOptions = {
         fontSize: fontSize.value,
-        fontFamily: "monospace",
+        fontFamily: fontFamily,
         lineHeight: lineHeight.value,
         charWidth: charWidth.value,
         width: img.width,  // Use original image width for canvas
@@ -229,27 +230,13 @@ function loadImageAndProcess(url) {
     img.src = url; // Set the source of the image
     img.onload = function () {
         processImage(img); // Call the function to process the image
-        if(currentImage){
-            if(currentImage.src!=img.src){
-
-                currentImage = img; 
-
-            }
-        }else{
-            currentImage = img; 
+        currentImage = img;
+        const existingImage = document.getElementById('processed-image');
+        if (existingImage) {
+            existingImage.parentNode.replaceChild(img, existingImage);
+        } else {
             document.body.appendChild(img);
-
         }
-        // img.id = 'processed-image'; // Set a consistent ID for the image
-        // const existingImage = document.getElementById('processed-image');
-//         if (existingImage) {
-//             console.log("existingImage is being replaced");
-//             existingImage.parentNode.replaceChild(img, existingImage);
-//         } else {
-//             console.log("adding as existing Image");
-//             document.body.appendChild(img);
-//             currentImage = img;
-//   }           
 
     };
     img.onerror = function () {
@@ -592,7 +579,6 @@ fileInput.addEventListener('change', function() {
     }
 });
 
-
 const presetFileInput = document.getElementById('load-preset');
 presetFileInput.type = 'file';
 presetFileInput.addEventListener('change', function() {
@@ -631,8 +617,10 @@ let currentFont;
 
 fontDropdown.onchange = (e) => {
     currentFont =e.target.value;
+    presetInfo.fontFamily = currentFont;
     console.log("current font ", currentFont);
     // apply font in the text for the image and video reader 
+
 };
 
 
