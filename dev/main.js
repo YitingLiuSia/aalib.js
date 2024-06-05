@@ -463,6 +463,7 @@ function loadPreset(){
     gradientInfo = presetInfo.gradientInfo;
     loadGradient();
     updateGradient();
+
     updatePreset();
     console.log("preset info is ", presetInfo);
     brightnessValue.innerHTML = presetInfo.brightnessEle;
@@ -472,7 +473,9 @@ function loadPreset(){
     fontFamily = presetInfo.fontFamily;
     lineHeight.value = presetInfo.lineHeight;
     charWidth.value = presetInfo.charWidth;
+    charsetSelector.value = presetInfo.charset;
 }
+
 
 function savePreset(){
     console.log("save preset ", presetInfo);
@@ -508,7 +511,7 @@ function savePresetToFile(){
 function saveGradientToFile() {
     saveGradient();
     const gradientData = JSON.stringify(gradientInfo);
-    const blob = new Blob([gradientData], { type: 'application/json' });
+    const blob = new Blob([gradientData], { type: 'application/json'});
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
@@ -545,7 +548,6 @@ function loadGradientFromFile(file) {
     const reader = new FileReader();
     reader.onload = function(event) {
         const data = JSON.parse(event.target.result);
-        // console.log(" data",data);
         gradientInfo.color1 = data.color1;
         gradientInfo.color2 = data.color2;
         gradientInfo.color3 = data.color3;
