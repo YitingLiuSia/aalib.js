@@ -14,9 +14,33 @@ import html, { ASCII_CHARSET } from "../src/renderers/HTMLRenderer";
 import videoCanvas from "../src/renderers/CanvasRenderer";
 import { appendToBody } from "./utils";
 import { json } from "body-parser";
-
 const charset = ASCII_CHARSET;
 const resource = filename => `../resources/${ filename }`;
+
+// loading default presetInfo in resources location on start 
+document.addEventListener('DOMContentLoaded', () => {
+    fetch(resource("presetInfo.json"))
+        .then(response => response.json())
+        .then(data => {
+            console.log("data is ",data);
+            presetInfo = new PresetInfo(
+                data.inverseEle, 
+                data.desaturate, 
+                data.brightnessEle, 
+                data.contrastEle, 
+                data.desaturation, 
+                data.gradientInfo, 
+                data.fontSize, 
+                data.fontFamily, 
+                data.lineHeight,
+                data.charWidth
+            );
+
+            loadPreset();
+        })
+        .catch(error => console.error('Error loading preset:', error));
+});
+
 
 const FONTS = {
     Sora: resource("sora-ttf/Sora-Regular.ttf"),
@@ -149,29 +173,45 @@ function loadImageFromURL(img, isCanvas){
         background: "rgba(0,0,0,0)",
         color: gradient
     };
+
     console.log("loading image with current font ", currentFont);
-    if (isCanvas) {
-        aalib.read.image.fromURL(img.src)
-        .map(aalib.aa(aaReq))
-        .map(aalib.render.canvas(canvasOptions))
-        .do(function (el) {
+    let imageProcessingPipeline = aalib.read.image.fromURL(img.src)
+            .map(aalib.aa(aaReq));
+
+        if (inverseEle.checked) {
+
+            imageProcessingPipeline = imageProcessingPipeline.map(aalib.filter.inverse());
+        }
+        if (desaturate.checked) {
+            imageProcessingPipeline = imageProcessingPipeline.map(aalib.filter.desaturate());
+        }
+        if (brightnessValue.value !== undefined) {
+            imageProcessingPipeline = imageProcessingPipeline.map(aalib.filter.brightness(brightnessValue.value));
+        }
+        if (contrastValue.value !== undefined) {
+            imageProcessingPipeline = imageProcessingPipeline.map(aalib.filter.contrast(contrastValue.value));
+        }
+        if (desaturationValue.value !== undefined) {
+            imageProcessingPipeline = imageProcessingPipeline.map(aalib.filter.desaturate(desaturationValue.value));
+        }
+        
+        if (isCanvas) {
+
+        imageProcessingPipeline.map(aalib.render.canvas(canvasOptions))
+        .do(function (el) {// or     .map(aalib.render.html({ el: document.querySelector(".aa-image") }))
             document.body.appendChild(el);
-            // el.id = 'mona-image'; // Set a unique ID for the element
-            // const existingElement = document.getElementById('mona-image');
-            // if (existingElement) {
-            //     document.body.replaceChild(el, existingElement);
-            // } else {
-            //     document.body.appendChild(el);
-            // }
+            el.id = 'processed-image'; // Set a unique ID for the element
+            const existingElement = document.getElementById('processed-image');
+            if (existingElement) {
+                document.body.replaceChild(el, existingElement);
+            } else {
+                document.body.appendChild(el);
+            }
         })
         .subscribe(); 
         
     } else {
-        aalib.read.image.fromURL(img.src)
-        .map(aalib.aa(aaReq))
-        .map(aalib.render.html({
-            canvasOptions
-        }))
+        imageProcessingPipeline.map(aalib.render.html(canvasOptions))
         .do(function (el) {
             document.body.appendChild(el);
             // el.id = 'mona-image'; // Set a unique ID for the element
@@ -186,28 +226,38 @@ function loadImageFromURL(img, isCanvas){
         .subscribe(); 
     }
 }
+
 function processImage(img) {
     console.log("image on load isCanvas is ", isCanvas);
     loadImageFromURL(img, isCanvas);
 }
-
 function loadImageAndProcess(url) {
     const img = new Image();
-    // Force reload by bypassing cache using a unique identifier
     img.src = url; // Set the source of the image
     img.onload = function () {
-        if (currentImage && currentImage.src === img.src) {
-            img.id = 'processed-image'; // Set a consistent ID for the image
-            const existingImage = document.getElementById('processed-image');
-            if (existingImage) {
-                document.body.replaceChild(img, existingImage);
-            } else {
-                document.body.appendChild(img);
+        processImage(img); // Call the function to process the image
+        if(currentImage){
+            if(currentImage.src!=img.src){
+
+                currentImage = img; 
+
             }
-        } else {
-            currentImage = img; // Store the current image
-            processImage(img); // Call the function to process the image
+        }else{
+            currentImage = img; 
+            document.body.appendChild(img);
+
         }
+        // img.id = 'processed-image'; // Set a consistent ID for the image
+        // const existingImage = document.getElementById('processed-image');
+//         if (existingImage) {
+//             console.log("existingImage is being replaced");
+//             existingImage.parentNode.replaceChild(img, existingImage);
+//         } else {
+//             console.log("adding as existing Image");
+//             document.body.appendChild(img);
+//             currentImage = img;
+//   }           
+
     };
     img.onerror = function () {
         console.error('Error loading the image');
@@ -226,10 +276,10 @@ function handleImageInputChange(event) {
     if (file && file.type.startsWith('image/')) {
         const reader = new FileReader();
         reader.onload = function (e) {
-            const uniqueSuffix = '?nocache=' + new Date().getTime();// this does not work 
-            console.log("uniqueSuffix ",uniqueSuffix);
-            const safeUrl = encodeURI(e.target.result) + uniqueSuffix;
-            loadImageAndProcess(safeUrl);
+            // const uniqueSuffix = '#nocache=' + new Date().getTime();// this does not work 
+            // console.log("uniqueSuffix ",uniqueSuffix);
+           // const safeUrl = encodeURI(e.target.result);// + uniqueSuffix;
+            loadImageAndProcess(e.target.result);
         };
 
         reader.onerror = function () {
@@ -269,6 +319,7 @@ class PresetInfo {
         this.charWidth = charWidth;
     }
 }
+
 let currentImage; // To hold the current image element
 let gradientCanvas = document.getElementById("gradient-canvas");
 let gradientCanvasCTX = gradientCanvas.getContext('2d');
@@ -307,30 +358,63 @@ let brightnessValue = brightnessEle.parentElement.querySelector(".sliderValue");
 let contrastValue = contrastEle.parentElement.querySelector(".sliderValue");
 let desaturationValue = desaturation.parentElement.querySelector(".sliderValue");
 
+fontSize.oninput=(e)=>{
+    fontSize.innerHTML = e.target.value;
+    if(fontSize!=e.target.value){
+    fontSize = e.target.value;
+    updateImage("fontSize");
+    }
+}
+
+charWidth.oninput=(e)=>{
+    charWidth.innerHTML = e.target.value;
+    if(charWidth.value!=e.target.value){
+    charWidth.value = e.target.value;
+    updateImage("charWidth");
+}
+}
+
+lineHeight.oninput=(e)=>{
+    lineHeight.innerHTML = e.target.value;
+    if(lineHeight.value!=e.target.value){
+    lineHeight.value = e.target.value;
+    updateImage("lineHeight");
+}
+}
+
 brightnessEle.oninput = (e) => {
+  if(brightnessValue.innerHTML!=e.target.value){
     brightnessValue.innerHTML = e.target.value;
+    updateImage("brightness");
+}
+
 }
 contrastEle.oninput=(e)=>{
+    if(contrastValue.innerHTML!=e.target.value){
     contrastValue.innerHTML = e.target.value;
+    updateImage("desaturation"); }
 }
 
 desaturation.oninput=(e)=>{
+    if(desaturationValue.innerHTML!=e.target.value){
     desaturationValue.innerHTML = e.target.value;
+    updateImage("desaturation");
+    }
 }
 
 savePresetButton.onclick= savePresetToFile;
-
 desaturate.onchange=(e)=>{
     presetInfo.desaturate = e.target.value;
-    console.log("current image is ",currentImage);
-    if(currentImage){
-        console.log("process current image -desaturate");
-        processImage(currentImage);
-    }
+    updateImage("desaturate");
     console.log("preset info is ", presetInfo.desaturate);
-
 }
 
+function updateImage(funcName){
+    if(currentImage){
+        console.log(`process current image ${funcName}`);
+        processImage(currentImage);
+    }
+}
 function updateGradient(){
     console.log("update gradient");
     gradient = gradientCanvasCTX.createLinearGradient(0, 0, gcWidth, 0);
