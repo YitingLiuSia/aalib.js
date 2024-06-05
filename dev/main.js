@@ -177,9 +177,7 @@ function loadImageFromURL(img, isCanvas){
     console.log("loading image with current font ", currentFont);
     let imageProcessingPipeline = aalib.read.image.fromURL(img.src)
             .map(aalib.aa(aaReq));
-
         if (inverseEle.checked) {
-
             imageProcessingPipeline = imageProcessingPipeline.map(aalib.filter.inverse());
         }
         if (desaturate.checked) {
@@ -197,36 +195,31 @@ function loadImageFromURL(img, isCanvas){
         
         if (isCanvas) {
         imageProcessingPipeline.map(aalib.render.canvas(canvasOptions))
-        .do(function (el) {// or     .map(aalib.render.html({ el: document.querySelector(".aa-image") }))
-            el.id = 'processed-image'; // Set a unique ID for the element
-            const existingElement = document.getElementById('processed-image');
-            if (existingElement) {
-                console.log("replace child image");
-                existingElement.parentNode.replaceChild(el, existingElement);
-            } else {
-                console.log("append child image");
-                document.body.appendChild(el);
-            }
+        .do(function (el) {
+           replaceImageToDiv(el);
         })
         .subscribe(); 
         
     } else {
         imageProcessingPipeline.map(aalib.render.html(canvasOptions))
         .do(function (el) {
-            document.body.appendChild(el);
-            // el.id = 'mona-image'; // Set a unique ID for the element
-            // const existingElement = document.getElementById('mona-image');
-            // if (existingElement) {
-            //     console.log("should replace chi")
-            //     document.body.replaceChild(el, existingElement);
-            // } else {
-            //     document.body.appendChild(el);
-            // }
+            replaceImageToDiv(el);
         })
         .subscribe(); 
     }
 }
 
+function replaceImageToDiv(el){
+    el.id = 'processed-image'; // Set a unique ID for the element
+    const existingElement = document.getElementById('processed-image');
+    if (existingElement) {
+        console.log("replace child image");
+        existingElement.parentNode.replaceChild(el, existingElement);
+    } else {
+        console.log("append child image");
+        document.body.appendChild(el);
+    }
+}
 function processImage(img) {
     console.log("image on load isCanvas is ", isCanvas);
     loadImageFromURL(img, isCanvas);
@@ -360,9 +353,10 @@ let desaturationValue = desaturation.parentElement.querySelector(".sliderValue")
 
 fontSize.oninput=(e)=>{
     fontSize.innerHTML = e.target.value;
-    if(fontSize!=e.target.value){
-    fontSize = e.target.value;
+    if(fontSize.value!=e.target.value){
+    fontSize.value = e.target.value;
     updateImage("fontSize");
+
     }
 }
 
@@ -375,6 +369,7 @@ charWidth.oninput=(e)=>{
 }
 
 lineHeight.oninput=(e)=>{
+    console.log("on input line height");
     lineHeight.innerHTML = e.target.value;
     if(lineHeight.value!=e.target.value){
     lineHeight.value = e.target.value;
@@ -423,6 +418,8 @@ function updateGradient(){
     gradient.addColorStop(colorPosition3.value/100, color3.value);
     gradientCanvasCTX.fillStyle = gradient;
     gradientCanvasCTX.fillRect(0, 0, gcWidth, gcHeight);
+    updateImage("gradient");
+
 }
 
 function updatePreset(){
@@ -532,7 +529,6 @@ function savePresetToFile(){
     console.log("Preset saved to file.");
 }
 
-
 function saveGradientToFile() {
     saveGradient();
     const gradientData = JSON.stringify(gradientInfo);
@@ -609,29 +605,17 @@ presetFileInput.addEventListener('change', function() {
 // Event listener for brightness changes
 brightnessEle.addEventListener('input', (e) => {
     brightnessValue.innerHTML = e.target.value;
-    if (currentImage) {
-        processImage(currentImage); // Reprocess the image with the new brightness value
-    }
+    updateImage("brightnessEle");
+
 });
 inverseEle.onchange = (e) => {
     presetInfo.inverseEle = e.target.checked;
-    if (currentImage) {
-        console.log("process current image -inverseEle ");
-        processImage(currentImage); // Reprocess the image with the new brightness value
-    }
-    console.log("Inverse element is now", presetInfo.inverseEle ? "enabled" : "disabled");
+    updateImage("inverseEle");
 }
 desaturate.onchange=(e)=>{
     presetInfo.desaturate = e.target.checked;
-    console.log("Desaturate element is now", presetInfo.desaturate ? "enabled" : "disabled");
-}
-charWidth.onselect=(e)=>{
-    presetInfo.charWidth = e.target.value;
-    console.log("preset info is ", presetInfo.charWidth);
-}
-
-lineHeight.onselect=(e)=>{
-    presetInfo.lineHeight = e.target.value;
+    updateImage("desaturate");
+  
 }
 
 function selectFont(fontName) {
