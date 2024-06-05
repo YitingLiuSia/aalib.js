@@ -164,6 +164,7 @@ function loadImageFromURL(img, isCanvas){
     const aaWidth = Math.round(aaHeight * aspectRatio); // Maintain aspect ratio for ASCII art width
     const aaReq = { width: aaWidth, height: aaHeight, colored: false };
     console.log("presetInfo.fontFamily font in load image from url is ",fontFamily, presetInfo.fontFamily);
+    console.log("font size ",fontSize.vaule);
     const canvasOptions = {
         fontSize: fontSize.value,
         fontFamily: fontFamily,
@@ -338,50 +339,36 @@ let brightnessValue = brightnessEle.parentElement.querySelector(".sliderValue");
 let contrastValue = contrastEle.parentElement.querySelector(".sliderValue");
 let desaturationValue = desaturation.parentElement.querySelector(".sliderValue");
 
-fontSize.oninput=(e)=>{
-    fontSize.innerHTML = e.target.value;
-    if(fontSize.value!=e.target.value){
+fontSize.oninput = (e) => {
     fontSize.value = e.target.value;
     updateImage("fontSize");
-
-    }
 }
 
 charWidth.oninput=(e)=>{
-    charWidth.innerHTML = e.target.value;
-    if(charWidth.value!=e.target.value){
     charWidth.value = e.target.value;
     updateImage("charWidth");
 }
-}
 
 lineHeight.oninput=(e)=>{
-    console.log("on input line height");
-    lineHeight.innerHTML = e.target.value;
-    if(lineHeight.value!=e.target.value){
     lineHeight.value = e.target.value;
     updateImage("lineHeight");
 }
-}
 
 brightnessEle.oninput = (e) => {
-  if(brightnessValue.innerHTML!=e.target.value){
-    brightnessValue.innerHTML = e.target.value;
+    brightnessValue.value =e.target.value;
     updateImage("brightness");
 }
 
-}
+
 contrastEle.oninput=(e)=>{
-    if(contrastValue.innerHTML!=e.target.value){
-    contrastValue.innerHTML = e.target.value;
-    updateImage("desaturation"); }
+    contrastValue.value=e.target.value;
+    updateImage("desaturation");
 }
 
 desaturation.oninput=(e)=>{
-    if(desaturationValue.innerHTML!=e.target.value){
-    desaturationValue.innerHTML = e.target.value;
+   desaturationValue.value=e.target.value;
     updateImage("desaturation");
-    }
+
 }
 
 savePresetButton.onclick= savePresetToFile;
@@ -393,12 +380,12 @@ desaturate.onchange=(e)=>{
 
 function updateImage(funcName){
     if(currentImage){
-        console.log(`process current image ${funcName}`);
+        console.log(`${funcName} - update image`);
         processImage(currentImage);
     }
 }
 function updateGradient(){
-    console.log("update gradient");
+    // console.log("update gradient");
     gradient = gradientCanvasCTX.createLinearGradient(0, 0, gcWidth, 0);
     gradient.addColorStop(colorPosition1.value/100, color1.value);
     gradient.addColorStop(colorPosition2.value/100, color2.value);
@@ -410,7 +397,7 @@ function updateGradient(){
 }
 
 function updatePreset(){
-    console.log("update preset");
+    // console.log("update preset");
     if(desaturate.value!=presetInfo.desaturate){
         desaturate.value = presetInfo.desaturate;
     }
