@@ -161,12 +161,14 @@ imageDropdown.onchange = function(){
 // image size is the same, but the ascii squished the size 
 // the image is not resized proprtionally but it is closer 
 function loadImageFromURL(img, isCanvas){
+    const asciiDimensions = calculateAsciiDimensionsForImageSize(img.width, img.height, charWidth.value, charWidth.value);
+    console.log('Required ASCII Dimensions:', asciiDimensions);
     console.log("image size is ", img.width, img.height);
-    const aspectRatio = img.width / img.height;
-    const aaHeight = 165; // Height for ASCII art
-    const aaWidth = Math.round(aaHeight * aspectRatio); // Maintain aspect ratio for ASCII art width
-    const aaReq = { width: aaWidth, height: aaHeight, colored: false };
-    
+    // const aspectRatio = img.width / img.height;
+    // const aaHeight = 165; // Height for ASCII art
+    // const aaWidth = Math.round(aaHeight * aspectRatio); // Maintain aspect ratio for ASCII art width
+    const aaReq = { width: asciiDimensions.width, height: asciiDimensions.height, colored: false };
+
     const canvasOptions = {
         fontSize: fontSize.value,
         fontFamily: presetInfo.fontFamily,
@@ -584,7 +586,6 @@ desaturate.onchange=(e)=>{
     updateImage("desaturate");
 }
 
-
 fontDropdown.onchange = (e) => {
     presetInfo.fontFamily =e.target.value;
     // apply font in the text for the image and video reader 
@@ -598,5 +599,16 @@ charsetSelector.onchange=(e)=>{
         presetInfo.charset =charset_ascii;
     }
     updateImage("charset");
+}
+
+function calculateAsciiDimensionsForImageSize(pixelWidth, pixelHeight, charPixelWidth, charPixelHeight) {
+    if(charPixelHeight!=0 && charPixelWidth!=0){
+    const asciiWidth = Math.ceil(pixelWidth / charPixelWidth);
+    const asciiHeight = Math.ceil(pixelHeight / charPixelHeight);
+
+    return {
+        width: asciiWidth,
+        height: asciiHeight
+    };}
 }
 
