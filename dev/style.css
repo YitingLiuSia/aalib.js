@@ -1,7 +1,7 @@
 body{
     display: flex;
     justify-content: space-between; /* Aligns children to each side of the container */
-
+    overflow: hidden;
 }
 #gradient-canvas {
     border: 1px solid #000;
@@ -15,18 +15,21 @@ p{
 }
 .container{
     flex-direction: row;
-    background-color: pink;
     margin: 10px;
 }
 
 #preset-container{
-    flex: 0 1 10%;
-    width: 20vw;
+    background-color:rgb(224, 212, 189);
+    padding: 20px;
     margin: 0 auto;
     display: block;
-    justify-content: center;
-    align-items: center;
+    overflow-y: scroll;
+    overflow-x: hidden; /* Prevents horizontal scrolling */
+    max-height: 90vh;
+    max-width: 40vw;
+
 }
+
 
 #image-container{
     flex: 0 1 90%;
@@ -35,9 +38,12 @@ p{
 
 #imported-image{
     width: 30%;
-    height: auto;
     opacity: 0.6;
+    overflow-y: scroll;
+    overflow-x: hidden; /* Prevents horizontal scrolling */
+    max-height: 100vh;
 }
+
 
 #processed-image{
     max-width: 70%;
@@ -45,12 +51,27 @@ p{
 }
 
 .sliderContainer{
-    display: flex; justify-content: center; align-items: center;
+    text-align: left; 
+    width: 100%;
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center;
+}
+
+.gradient-selection-container{
+    width: 80%;
+   margin: 0 auto;
+   justify-content: center;
+   align-items: center;
 }
 
 .slider-values{
-    justify-content: center;
-    display: flex;
+    display: flex; 
+    justify-content: space-between;
+}
+
+.sliderValue{
+    font-weight: bold;
 }
 /* Base styles for form elements */
 input, select, button {
@@ -103,7 +124,7 @@ button:hover, button:focus {
 
 /* Styling for dropdowns */
 select {
-    min-width: 200px; /* Minimum width */
+    min-width: 150px; /* Minimum width */
     cursor: pointer; /* Pointer cursor on hover */
 }
 
@@ -112,8 +133,6 @@ input:focus, select:focus, button:focus {
     border-color: #66afe9; /* Highlight focus with a light blue border */
     outline: none; /* Remove default focus outline */
 }
-
-
 
 @media (max-width: 768px) {
     .main-container {
