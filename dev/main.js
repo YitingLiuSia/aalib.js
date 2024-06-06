@@ -34,7 +34,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 data.fontSize, 
                 data.fontFamily, 
                 data.lineHeight,
-                data.charWidth
+                data.charWidth,
+                data.charset
             );
 
             loadPreset();
