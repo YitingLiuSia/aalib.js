@@ -45,7 +45,12 @@ p{
 }
 
 .sliderContainer{
-    text-align: center;
+    display: flex; justify-content: center; align-items: center;
+}
+
+.slider-values{
+    justify-content: center;
+    display: flex;
 }
 /* Base styles for form elements */
 input, select, button {
