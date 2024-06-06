@@ -592,7 +592,6 @@ fontDropdown.onchange = (e) => {
 };
 
 charsetSelector.onchange=(e)=>{
-    // presetInfo.charset=e.target.value;
     if(e.target.value==="SIA/"){
         presetInfo.charset =charset_sia;
     }else{
@@ -605,7 +604,6 @@ function calculateAsciiDimensionsForImageSize(pixelWidth, pixelHeight, charPixel
     if(charPixelHeight!=0 && charPixelWidth!=0){
     const asciiWidth = Math.ceil(pixelWidth / charPixelWidth);
     const asciiHeight = Math.ceil(pixelHeight / charPixelHeight);
-
     return {
         width: asciiWidth,
         height: asciiHeight
