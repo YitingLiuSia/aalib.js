@@ -214,16 +214,6 @@ function loadImageFromURL(img, isCanvas){
 }
 
 function replaceImageToDiv(el){
-    // el.id = 'processed-image'; // Set a unique ID for the element
-    // const existingElement = document.getElementById('processed-image');
-    // if (existingElement) {
-    //     console.log("replace child image");
-    //     existingElement.parentNode.replaceChild(el, existingElement);
-    // } else {
-    //     console.log("append child image");
-    //     document.body.appendChild(el);
-    // }
-
     el.id = 'processed-image';
     const existingElement = document.getElementById('processed-image');
     if (existingElement) {
@@ -238,22 +228,20 @@ function replaceImageToDiv(el){
 function processImage(img) {
     loadImageFromURL(img, isCanvas);
 }
-
 function loadImageAndProcess(url) {
     const img = new Image();
     img.src = url; // Set the source of the image
     img.onload = function () {
-        const existingElement = document.getElementById('processed-image');
+        let existingElement = document.getElementById('imported-image');
         if (existingElement) {
             console.log("loadImageAndProcess - replace child image");
-            existingElement.parentNode.replaceChild(img, existingElement);
-            currentImage = img;
+            existingElement.src = img.src; // Update the source instead of replacing the node
         } else {
             console.log("loadImageAndProcess - append child image");
-            img.id = 'processed-image'; // Ensure the image has an ID
-            document.body.appendChild(img);
+            img.id = 'imported-image'; // Ensure the image has an ID
+            document.body.appendChild(img); // Append the new image element to the body
         }
-        processImage(currentImage); // Call the function to process the image
+        processImage(img); // Call the function to process the image
     };
     img.onerror = function () {
         console.error('Error loading the image');
@@ -262,15 +250,14 @@ function loadImageAndProcess(url) {
 // this should update when the url is the same but when the changes of preset is applied 
 function handleImageInputChange(event) {
     const file = event.target.files[0];
+   
     if (file && file.type.startsWith('image/')) {
         const reader = new FileReader();
         reader.onload = function (e) {
             // const uniqueSuffix = '#nocache=' + new Date().getTime();// this does not work 
             // console.log("uniqueSuffix ",uniqueSuffix);
            // const safeUrl = encodeURI(e.target.result);// + uniqueSuffix;
-         
            loadImageAndProcess(e.target.result);
-
 
         };
 
