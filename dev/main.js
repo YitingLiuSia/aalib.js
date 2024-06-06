@@ -26,10 +26,10 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log("data is ",data);
             presetInfo = new PresetInfo(
                 data.inverseEle, 
-                data.desaturate, 
+                // data.desaturate, 
                 data.brightnessEle, 
                 data.contrastEle, 
-                data.desaturation, 
+                // data.desaturation, 
                 data.gradientInfo, 
                 data.fontSize, 
                 data.fontFamily, 
@@ -186,18 +186,18 @@ function loadImageFromURL(img, isCanvas){
         if (inverseEle.checked) {
             imageProcessingPipeline = imageProcessingPipeline.map(aalib.filter.inverse());
         }
-        if (desaturate.checked) {
-            imageProcessingPipeline = imageProcessingPipeline.map(aalib.filter.desaturate());
-        }
+        // if (desaturate.checked) {
+        //     imageProcessingPipeline = imageProcessingPipeline.map(aalib.filter.desaturate());
+        // }
         if (brightnessValue.value !== undefined) {
             imageProcessingPipeline = imageProcessingPipeline.map(aalib.filter.brightness(brightnessValue.value));
         }
         if (contrastValue.value !== undefined) {
             imageProcessingPipeline = imageProcessingPipeline.map(aalib.filter.contrast(contrastValue.value));
         }
-        if (desaturationValue.value !== undefined) {
-            imageProcessingPipeline = imageProcessingPipeline.map(aalib.filter.desaturate(desaturationValue.value));
-        }
+        // if (desaturationValue.value !== undefined) {
+        //     imageProcessingPipeline = imageProcessingPipeline.map(aalib.filter.desaturate(desaturationValue.value));
+        // }
         
         if (isCanvas) {
         imageProcessingPipeline.map(aalib.render.canvas(canvasOptions))
@@ -244,7 +244,7 @@ function loadImageAndProcess(url) {
             img.id = 'imported-image'; // Ensure the image has an ID
             document.body.appendChild(img); // Append the new image element to the body
         }
-        processImage(img); // Call the function to process the image
+        processImage(currentImage); // Call the function to process the image
     };
     img.onerror = function () {
         console.error('Error loading the image');
@@ -288,12 +288,12 @@ class GradientInfo {
 }
 
 class PresetInfo {
-    constructor(inverseEle, desaturate, brightnessEle, contrastEle, desaturation, gradientInfo, fontSize, fontFamily, lineHeight,charWidth, charset) {
+    constructor(inverseEle, brightnessEle, contrastEle, gradientInfo, fontSize, fontFamily, lineHeight,charWidth, charset) {
         this.inverseEle = inverseEle;
-        this.desaturate = desaturate;
+        // this.desaturate = desaturate;
         this.brightnessEle = brightnessEle;
         this.contrastEle = contrastEle;
-        this.desaturation = desaturation;
+        // this.desaturation = desaturation;
         this.gradientInfo = gradientInfo;
         this.fontSize = fontSize;
         this.fontFamily = fontFamily;
@@ -326,19 +326,21 @@ colorPosition2.onchange = updateGradient;
 colorPosition3.onchange = updateGradient;
 let gradient;
 let savePresetButton = document.getElementById("save-preset");
-let desaturate = document.getElementById("desaturate");
+// let desaturate = document.getElementById("desaturate");
 let inverseEle = document.getElementById("inverse");
-let desaturation = document.getElementById("desaturation");
-let brightnessEle = document.getElementById("brightness");
-let contrastEle = document.getElementById("contrast");
+// let desaturation = document.getElementById("desaturation");
 let fontDropdown = document.getElementById("font-dropdown");
 let fontSize = document.getElementById("fontSize");
 let charWidth = document.getElementById("charWidth");
 let lineHeight = document.getElementById("lineHeight");
 let charsetSelector = document.getElementById("charset-selector");
-let brightnessValue = brightnessEle.parentElement.querySelector(".sliderValue");
-let contrastValue = contrastEle.parentElement.querySelector(".sliderValue");
-let desaturationValue = desaturation.parentElement.querySelector(".sliderValue");
+
+let brightnessEle = document.getElementById("brightness");
+let contrastEle = document.getElementById("contrast");
+let brightnessValue = brightnessEle.nextElementSibling.querySelector(".sliderValue");
+let contrastValue = contrastEle.nextElementSibling.querySelector(".sliderValue");
+
+// let desaturationValue = desaturation.parentElement.querySelector(".sliderValue");
 
 fontSize.oninput = (e) => {
     fontSize.value = e.target.value;
@@ -356,26 +358,29 @@ lineHeight.oninput=(e)=>{
 }
 
 brightnessEle.oninput = (e) => {
+    brightnessValue.textContent =e.target.value;
     brightnessValue.value =e.target.value;
     updateImage("brightness");
 }
 
 contrastEle.oninput=(e)=>{
+    contrastValue.textContent=e.target.value;
     contrastValue.value=e.target.value;
-    updateImage("desaturation");
+    console.log("contrast value ", contrastValue.value);
+    updateImage("contrast");
 }
 
-desaturation.oninput=(e)=>{
-   desaturationValue.value=e.target.value;
-    updateImage("desaturation");
-}
+// desaturation.oninput=(e)=>{
+//    desaturationValue.value=e.target.value;
+//     updateImage("desaturation");
+// }
 
 savePresetButton.onclick= savePresetToFile;
-desaturate.onchange=(e)=>{
-    presetInfo.desaturate = e.target.value;
-    updateImage("desaturate");
-    console.log("preset info is ", presetInfo.desaturate);
-}
+// desaturate.onchange=(e)=>{
+//     presetInfo.desaturate = e.target.value;
+//     updateImage("desaturate");
+//     console.log("preset info is ", presetInfo.desaturate);
+// }
 
 function updateImage(funcName){
     if(currentImage){
@@ -394,18 +399,18 @@ function updateGradient(){
 }
 
 function updatePreset(){
-    if(desaturate.value!=presetInfo.desaturate){
-        desaturate.value = presetInfo.desaturate;
-    }
+    // if(desaturate.value!=presetInfo.desaturate){
+    //     desaturate.value = presetInfo.desaturate;
+    // }
     if(brightnessEle.value!=presetInfo.brightnessEle){
         brightnessEle.value = presetInfo.brightnessEle;
     }
     if(contrastEle.value!=presetInfo.contrastEle){
         contrastEle.value = presetInfo.contrastEle;
     }
-    if(desaturation.value!=presetInfo.desaturation){
-        desaturation.value = presetInfo.desaturation;
-    }
+    // if(desaturation.value!=presetInfo.desaturation){
+    //     desaturation.value = presetInfo.desaturation;
+    // }
     if(inverseEle.value!=presetInfo.inverseEle){
         inverseEle.value = presetInfo.inverseEle;     
     }
@@ -452,17 +457,17 @@ function saveGradient() {
 function loadPreset(){
     console.log("load preset");
     inverseEle.checked = presetInfo.inverseEle;
-    desaturate.checked = presetInfo.desaturate;
+    // desaturate.checked = presetInfo.desaturate;
     brightnessEle.value = presetInfo.brightnessEle;
     contrastEle.value = presetInfo.contrastEle;
-    desaturation.value = presetInfo.desaturation;
+    // desaturation.value = presetInfo.desaturation;
     gradientInfo = presetInfo.gradientInfo;
     loadGradient();
     updateGradient();
     updatePreset();
     brightnessValue.innerHTML = presetInfo.brightnessEle;
     contrastValue.innerHTML = presetInfo.contrastEle;
-    desaturationValue.innerHTML = presetInfo.desaturation;
+    // desaturationValue.innerHTML = presetInfo.desaturation;
     fontSize.value = presetInfo.fontSize;
     fontFamily = presetInfo.fontFamily;
     lineHeight.value = presetInfo.lineHeight;
@@ -473,10 +478,10 @@ function loadPreset(){
 function savePreset(){
     console.log("save preset ", presetInfo);
     presetInfo.inverseEle = inverseEle.checked;
-    presetInfo.desaturate = desaturate.checked;
+    // presetInfo.desaturate = desaturate.checked;
     presetInfo.brightnessEle = brightnessEle.value;
     presetInfo.contrastEle = contrastEle.value;
-    presetInfo.desaturation = desaturation.value;
+    // presetInfo.desaturation = desaturation.value;
     presetInfo.gradientInfo = gradientInfo;
     saveGradient();
     presetInfo.fontSize = fontSize.value;
@@ -520,9 +525,9 @@ function loadPresetFromFile(file){
     reader.onload = function(event){
         const data = JSON.parse(event.target.result);
         presetInfo.brightnessEle = data.brightnessEle;
-        presetInfo.desaturation = data.desaturation;
+        // presetInfo.desaturation = data.desaturation;
         presetInfo.contrastEle = data.contrastEle;
-        presetInfo.desaturate = data.desaturate;
+        // presetInfo.desaturate = data.desaturate;
         presetInfo.inverseEle = data.inverseEle;
         presetInfo.gradientInfo = data.gradientInfo;
         presetInfo.fontSize = data.fontSize;
@@ -581,10 +586,10 @@ inverseEle.onchange = (e) => {
     presetInfo.inverseEle = e.target.checked;
     updateImage("inverseEle");
 }
-desaturate.onchange=(e)=>{
-    presetInfo.desaturate = e.target.checked;
-    updateImage("desaturate");
-}
+// desaturate.onchange=(e)=>{
+//     presetInfo.desaturate = e.target.checked;
+//     updateImage("desaturate");
+// }
 
 fontDropdown.onchange = (e) => {
     presetInfo.fontFamily =e.target.value;
