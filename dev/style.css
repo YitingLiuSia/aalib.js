@@ -1,15 +1,117 @@
 body{
-
-    margin: 10px;
     display: flex;
-    flex-direction: column;
-    align-items: start;
-    justify-content: left;
-
+    justify-content: space-between; /* Aligns children to each side of the container */
 
 }
-
 #gradient-canvas {
     border: 1px solid #000;
     cursor: pointer;
+    display: block;
+    margin: 0 auto;
+}
+
+p{
+    font-size: small;
+}
+.container{
+    flex-direction: row;
+    background-color: pink;
+    margin: 10px;
+}
+
+#preset-container{
+    flex: 0 1 10%;
+    width: 20vw;
+    margin: 0 auto;
+    display: block;
+    justify-content: center;
+    align-items: center;
+}
+
+#image-container{
+    flex: 0 1 90%;
+    width: 70vw;
+}
+
+#imported-image{
+    width: 30%;
+    height: auto;
+    opacity: 0.6;
+}
+
+#processed-image{
+    max-width: 70%;
+    height: auto;
+}
+
+.sliderContainer{
+    text-align: center;
+}
+/* Base styles for form elements */
+input, select, button {
+    font-family: 'Sora', sans-serif; /* Consistent font family */
+    padding: 8px 12px; /* Adequate padding */
+    margin: 5px; /* Spacing around elements */
+    border: 1px solid #ccc; /* Subtle border */
+    border-radius: 4px; /* Rounded corners */
+    box-sizing: border-box; /* Includes padding and border in the element's total width and height */
+    align-self: center;
+    justify-content: center;
+}
+
+input[type="range"]{
+    width: 80%; 
+    cursor: pointer;
+}
+input[type="color"]{
+
+    max-width: 200px; 
+    padding: 0.5px;
+}
+
+.slider-values{
+    display:flex;
+    justify-content: space-between
+}
+/* Smaller input sizes */
+input[type="text"],input[type="number"]{
+    max-width: 70px; /* Restricting width for smaller inputs */
+}
+
+
+input[type="file"] {
+    max-width: 200px; /* Restricting width for smaller inputs */
+}
+
+/* Styling for buttons */
+button {
+    background-color: #007BFF; /* A pleasant blue */
+    color: white; /* White text */
+    border: none; /* No border */
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: background-color 0.3s; /* Smooth transition for hover effect */
+}
+
+button:hover, button:focus {
+    background-color: #0056b3; /* Darker blue on hover/focus */
+}
+
+/* Styling for dropdowns */
+select {
+    min-width: 200px; /* Minimum width */
+    cursor: pointer; /* Pointer cursor on hover */
+}
+
+/* Focus styles for inputs and buttons */
+input:focus, select:focus, button:focus {
+    border-color: #66afe9; /* Highlight focus with a light blue border */
+    outline: none; /* Remove default focus outline */
+}
+
+
+
+@media (max-width: 768px) {
+    .main-container {
+        flex-direction: row;
+    }
 }
