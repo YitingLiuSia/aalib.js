@@ -166,11 +166,10 @@ function loadImageFromURL(img, isCanvas){
     const aaHeight = 165; // Height for ASCII art
     const aaWidth = Math.round(aaHeight * aspectRatio); // Maintain aspect ratio for ASCII art width
     const aaReq = { width: aaWidth, height: aaHeight, colored: false };
-    console.log("presetInfo.fontFamily font in load image from url is ",fontFamily, presetInfo.fontFamily);
-    console.log("font size ",fontSize.vaule);
+    
     const canvasOptions = {
         fontSize: fontSize.value,
-        fontFamily: fontFamily,
+        fontFamily: presetInfo.fontFamily,
         lineHeight: lineHeight.value,
         charWidth: charWidth.value,
         charset: presetInfo.charset,
@@ -180,7 +179,6 @@ function loadImageFromURL(img, isCanvas){
         color: gradient
     };
 
-    console.log("loading image with current font ", currentFont);
     let imageProcessingPipeline = aalib.read.image.fromURL(img.src)
             .map(aalib.aa(aaReq));
         if (inverseEle.checked) {
@@ -216,44 +214,51 @@ function loadImageFromURL(img, isCanvas){
 }
 
 function replaceImageToDiv(el){
-    el.id = 'processed-image'; // Set a unique ID for the element
+    // el.id = 'processed-image'; // Set a unique ID for the element
+    // const existingElement = document.getElementById('processed-image');
+    // if (existingElement) {
+    //     console.log("replace child image");
+    //     existingElement.parentNode.replaceChild(el, existingElement);
+    // } else {
+    //     console.log("append child image");
+    //     document.body.appendChild(el);
+    // }
+
+    el.id = 'processed-image';
     const existingElement = document.getElementById('processed-image');
     if (existingElement) {
-        console.log("replace child image");
+        console.log("replaceImageToDiv - replace child image");
         existingElement.parentNode.replaceChild(el, existingElement);
     } else {
-        console.log("append child image");
+        console.log("replaceImageToDiv - append child image");
+        el.id = 'processed-image'; // Ensure the image has an ID
         document.body.appendChild(el);
     }
 }
 function processImage(img) {
-    console.log("image on load isCanvas is ", isCanvas);
     loadImageFromURL(img, isCanvas);
 }
+
 function loadImageAndProcess(url) {
     const img = new Image();
     img.src = url; // Set the source of the image
     img.onload = function () {
-        processImage(img); // Call the function to process the image
-        currentImage = img;
-        const existingImage = document.getElementById('processed-image');
-        if (existingImage) {
-            existingImage.parentNode.replaceChild(img, existingImage);
+        const existingElement = document.getElementById('processed-image');
+        if (existingElement) {
+            console.log("loadImageAndProcess - replace child image");
+            existingElement.parentNode.replaceChild(img, existingElement);
+            currentImage = img;
         } else {
+            console.log("loadImageAndProcess - append child image");
+            img.id = 'processed-image'; // Ensure the image has an ID
             document.body.appendChild(img);
         }
+        processImage(currentImage); // Call the function to process the image
     };
     img.onerror = function () {
         console.error('Error loading the image');
     };
 }
-
-let publicCurrentImage;
-function exposeImageUrl(url){
-    console.log("public current image url is ",url);
-    publicCurrentImage = url;
-}
-
 // this should update when the url is the same but when the changes of preset is applied 
 function handleImageInputChange(event) {
     const file = event.target.files[0];
@@ -263,7 +268,10 @@ function handleImageInputChange(event) {
             // const uniqueSuffix = '#nocache=' + new Date().getTime();// this does not work 
             // console.log("uniqueSuffix ",uniqueSuffix);
            // const safeUrl = encodeURI(e.target.result);// + uniqueSuffix;
-            loadImageAndProcess(e.target.result);
+         
+           loadImageAndProcess(e.target.result);
+
+
         };
 
         reader.onerror = function () {
@@ -304,7 +312,6 @@ class PresetInfo {
         this.charset = charset;
     }
 }
-
 
 let currentImage; // To hold the current image element
 let gradientCanvas = document.getElementById("gradient-canvas");
@@ -387,7 +394,6 @@ function updateImage(funcName){
     }
 }
 function updateGradient(){
-    // console.log("update gradient");
     gradient = gradientCanvasCTX.createLinearGradient(0, 0, gcWidth, 0);
     gradient.addColorStop(colorPosition1.value/100, color1.value);
     gradient.addColorStop(colorPosition2.value/100, color2.value);
@@ -425,8 +431,8 @@ function updatePreset(){
     if(charWidth.value!=presetInfo.charWidth){
         charWidth.value = presetInfo.charWidth;
     }
-    if(charsetSelector.value!=presetInfo.charsetSelector){
-        charsetSelector.value = presetInfo.charsetSelector;
+    if(charsetSelector.value!=presetInfo.charset){
+        charsetSelector.value = presetInfo.charset;
     }
     if(gradientInfo!=presetInfo.gradientInfo){
         gradientInfo = presetInfo.gradientInfo;
@@ -455,7 +461,6 @@ function saveGradient() {
 
 function loadPreset(){
     console.log("load preset");
-    console.log("in load preset, inverse value is ", inverseEle.checked);
     inverseEle.checked = presetInfo.inverseEle;
     desaturate.checked = presetInfo.desaturate;
     brightnessEle.value = presetInfo.brightnessEle;
@@ -465,7 +470,6 @@ function loadPreset(){
     loadGradient();
     updateGradient();
     updatePreset();
-    console.log("preset info is ", presetInfo);
     brightnessValue.innerHTML = presetInfo.brightnessEle;
     contrastValue.innerHTML = presetInfo.contrastEle;
     desaturationValue.innerHTML = presetInfo.desaturation;
@@ -474,12 +478,7 @@ function loadPreset(){
     lineHeight.value = presetInfo.lineHeight;
     charWidth.value = presetInfo.charWidth;
     charsetSelector.value = presetInfo.charset;
-    console.log("charsetSelector info is ", charsetSelector);
-    console.log("charsetSelector info is ", charsetSelector.value);
-    console.log("presetInfo info is ", presetInfo.charset);
 }
-
-
 
 function savePreset(){
     console.log("save preset ", presetInfo);
@@ -496,7 +495,6 @@ function savePreset(){
     presetInfo.charWidth = charWidth.value;
     presetInfo.charset = charsetSelector.value;
 }
-
 
 function savePresetToFile(){
     savePreset();
@@ -527,7 +525,7 @@ function savePresetToFile(){
 // }
 
 // needs to update in the preset info values as well - UI 
-function loadPreetFromFile(file){
+function loadPresetFromFile(file){
     const reader = new FileReader();
     reader.onload = function(event){
         const data = JSON.parse(event.target.result);
@@ -579,7 +577,7 @@ presetFileInput.type = 'file';
 presetFileInput.addEventListener('change', function() {
     if (this.files && this.files[0]) {
         console.log("file", this.files[0]);
-        loadPreetFromFile(this.files[0]);
+        loadPresetFromFile(this.files[0]);
     }
 });
 
@@ -598,23 +596,19 @@ desaturate.onchange=(e)=>{
     updateImage("desaturate");
 }
 
-let currentFont; 
+
 fontDropdown.onchange = (e) => {
-    currentFont =e.target.value;
-    presetInfo.fontFamily = currentFont;
-    console.log("current font ", currentFont);
+    presetInfo.fontFamily =e.target.value;
     // apply font in the text for the image and video reader 
 };
 
 charsetSelector.onchange=(e)=>{
-    presetInfo.charset=e.target.value;
-    // if(e.target.value==="SIA/"){
-    //     presetInfo.charset =charset_sia;
-    // }else{
-    //     presetInfo.charset =charset_ascii;
-    // }
-    console.log("current charset ", e.target.value);
-    console.log("presetinfo charset ", presetInfo.charset);
+    // presetInfo.charset=e.target.value;
+    if(e.target.value==="SIA/"){
+        presetInfo.charset =charset_sia;
+    }else{
+        presetInfo.charset =charset_ascii;
+    }
     updateImage("charset");
 }
 
