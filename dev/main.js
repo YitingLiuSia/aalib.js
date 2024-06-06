@@ -551,14 +551,14 @@ function loadPresetFromFile(file){
 //     reader.readAsText(file);
 // }
 
-const fileInput = document.getElementById('gradient-file-input');
-fileInput.type = 'file';
-fileInput.addEventListener('change', function() {
-    if (this.files && this.files[0]) {
-        console.log("file", this.files[0]);
-        loadGradientFromFile(this.files[0]);
-    }
-});
+// const fileInput = document.getElementById('gradient-file-input');
+// fileInput.type = 'file';
+// fileInput.addEventListener('change', function() {
+//     if (this.files && this.files[0]) {
+//         console.log("file", this.files[0]);
+//         loadGradientFromFile(this.files[0]);
+//     }
+// });
 
 const presetFileInput = document.getElementById('load-preset');
 presetFileInput.type = 'file';
