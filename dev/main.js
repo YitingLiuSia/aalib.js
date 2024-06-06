@@ -236,6 +236,7 @@ function loadImageAndProcess(url) {
         if (existingElement) {
             console.log("loadImageAndProcess - replace child image");
             existingElement.src = img.src; // Update the source instead of replacing the node
+            currentImage = img;
         } else {
             console.log("loadImageAndProcess - append child image");
             img.id = 'imported-image'; // Ensure the image has an ID
