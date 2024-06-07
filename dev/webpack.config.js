@@ -4,7 +4,9 @@ module.exports = {
     entry: path.resolve(__dirname, "main.js"),
     output: {
         path: __dirname,
-        publicPath: path.basename(__dirname) + "/"
+        publicPath: path.basename(__dirname) + "/",
+        filename: 'bundle.js'  // Ensure this line is present
+
     },
     module: {
         rules: [
