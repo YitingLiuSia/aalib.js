@@ -2,6 +2,7 @@ body{
     display: flex;
     justify-content: space-between; /* Aligns children to each side of the container */
     overflow: hidden;
+   height: 100vh;
 }
 #gradient-canvas {
     border: 1px solid #000;
@@ -25,9 +26,8 @@ p{
     display: block;
     overflow-y: scroll;
     overflow-x: hidden; /* Prevents horizontal scrolling */
-    max-height: 90vh;
+    max-height: 95vh;
     max-width: 40vw;
-
 }
 
 
