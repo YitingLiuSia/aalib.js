@@ -30,10 +30,10 @@ export class HTMLRenderer extends BaseRenderer {
         if (!image.meta.colored) {
             this.el.style.color = this.options.color;
         }
-
-        const renderer = image.meta.colored
-            ? colorRenderer(this.el)
-            : monoRenderer(this.el);
+        const renderer = colorRenderer(this.el);
+        //  image.meta.colored
+        //     ? colorRenderer(this.el)
+        //     : monoRenderer(this.el);
 
         return renderer(image);
     }
