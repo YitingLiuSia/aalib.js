@@ -70,6 +70,7 @@ let isCanvas = true;
 
 imageDropdown.onchange = function(){
     isCanvas = this.value === "canvas";
+    updateImage("canvasORHTML");
     console.log("iscanvas", isCanvas);
 }
 
@@ -593,6 +594,8 @@ inverseEle.onchange = (e) => {
 
 fontDropdown.onchange = (e) => {
     presetInfo.fontFamily =e.target.value;
+    console.log("preset info font family is ",presetInfo.fontFamily);
+    updateImage("fontFamily");
     // apply font in the text for the image and video reader 
 };
 

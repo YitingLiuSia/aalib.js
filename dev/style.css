@@ -1,4 +1,18 @@
+@font-face {
+    font-family: 'Sora';
+    src: url('../resources/sora-ttf/Sora-Regular.ttf') format('truetype');
+}
+@font-face {
+    font-family: 'Kode';
+    src: url('../resources/kode-mono/KodeMono-Regular.ttf') format('truetype');
+}
+@font-face {
+    font-family: 'OpenSans';
+    src: url('../resources/open-sans/OpenSans-Regular.ttf') format('truetype');
+}
+
 body{
+    font-family: 'Sora','sans-serif';
     display: flex;
     justify-content: space-between; /* Aligns children to each side of the container */
     overflow: hidden;
