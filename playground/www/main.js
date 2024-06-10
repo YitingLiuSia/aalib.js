@@ -1,23 +1,27 @@
-import "rxjs/add/operator/do";
-import ImageReader from "../src/readers/ImageReader";
-import VideoReader from "../src/readers/VideoReader";
-import ImageDataReader from "../src/readers/ImageDataReader";
-import inverse from "../src/filters/inverse";
-import contrast from "../src/filters/contrast";
-import brightness from "../src/filters/brightness";
-import linear from "../src/filters/linear";
-import { appendToID } from "./utils";
-import { GenerateID } from "./utils";
-import aa from "../src/aa";
-import aalib from "../dist/aalib.js";
-import html, { ASCII_CHARSET } from "../src/renderers/HTMLRenderer";
-import videoCanvas from "../src/renderers/CanvasRenderer";
-import { appendToBody } from "./utils";
-import { json } from "body-parser";
-const charset_ascii = ASCII_CHARSET;
+// import "rxjs/add/operator/do";
+// import ImageReader from "../src/readers/ImageReader";
+// import VideoReader from "../src/readers/VideoReader";
+// import ImageDataReader from "../src/readers/ImageDataReader";
+// import inverse from "../src/filters/inverse";
+// import contrast from "../src/filters/contrast";
+// import brightness from "../src/filters/brightness";
+// import linear from "../src/filters/linear";
+// import { appendToID } from "./utils";
+// import { GenerateID } from "./utils";
+// import aa from "../src/aa";
+// import videoCanvas from "../src/renderers/CanvasRenderer";
+// import { appendToBody } from "./utils";
+// import { json } from "body-parser";
+// import aalib from '../../dist/aalib.js';
+import * as aalib from '../../dist/aalib.js';
+function range(start, end) {
+    return Array.from(new Array(end - start + 1).keys()).map(i => i + start);
+}
+const charset_ascii = range(32, 126).map(code => String.fromCharCode(code));
 const charset_sia = "SIA/";
-const resource = filename => `../resources/${ filename }`;
+const resource = filename => `../../resources/${ filename }`;
 
+// const aalib =  "../../dist/aalib.js";
 // loading default presetInfo in resources location on start 
 document.addEventListener('DOMContentLoaded', () => {
     fetch(resource("presetInfo.json"))
@@ -181,7 +185,7 @@ function loadImageFromURL(img, isCanvas){
         color: gradient
     };
 
-    let imageProcessingPipeline = aalib.read.image.fromURL(img.src)
+    let imageProcessingPipeline = aalib.read.Image.fromURL(img.src)
             .map(aalib.aa(aaReq));
         if (inverseEle.checked) {
             imageProcessingPipeline = imageProcessingPipeline.map(aalib.filter.inverse());
