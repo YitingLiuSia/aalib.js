@@ -170,6 +170,11 @@ function loadImageFromURL(img, isCanvas){
     // const aaWidth = Math.round(aaHeight * aspectRatio); // Maintain aspect ratio for ASCII art width
     const aaReq = { width: asciiDimensions.width, height: asciiDimensions.height, colored: false };
 
+    const gradientArray = [
+        { color: color1.value, position: colorPosition1.value/100 },  // Position at 20%
+        { color: color2.value, position: colorPosition2.value/100 },  // Position at 80%
+        { color: color3.value, position: colorPosition3.value/100 }   // Position at 100%
+    ]
     const canvasOptions = {
         fontSize: fontSize.value,
         fontFamily: presetInfo.fontFamily,
@@ -179,7 +184,8 @@ function loadImageFromURL(img, isCanvas){
         width: img.width,  // Use original image width for canvas
         height: img.height, // Use original image height for canvas
         background: "rgba(0,0,0,0)",
-        color: gradient
+        // color: gradientArray,
+        gradient: gradientArray
     };
 
     let imageProcessingPipeline = aalib.read.image.fromURL(img.src);

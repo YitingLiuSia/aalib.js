@@ -31,7 +31,9 @@ export class CanvasRenderer extends BaseRenderer {
         this.ctx.font = this.options.fontSize + "px " + this.options.fontFamily;
 
         if (this.options.gradient) {
-            this.createGradient();
+            this.createGradientWithPosition();
+            // this.createGradient(); but the color has no position but index
+
         } else {
             this.el.style.backgroundColor = this.options.background;
         }
@@ -41,6 +43,15 @@ export class CanvasRenderer extends BaseRenderer {
         const gradient = this.ctx.createLinearGradient(0, 0, this.el.width, this.el.height);
         this.options.gradient.forEach((color, index) => {
             gradient.addColorStop(index / (this.options.gradient.length - 1), color);
+        });
+        this.gradient = gradient;
+    }
+
+    createGradientWithPosition() {
+        const gradient = this.ctx.createLinearGradient(0, 0, this.el.width, this.el.height);
+        // Assuming this.options.gradient is an array of objects like [{color: '#fff', position: 0.5}, ...]
+        this.options.gradient.forEach((stop) => {
+            gradient.addColorStop(stop.position, stop.color);
         });
         this.gradient = gradient;
     }
