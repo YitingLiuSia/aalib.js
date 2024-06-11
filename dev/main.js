@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 const FONTS = {
-    Sora: resource("sora-ttf/Sora-Regular.ttf"),
+    Sora: resource("sora-ttf/Sora-Regular-mono.ttf"),
     Kode: resource("kode-mono/KodeMono-Regular.ttf"),
     OpenSans: resource("open-sans/OpenSans-Regular.ttf")
 }
@@ -318,7 +318,7 @@ let colorPosition3 = document.getElementById('position3');
 let saveGradientButton = document.getElementById("save-gradient");
 let gradientInfo = new GradientInfo();
 let presetInfo = new PresetInfo();
-let fontFamily = "Sora";
+let fontFamily = "monospace";//"Sora";
 color1.onchange = updateGradient;
 color2.onchange = updateGradient;
 color3.onchange = updateGradient;
@@ -342,7 +342,6 @@ let brightnessValue = brightnessEle.nextElementSibling.querySelector(".sliderVal
 let contrastValue = contrastEle.nextElementSibling.querySelector(".sliderValue");
 
 // let desaturationValue = desaturation.parentElement.querySelector(".sliderValue");
-
 fontSize.oninput = (e) => {
     fontSize.value = e.target.value;
     updateImage("fontSize");
@@ -370,6 +369,32 @@ contrastEle.oninput=(e)=>{
     console.log("contrast value ", contrastValue.value);
     updateImage("contrast");
 }
+
+inverseEle.onchange = (e) => {
+    presetInfo.inverseEle = e.target.checked;
+    updateImage("inverseEle");
+}
+// desaturate.onchange=(e)=>{
+//     presetInfo.desaturate = e.target.checked;
+//     updateImage("desaturate");
+// }
+
+fontDropdown.onchange = (e) => {
+    presetInfo.fontFamily =e.target.value;
+    console.log("preset info font family is ",presetInfo.fontFamily);
+    updateImage("fontFamily");
+    // apply font in the text for the image and video reader 
+};
+
+charsetSelector.onchange=(e)=>{
+    if(e.target.value==="SIA/"){
+        presetInfo.charset =charset_sia;
+    }else{
+        presetInfo.charset =charset_ascii;
+    }
+    updateImage("charset");
+}
+
 
 // desaturation.oninput=(e)=>{
 //    desaturationValue.value=e.target.value;
@@ -420,6 +445,8 @@ function updatePreset(){
     }
     if(fontFamily!=presetInfo.fontFamily){
         fontFamily = presetInfo.fontFamily;
+        fontDropdown.value = fontFamily;
+
     }
     if(lineHeight.value!=presetInfo.lineHeight){
         lineHeight.value = presetInfo.lineHeight;
@@ -570,6 +597,7 @@ function loadPresetFromFile(file){
 
 const presetFileInput = document.getElementById('load-preset');
 presetFileInput.type = 'file';
+
 presetFileInput.addEventListener('change', function() {
     if (this.files && this.files[0]) {
         console.log("file", this.files[0]);
@@ -577,36 +605,6 @@ presetFileInput.addEventListener('change', function() {
     }
 });
 
-// Event listener for brightness changes
-brightnessEle.addEventListener('input', (e) => {
-    brightnessValue.innerHTML = e.target.value;
-    updateImage("brightnessEle");
-
-});
-inverseEle.onchange = (e) => {
-    presetInfo.inverseEle = e.target.checked;
-    updateImage("inverseEle");
-}
-// desaturate.onchange=(e)=>{
-//     presetInfo.desaturate = e.target.checked;
-//     updateImage("desaturate");
-// }
-
-fontDropdown.onchange = (e) => {
-    presetInfo.fontFamily =e.target.value;
-    console.log("preset info font family is ",presetInfo.fontFamily);
-    updateImage("fontFamily");
-    // apply font in the text for the image and video reader 
-};
-
-charsetSelector.onchange=(e)=>{
-    if(e.target.value==="SIA/"){
-        presetInfo.charset =charset_sia;
-    }else{
-        presetInfo.charset =charset_ascii;
-    }
-    updateImage("charset");
-}
 
 function calculateAsciiDimensionsForImageSize(pixelWidth, pixelHeight, charPixelWidth, charPixelHeight) {
     if(charPixelHeight!=0 && charPixelWidth!=0){

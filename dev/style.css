@@ -1,6 +1,6 @@
 @font-face {
     font-family: 'Sora';
-    src: url('../resources/sora-ttf/Sora-Regular-mono.ttf') format('truetype');
+    src: url('../resources/sora-otf/Sora-Regular-mono.ttf') format('truetype');
 }
 @font-face {
     font-family: 'Kode';
@@ -12,7 +12,7 @@
 }
 
 body{
-    font-family: 'Sora','sans-serif';
+    font-family: 'monospace','sans-serif';
     display: flex;
     justify-content: space-between; /* Aligns children to each side of the container */
     overflow: hidden;
