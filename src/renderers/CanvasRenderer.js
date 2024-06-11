@@ -53,6 +53,7 @@ export class CanvasRenderer extends BaseRenderer {
         this.options.gradient.forEach((stop) => {
             gradient.addColorStop(stop.position, stop.color);
         });
+        console.log("this gradient is ",gradient);
         this.gradient = gradient;
     }
 
