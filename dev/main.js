@@ -162,7 +162,14 @@ imageDropdown.onchange = function(){
 // image size is the same, but the ascii squished the size 
 // the image is not resized proprtionally but it is closer {"inverseEle":true,"brightnessEle":"1.3","contrastEle":"1.2","gradientInfo":{"color1":"#b0d4fc","color2":"#ffccdb","color3":"#ffe2cc","colorPosition1":"20","colorPosition2":"80","colorPosition3":"100"},"fontSize":"5","fontFamily":"Sora","lineHeight":"4","charWidth":"4","charset":"ASCII"}
 function loadImageFromURL(img, isCanvas){
+    if (!img) {
+        console.error('No image provided to loadImageFromURL');
+        return;
+    }
+
+    img.onload = function() {
     const asciiDimensions = calculateAsciiDimensionsForImageSize(img.width, img.height, charWidth.value, charWidth.value);
+    console.log("current gradient before image is ", gradient);
     console.log('Required ASCII Dimensions:', asciiDimensions);
     console.log("image size is ", img.width, img.height);
     // const aspectRatio = img.width / img.height;
@@ -179,7 +186,7 @@ function loadImageFromURL(img, isCanvas){
         width: img.width,  // Use original image width for canvas
         height: img.height, // Use original image height for canvas
         background: "rgba(0,0,0,0)",
-        color: gradient
+        color: gradientArray
     };
 
     let imageProcessingPipeline = aalib.read.image.fromURL(img.src);
@@ -223,6 +230,10 @@ function loadImageFromURL(img, isCanvas){
         })
         .subscribe(); 
     }
+};
+ img.onerror = function() {
+    console.error('Error loading the image');
+};
 }
 
 function replaceImageToDiv(el){
@@ -238,7 +249,10 @@ function replaceImageToDiv(el){
     }
 }
 function processImage(img) {
-    loadImageFromURL(img, isCanvas);
+    if (!img) {
+        console.error('No image provided to processImage');
+        return;
+    }    loadImageFromURL(img, isCanvas);
 }
 function loadImageAndProcess(url) {
     const img = new Image();
@@ -288,14 +302,21 @@ document.getElementById('imageInput').addEventListener('change', handleImageInpu
 // gradient
 class GradientInfo {
     constructor(color1, color2, color3, colorPosition1, colorPosition2, colorPosition3) {
-        this.color1 = color1;
-        this.color2 = color2;
-        this.color3 = color3;
-        this.colorPosition1 = colorPosition1;
-        this.colorPosition2 = colorPosition2;
-        this.colorPosition3 = colorPosition3;
+       this.color1 = color1;
+       this.color2 = color2; 
+       this.color3 = color3;
+       this.colorPosition1= colorPosition1;
+       this.colorPosition2 =colorPosition2;
+       this.colorPosition3 = colorPosition3;
+        
     }
 }
+
+let gradientArray =  [
+    { color: color1, position: colorPosition1 },
+    { color: color2, position: colorPosition2 },
+    { color: color3, position: colorPosition3 }
+];
 
 class PresetInfo {
     constructor(inverseEle, brightnessEle, contrastEle, gradientInfo, fontSize, fontFamily, lineHeight,charWidth, charset) {
@@ -435,9 +456,8 @@ function updateGradient(){
 }
 
 function updatePreset(){
-    // if(desaturate.value!=presetInfo.desaturate){
-    //     desaturate.value = presetInfo.desaturate;
-    // }
+    console.log("update preset ");
+
     if(brightnessEle.value!=presetInfo.brightnessEle){
         brightnessEle.value = presetInfo.brightnessEle;
     }
@@ -445,9 +465,6 @@ function updatePreset(){
         contrastEle.value = presetInfo.contrastEle;
     }
    
-    // if(desaturation.value!=presetInfo.desaturation){
-    //     desaturation.value = presetInfo.desaturation;
-    // }
     if(inverseEle.value!=presetInfo.inverseEle){
         inverseEle.value = presetInfo.inverseEle;     
     }
@@ -457,7 +474,6 @@ function updatePreset(){
     if(fontFamily!=presetInfo.fontFamily){
         fontFamily = presetInfo.fontFamily;
         fontDropdown.value = fontFamily;
-
     }
     if(lineHeight.value!=presetInfo.lineHeight){
         lineHeight.value = presetInfo.lineHeight;
@@ -465,9 +481,15 @@ function updatePreset(){
     if(charWidth.value!=presetInfo.charWidth){
         charWidth.value = presetInfo.charWidth;
     }
+    // charset selector needs to be updated in the dropdown too 
     if(charsetSelector.value!=presetInfo.charset){
         console.log("charset selector value is ",charsetSelector.value)
-        charsetSelector.value = presetInfo.charset;
+        // charsetSelector.value = presetInfo.charset;
+        if( presetInfo.charset===charset_sia){
+            charsetSelector.value  ="SIA/";
+        }else{
+            charsetSelector.value  ="ASCII";
+        }
     }
     if(gradientInfo!=presetInfo.gradientInfo){
         gradientInfo = presetInfo.gradientInfo;
@@ -475,25 +497,30 @@ function updatePreset(){
     console.log("preset info is ", presetInfo);
 }
 
-function loadGradient(){
+function loadGradient() {
     console.log("load gradient");
-    colorPosition1.value = gradientInfo.colorPosition1;
-    colorPosition2.value = gradientInfo.colorPosition2;
-    colorPosition3.value = gradientInfo.colorPosition3;
-    color1.value = gradientInfo.color1;
-    color2.value = gradientInfo.color2;
-    color3.value = gradientInfo.color3;
+    console.log("gradientInfo gradient ", gradientInfo.gradients);
+
+    colorPosition1.value = gradientInfo.gradients[0].position;
+    colorPosition2.value = gradientInfo.gradients[1].position;
+    colorPosition3.value = gradientInfo.gradients[2].position;
+    color1.value = gradientInfo.gradients[0].color;
+    color2.value = gradientInfo.gradients[1].color;
+    color3.value = gradientInfo.gradients[2].color;
+
+    console.log("gradient is ", gradientInfo.gradients);
 }
 
 function saveGradient() {
-    gradientInfo.color1 = color1.value;
-    gradientInfo.color2 = color2.value;
-    gradientInfo.color3 = color3.value;
-    gradientInfo.colorPosition1 = colorPosition1.value;
-    gradientInfo.colorPosition2 = colorPosition2.value;
-    gradientInfo.colorPosition3 = colorPosition3.value;
-}
+    gradientInfo.gradients = [
+        { color: color1.value, position: parseFloat(colorPosition1.value) },
+        { color: color2.value, position: parseFloat(colorPosition2.value) },
+        { color: color3.value, position: parseFloat(colorPosition3.value) }
+    ];
 
+    gradient = gradientInfo.gradients;
+    console.log("Gradient saved:", gradientInfo.gradients);
+}
 function loadPreset(){
     console.log("load preset");
     inverseEle.checked = presetInfo.inverseEle;

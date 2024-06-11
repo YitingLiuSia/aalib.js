@@ -18,7 +18,7 @@ export class CanvasRenderer extends BaseRenderer {
             height: 300,
             background: "#fff",
             color: "#000",
-            gradient: null // Adding gradient option
+            gradients: null // Adding gradient option
         }, options));
 
         this.el = this.options.el || document.createElement("canvas");
@@ -30,7 +30,7 @@ export class CanvasRenderer extends BaseRenderer {
         this.ctx.textAlign = "start";
         this.ctx.font = this.options.fontSize + "px " + this.options.fontFamily;
 
-        if (this.options.gradient) {
+        if (this.options.gradients) {
             this.createGradient();
         } else {
             this.el.style.backgroundColor = this.options.background;
@@ -38,11 +38,13 @@ export class CanvasRenderer extends BaseRenderer {
     }
 
     createGradient() {
+        console.log("create gradient");
         const gradient = this.ctx.createLinearGradient(0, 0, this.el.width, this.el.height);
-        this.options.gradient.forEach((color, index) => {
-            gradient.addColorStop(index / (this.options.gradient.length - 1), color);
+        this.options.gradients.forEach((stop) => {
+            gradients.addColorStop(stop.position, stop.color);
+            console.log("addColorStop ", stop.position, stop.color);
         });
-        this.gradient = gradient;
+        this.gradients = gradient;
     }
 
     render(image) {
