@@ -165,11 +165,14 @@ function loadImageFromURL(img, isCanvas){
     const asciiDimensions = calculateAsciiDimensionsForImageSize(img.width, img.height, charWidth.value, charWidth.value);
     console.log('Required ASCII Dimensions:', asciiDimensions);
     console.log("image size is ", img.width, img.height);
-    // const aspectRatio = img.width / img.height;
-    // const aaHeight = 165; // Height for ASCII art
-    // const aaWidth = Math.round(aaHeight * aspectRatio); // Maintain aspect ratio for ASCII art width
     const aaReq = { width: asciiDimensions.width, height: asciiDimensions.height, colored: false };
-
+    // Example gradient stops
+    gradient = gradientCanvasCTX.createLinearGradient(0, 0, img.width, 0);
+    gradient.addColorStop(colorPosition1.value/100, color1.value);
+    gradient.addColorStop(colorPosition2.value/100, color2.value);
+    gradient.addColorStop(colorPosition3.value/100, color3.value);
+ 
+    console.log("gradient is ",gradient);
     const canvasOptions = {
         fontSize: fontSize.value,
         fontFamily: presetInfo.fontFamily,

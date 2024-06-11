@@ -31,7 +31,8 @@ export class CanvasRenderer extends BaseRenderer {
         this.ctx.font = this.options.fontSize + "px " + this.options.fontFamily;
 
         if (this.options.gradient) {
-            this.createGradient();
+            this.createGradientStop();
+            // this.createGradient();
         } else {
             this.el.style.backgroundColor = this.options.background;
         }
@@ -39,8 +40,16 @@ export class CanvasRenderer extends BaseRenderer {
 
     createGradient() {
         const gradient = this.ctx.createLinearGradient(0, 0, this.el.width, this.el.height);
-        this.options.gradient.forEach((color, index) => {
+        this.options.gradient.forEach((index,color) => {
             gradient.addColorStop(index / (this.options.gradient.length - 1), color);
+        });
+        this.gradient = gradient;
+    }
+
+    createGradientStop() {
+        const gradient = this.ctx.createLinearGradient(0, 0, this.el.width, this.el.height);
+        this.options.gradient.forEach((position,color) => {
+            gradient.addColorStop(position, color);
         });
         this.gradient = gradient;
     }
