@@ -160,7 +160,7 @@ imageDropdown.onchange = function(){
 
 // image input 
 // image size is the same, but the ascii squished the size 
-// the image is not resized proprtionally but it is closer 
+// the image is not resized proprtionally but it is closer {"inverseEle":true,"brightnessEle":"1.3","contrastEle":"1.2","gradientInfo":{"color1":"#b0d4fc","color2":"#ffccdb","color3":"#ffe2cc","colorPosition1":"20","colorPosition2":"80","colorPosition3":"100"},"fontSize":"5","fontFamily":"Sora","lineHeight":"4","charWidth":"4","charset":"ASCII"}
 function loadImageFromURL(img, isCanvas){
     const asciiDimensions = calculateAsciiDimensionsForImageSize(img.width, img.height, charWidth.value, charWidth.value);
     console.log('Required ASCII Dimensions:', asciiDimensions);
@@ -182,32 +182,41 @@ function loadImageFromURL(img, isCanvas){
         color: gradient
     };
 
-    let imageProcessingPipeline = aalib.read.image.fromURL(img.src)
-            .map(aalib.aa(aaReq));
-        if (inverseEle.checked) {
+    let imageProcessingPipeline = aalib.read.image.fromURL(img.src);
+       
+    if (inverseEle.checked) {
+            console.log("inverse elemenet is checked ", inverseEle.checked)
             imageProcessingPipeline = imageProcessingPipeline.map(aalib.filter.inverse());
         }
+       // imageProcessingPipeline = imageProcessingPipeline.map(aalib.filter.desaturate());
+
         // if (desaturate.checked) {
         //     imageProcessingPipeline = imageProcessingPipeline.map(aalib.filter.desaturate());
         // }
+   
         if (brightnessValue.value !== undefined) {
+            console.log("brightnessValue value ", brightnessValue.value);
             imageProcessingPipeline = imageProcessingPipeline.map(aalib.filter.brightness(brightnessValue.value));
         }
         if (contrastValue.value !== undefined) {
+            console.log("contrastValue value ", contrastValue.value);
             imageProcessingPipeline = imageProcessingPipeline.map(aalib.filter.contrast(contrastValue.value));
         }
         // if (desaturationValue.value !== undefined) {
         //     imageProcessingPipeline = imageProcessingPipeline.map(aalib.filter.desaturate(desaturationValue.value));
-        // }
-        
+        // }]
+
+         // imageProcessingPipeline = imageProcessingPipeline.map(aalib.filter.desaturate(1));
+          imageProcessingPipeline = imageProcessingPipeline.map(aalib.aa(aaReq));
+
+
         if (isCanvas) {
         imageProcessingPipeline.map(aalib.render.canvas(canvasOptions))
         .do(function (el) {
            replaceImageToDiv(el);
         })
         .subscribe(); 
-        
-    } else {
+        } else {
         imageProcessingPipeline.map(aalib.render.html(canvasOptions))
         .do(function (el) {
             replaceImageToDiv(el);
@@ -386,6 +395,7 @@ fontDropdown.onchange = (e) => {
     // apply font in the text for the image and video reader 
 };
 
+
 charsetSelector.onchange=(e)=>{
     if(e.target.value==="SIA/"){
         presetInfo.charset =charset_sia;
@@ -434,6 +444,7 @@ function updatePreset(){
     if(contrastEle.value!=presetInfo.contrastEle){
         contrastEle.value = presetInfo.contrastEle;
     }
+   
     // if(desaturation.value!=presetInfo.desaturation){
     //     desaturation.value = presetInfo.desaturation;
     // }
