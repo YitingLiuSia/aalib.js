@@ -15,7 +15,7 @@ import videoCanvas from "../src/renderers/CanvasRenderer";
 import { appendToBody } from "./utils";
 import { json } from "body-parser";
 const charset_ascii = ASCII_CHARSET;
-const charset_sia = "SIA/";
+const charset_sia = "SIA/- ";
 const resource = filename => `../resources/${ filename }`;
 
 // loading default presetInfo in resources location on start 
@@ -466,6 +466,7 @@ function updatePreset(){
         charWidth.value = presetInfo.charWidth;
     }
     if(charsetSelector.value!=presetInfo.charset){
+        console.log("charset selector value is ",charsetSelector.value)
         charsetSelector.value = presetInfo.charset;
     }
     if(gradientInfo!=presetInfo.gradientInfo){
