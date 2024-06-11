@@ -33,6 +33,7 @@ export class CanvasRenderer extends BaseRenderer {
         if (this.options.gradient) {
             this.createGradientWithPosition();
             // this.createGradient(); but the color has no position but index
+            this.color = this.gradient; // Use gradient as the text color
 
         } else {
             this.el.style.backgroundColor = this.options.background;

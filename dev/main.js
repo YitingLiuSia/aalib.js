@@ -18,6 +18,11 @@ const charset_ascii = ASCII_CHARSET;
 const charset_sia = "SIA/- ";
 const resource = filename => `../resources/${ filename }`;
 
+let gradientArray = [
+    { color: 'red', position: 0.2 },  // Position at 20%
+    { color: 'blue', position: 0.8 },  // Position at 80%
+    { color: 'green', position: 1.0 }   // Position at 100%
+];
 // loading default presetInfo in resources location on start 
 document.addEventListener('DOMContentLoaded', () => {
     fetch(resource("presetInfo.json"))
@@ -31,7 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 data.contrastEle, 
                 data.gradientArray,
                 // data.desaturation, 
-                data.gradientInfo, 
+                // data.gradientInfo, 
                 data.fontSize, 
                 data.fontFamily, 
                 data.lineHeight,
@@ -171,7 +176,13 @@ function loadImageFromURL(img, isCanvas){
     // const aaWidth = Math.round(aaHeight * aspectRatio); // Maintain aspect ratio for ASCII art width
     const aaReq = { width: asciiDimensions.width, height: asciiDimensions.height, colored: false };
 
-   console.log("gradient array is ",presetInfo.gradientArray);
+    let newGradient = [
+        { color: 'white', position: 0.2 },  // Position at 20%
+        { color: 'blue', position: 0.8 },  // Position at 80%
+        { color: 'green', position: 1.0 }   // Position at 100%
+    ];
+    console.log("gradient array is ",presetInfo.gradientArray);
+    console.log("gradient array is ",gradientArray);
     const canvasOptions = {
         fontSize: fontSize.value,
         fontFamily: presetInfo.fontFamily,
@@ -181,8 +192,8 @@ function loadImageFromURL(img, isCanvas){
         width: img.width,  // Use original image width for canvas
         height: img.height, // Use original image height for canvas
         background: "rgba(0,0,0,0)",
-        // color: gradientArray,
-        gradient: gradientArray
+        // color: newGradient
+         gradient: newGradient
     };
 
     let imageProcessingPipeline = aalib.read.image.fromURL(img.src);
@@ -302,11 +313,7 @@ class GradientInfo {
     //     this.colorPosition3 = colorPosition3;
     // }
 }
-let gradientArray = [
-    { color: 'red', position: 0.2 },  // Position at 20%
-    { color: 'blue', position: 0.8 },  // Position at 80%
-    { color: 'green', position: 1.0 }   // Position at 100%
-]
+
 
 class PresetInfo {
     constructor(inverseEle, brightnessEle, contrastEle, gradientInfo, gradientArray, fontSize, fontFamily, lineHeight,charWidth, charset) {
@@ -339,7 +346,7 @@ let colorPosition3 = document.getElementById('position3');
 let saveGradientButton = document.getElementById("save-gradient");
 let gradientInfo = new GradientInfo();
 let presetInfo = new PresetInfo();
-let fontFamily = "monospace";//"Sora";
+let fontFamily = "Sora";//"Sora";
 color1.onchange = updateGradient;
 color2.onchange = updateGradient;
 color3.onchange = updateGradient;
@@ -438,12 +445,14 @@ function updateImage(funcName){
 }
 function updateGradient(){
     gradient = gradientCanvasCTX.createLinearGradient(0, 0, gcWidth, 0);
+    console.log("color position is ",colorPosition1.value/100);
     gradient.addColorStop(colorPosition1.value/100, color1.value);
     gradient.addColorStop(colorPosition2.value/100, color2.value);
     gradient.addColorStop(colorPosition3.value/100, color3.value);
     gradientCanvasCTX.fillStyle = gradient;
     gradientCanvasCTX.fillRect(0, 0, gcWidth, gcHeight);
     updateImage("gradient");
+    updateGradientArray();
 }
 
 function updatePreset(){
@@ -493,8 +502,17 @@ function updatePreset(){
 }
 
 function loadGradient(){
-    console.log("load gradient from ",gradientArray);
-    console.log("load gradient from ",presetInfo.gradientArray);
+    if (gradientArray.length >= 3) {
+        color1.value = gradientArray[0].color;
+        color2.value = gradientArray[1].color;
+        color3.value = gradientArray[2].color;
+        colorPosition1.value = gradientArray[0].position * 100; // Assuming position is a fraction
+        colorPosition2.value = gradientArray[1].position * 100;
+        colorPosition3.value = gradientArray[2].position * 100;
+    } else {
+        gradientArray = new Array(3);
+        console.error('Gradient array does not have enough entries.');
+    }
     // colorPosition1.value = gradientArray.colorPosition1;
     // color1.value = gradientArray.color1; 
     // colorPosition2.value = gradientArray.colorPosition2;
@@ -511,23 +529,33 @@ function loadGradient(){
 }
 
 function saveGradient() {
+    if (!Array.isArray(gradientArray)) {
+        gradientArray = [];
+    }
+    // Check if the gradientArray is empty and populate it accordingly
+    if (gradientArray.length === 0) {
+        gradientArray.push({ color: color1.value, position: parseFloat(colorPosition1.value/100) });
+        gradientArray.push({ color: color2.value, position: parseFloat(colorPosition2.value/100) });
+        gradientArray.push({ color: color3.value, position: parseFloat(colorPosition3.value/100) });
+    } else {
+        // If not empty, just update the existing entries
+        gradientArray[0].color = color1.value;
+        gradientArray[0].position = parseFloat(colorPosition1.value/100);
+        gradientArray[1].color = color2.value;
+        gradientArray[1].position = parseFloat(colorPosition2.value/100);
+        gradientArray[2].color = color3.value;
+        gradientArray[2].position = parseFloat(colorPosition3.value/100);
+    }
+}
 
-    console.log("save gradient array ",gradientArray);
-    // gradientArray.color1 = color1.value;
-    // gradientArray.color2 = color2.value;
-    // gradientArray.color3 = color3.value;
-    // gradientArray.colorPosition1 = colorPosition1.value;
-    // gradientArray.colorPosition2= colorPosition2.value;
-    // gradientArray.colorPosition3 = colorPosition3.value;
-    // 
-    // gradientInfo.colorPosition2 = colorPosition2.value;
-    // gradientInfo.colorPosition3 = colorPosition3.value;
-    // gradientInfo.color1 = color1.value;
-    // gradientInfo.color2 = color2.value;
-    // gradientInfo.color3 = color3.value;
-    // gradientInfo.colorPosition1 = colorPosition1.value;
-    // gradientInfo.colorPosition2 = colorPosition2.value;
-    // gradientInfo.colorPosition3 = colorPosition3.value;
+function updateGradientArray(){
+    gradientArray[0].color = color1.value;
+    gradientArray[0].position = parseFloat(colorPosition1.value/100);
+    gradientArray[1].color = color2.value;
+    gradientArray[1].position = parseFloat(colorPosition2.value/100);
+    gradientArray[2].color = color3.value;
+    gradientArray[2].position = parseFloat(colorPosition3.value/100);
+
 }
 
 function loadPreset(){
@@ -561,6 +589,7 @@ function savePreset(){
     // presetInfo.desaturation = desaturation.value;
     // presetInfo.gradientInfo = gradientInfo;
     saveGradient();
+     presetInfo.gradientArray = gradientArray;
     presetInfo.fontSize = fontSize.value;
     presetInfo.fontFamily = fontFamily;
     presetInfo.lineHeight = lineHeight.value;
@@ -606,7 +635,7 @@ function loadPresetFromFile(file){
         presetInfo.contrastEle = data.contrastEle;
         // presetInfo.desaturate = data.desaturate;
         presetInfo.inverseEle = data.inverseEle;
-        presetInfo.gradientInfo = data.gradientInfo;
+        // presetInfo.gradientInfo = data.gradientInfo;
         presetInfo.gradientArray = data.gradientArray;
         presetInfo.fontSize = data.fontSize;
         presetInfo.fontFamily = data.fontFamily;
