@@ -505,9 +505,7 @@ function loadPreset(){
     contrastEle.value = presetInfo.contrastEle;
     // desaturation.value = presetInfo.desaturation;
     gradientInfo = presetInfo.gradientInfo;
-    loadGradient();
-    updateGradient();
-    updatePreset();
+  
     brightnessValue.innerHTML = presetInfo.brightnessEle;
     contrastValue.innerHTML = presetInfo.contrastEle;
     // desaturationValue.innerHTML = presetInfo.desaturation;
@@ -516,6 +514,10 @@ function loadPreset(){
     lineHeight.value = presetInfo.lineHeight;
     charWidth.value = presetInfo.charWidth;
     charsetSelector.value = presetInfo.charset;
+    loadGradient();
+    updateGradient();
+    updatePreset();
+
 }
 
 function savePreset(){
@@ -620,8 +622,8 @@ presetFileInput.addEventListener('change', function() {
     }
 });
 
-
 function calculateAsciiDimensionsForImageSize(pixelWidth, pixelHeight, charPixelWidth, charPixelHeight) {
+    ///1260 width and 800 height
     if(charPixelHeight!=0 && charPixelWidth!=0){
     const asciiWidth = Math.ceil(pixelWidth / charPixelWidth);
     const asciiHeight = Math.ceil(pixelHeight / charPixelHeight);
