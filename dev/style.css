@@ -45,7 +45,6 @@ p{
     max-width: 40vw;
 }
 
-
 #image-import{
     overflow-y: scroll;
     overflow-x: hidden; /* Prevents horizontal scrolling */
