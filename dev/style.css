@@ -46,6 +46,10 @@ p{
 }
 
 
+#image-import{
+    overflow-y: scroll;
+    overflow-x: hidden; /* Prevents horizontal scrolling */
+}
 #image-container{
     flex: 0 1 90%;
     width: 70vw;
@@ -57,12 +61,14 @@ p{
     overflow-y: scroll;
     overflow-x: hidden; /* Prevents horizontal scrolling */
     max-height: 100vh;
+    
 }
 
 
 #processed-image{
     max-width: 70%;
     height: auto;
+    
 }
 
 .sliderContainer{
