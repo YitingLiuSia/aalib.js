@@ -29,6 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 // data.desaturate, 
                 data.brightnessEle, 
                 data.contrastEle, 
+                data.gradientArray,
                 // data.desaturation, 
                 data.gradientInfo, 
                 data.fontSize, 
@@ -165,14 +166,12 @@ function loadImageFromURL(img, isCanvas){
     const asciiDimensions = calculateAsciiDimensionsForImageSize(img.width, img.height, charWidth.value, charWidth.value);
     console.log('Required ASCII Dimensions:', asciiDimensions);
     console.log("image size is ", img.width, img.height);
+    // const aspectRatio = img.width / img.height;
+    // const aaHeight = 165; // Height for ASCII art
+    // const aaWidth = Math.round(aaHeight * aspectRatio); // Maintain aspect ratio for ASCII art width
     const aaReq = { width: asciiDimensions.width, height: asciiDimensions.height, colored: false };
-    // Example gradient stops
-    gradient = gradientCanvasCTX.createLinearGradient(0, 0, img.width, 0);
-    gradient.addColorStop(colorPosition1.value/100, color1.value);
-    gradient.addColorStop(colorPosition2.value/100, color2.value);
-    gradient.addColorStop(colorPosition3.value/100, color3.value);
- 
-    console.log("gradient is ",gradient);
+
+   console.log("gradient array is ",presetInfo.gradientArray);
     const canvasOptions = {
         fontSize: fontSize.value,
         fontFamily: presetInfo.fontFamily,
@@ -182,7 +181,8 @@ function loadImageFromURL(img, isCanvas){
         width: img.width,  // Use original image width for canvas
         height: img.height, // Use original image height for canvas
         background: "rgba(0,0,0,0)",
-        color: gradient
+        // color: gradientArray,
+        gradient: gradientArray
     };
 
     let imageProcessingPipeline = aalib.read.image.fromURL(img.src);
@@ -290,24 +290,33 @@ function handleImageInputChange(event) {
 document.getElementById('imageInput').addEventListener('change', handleImageInputChange);
 // gradient
 class GradientInfo {
-    constructor(color1, color2, color3, colorPosition1, colorPosition2, colorPosition3) {
-        this.color1 = color1;
-        this.color2 = color2;
-        this.color3 = color3;
-        this.colorPosition1 = colorPosition1;
-        this.colorPosition2 = colorPosition2;
-        this.colorPosition3 = colorPosition3;
-    }
+    // constructor(gradientArray) {
+    //     this.gradientArray = gradientArray;
+    // }
+    // constructor(color1, color2, color3, colorPosition1, colorPosition2, colorPosition3) {
+    //     this.color1 = color1;
+    //     this.color2 = color2;
+    //     this.color3 = color3;
+    //     this.colorPosition1 = colorPosition1;
+    //     this.colorPosition2 = colorPosition2;
+    //     this.colorPosition3 = colorPosition3;
+    // }
 }
+let gradientArray = [
+    { color: 'red', position: 0.2 },  // Position at 20%
+    { color: 'blue', position: 0.8 },  // Position at 80%
+    { color: 'green', position: 1.0 }   // Position at 100%
+]
 
 class PresetInfo {
-    constructor(inverseEle, brightnessEle, contrastEle, gradientInfo, fontSize, fontFamily, lineHeight,charWidth, charset) {
+    constructor(inverseEle, brightnessEle, contrastEle, gradientInfo, gradientArray, fontSize, fontFamily, lineHeight,charWidth, charset) {
         this.inverseEle = inverseEle;
         // this.desaturate = desaturate;
         this.brightnessEle = brightnessEle;
         this.contrastEle = contrastEle;
         // this.desaturation = desaturation;
-        this.gradientInfo = gradientInfo;
+        // this.gradientInfo = gradientInfo;
+        this.gradientArray = gradientArray;
         this.fontSize = fontSize;
         this.fontFamily = fontFamily;
         this.lineHeight = lineHeight;
@@ -472,29 +481,53 @@ function updatePreset(){
         console.log("charset selector value is ",charsetSelector.value)
         charsetSelector.value = presetInfo.charset;
     }
-    if(gradientInfo!=presetInfo.gradientInfo){
-        gradientInfo = presetInfo.gradientInfo;
+
+    if(gradientArray!=presetInfo.gradientArray){
+        gradientArray = presetInfo.gradientArray;
     }
+
+    // if(gradientInfo!=presetInfo.gradientInfo){
+    //     gradientInfo = presetInfo.gradientInfo;
+    // }
     console.log("preset info is ", presetInfo);
 }
 
 function loadGradient(){
-    console.log("load gradient");
-    colorPosition1.value = gradientInfo.colorPosition1;
-    colorPosition2.value = gradientInfo.colorPosition2;
-    colorPosition3.value = gradientInfo.colorPosition3;
-    color1.value = gradientInfo.color1;
-    color2.value = gradientInfo.color2;
-    color3.value = gradientInfo.color3;
+    console.log("load gradient from ",gradientArray);
+    console.log("load gradient from ",presetInfo.gradientArray);
+    // colorPosition1.value = gradientArray.colorPosition1;
+    // color1.value = gradientArray.color1; 
+    // colorPosition2.value = gradientArray.colorPosition2;
+    // color2.value = gradientArray.color2; 
+    // colorPosition3.value = gradientArray.colorPosition3;
+    // color3.value = gradientArray.color3; 
+
+    // colorPosition1.value = gradientInfo.colorPosition1;
+    // colorPosition2.value = gradientInfo.colorPosition2;
+    // colorPosition3.value = gradientInfo.colorPosition3;
+    // color1.value = gradientInfo.color1;
+    // color2.value = gradientInfo.color2;
+    // color3.value = gradientInfo.color3;
 }
 
 function saveGradient() {
-    gradientInfo.color1 = color1.value;
-    gradientInfo.color2 = color2.value;
-    gradientInfo.color3 = color3.value;
-    gradientInfo.colorPosition1 = colorPosition1.value;
-    gradientInfo.colorPosition2 = colorPosition2.value;
-    gradientInfo.colorPosition3 = colorPosition3.value;
+
+    console.log("save gradient array ",gradientArray);
+    // gradientArray.color1 = color1.value;
+    // gradientArray.color2 = color2.value;
+    // gradientArray.color3 = color3.value;
+    // gradientArray.colorPosition1 = colorPosition1.value;
+    // gradientArray.colorPosition2= colorPosition2.value;
+    // gradientArray.colorPosition3 = colorPosition3.value;
+    // 
+    // gradientInfo.colorPosition2 = colorPosition2.value;
+    // gradientInfo.colorPosition3 = colorPosition3.value;
+    // gradientInfo.color1 = color1.value;
+    // gradientInfo.color2 = color2.value;
+    // gradientInfo.color3 = color3.value;
+    // gradientInfo.colorPosition1 = colorPosition1.value;
+    // gradientInfo.colorPosition2 = colorPosition2.value;
+    // gradientInfo.colorPosition3 = colorPosition3.value;
 }
 
 function loadPreset(){
@@ -504,8 +537,11 @@ function loadPreset(){
     brightnessEle.value = presetInfo.brightnessEle;
     contrastEle.value = presetInfo.contrastEle;
     // desaturation.value = presetInfo.desaturation;
-    gradientInfo = presetInfo.gradientInfo;
-  
+    // gradientInfo = presetInfo.gradientInfo;
+    gradientArray = presetInfo.gradientArray;
+    loadGradient();
+    updateGradient();
+    updatePreset();
     brightnessValue.innerHTML = presetInfo.brightnessEle;
     contrastValue.innerHTML = presetInfo.contrastEle;
     // desaturationValue.innerHTML = presetInfo.desaturation;
@@ -514,10 +550,6 @@ function loadPreset(){
     lineHeight.value = presetInfo.lineHeight;
     charWidth.value = presetInfo.charWidth;
     charsetSelector.value = presetInfo.charset;
-    loadGradient();
-    updateGradient();
-    updatePreset();
-
 }
 
 function savePreset(){
@@ -527,7 +559,7 @@ function savePreset(){
     presetInfo.brightnessEle = brightnessEle.value;
     presetInfo.contrastEle = contrastEle.value;
     // presetInfo.desaturation = desaturation.value;
-    presetInfo.gradientInfo = gradientInfo;
+    // presetInfo.gradientInfo = gradientInfo;
     saveGradient();
     presetInfo.fontSize = fontSize.value;
     presetInfo.fontFamily = fontFamily;
@@ -575,6 +607,7 @@ function loadPresetFromFile(file){
         // presetInfo.desaturate = data.desaturate;
         presetInfo.inverseEle = data.inverseEle;
         presetInfo.gradientInfo = data.gradientInfo;
+        presetInfo.gradientArray = data.gradientArray;
         presetInfo.fontSize = data.fontSize;
         presetInfo.fontFamily = data.fontFamily;
         presetInfo.lineHeight = data.lineHeight;
@@ -622,8 +655,8 @@ presetFileInput.addEventListener('change', function() {
     }
 });
 
+
 function calculateAsciiDimensionsForImageSize(pixelWidth, pixelHeight, charPixelWidth, charPixelHeight) {
-    ///1260 width and 800 height
     if(charPixelHeight!=0 && charPixelWidth!=0){
     const asciiWidth = Math.ceil(pixelWidth / charPixelWidth);
     const asciiHeight = Math.ceil(pixelHeight / charPixelHeight);
