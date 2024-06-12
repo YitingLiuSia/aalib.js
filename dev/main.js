@@ -74,89 +74,88 @@ imageDropdown.onchange = function(){
     console.log("iscanvas", isCanvas);
 }
 
-//let videoCanvasElement = document.getElementById('video-scene');
-// let mediaRecorder;
-// let recordedChunks = [];
-// setupMediaRecorder(videoCanvasElement);
-// document.getElementById('startRecording').addEventListener('click', startRecording);
-// document.getElementById('stopAndDownload').addEventListener('click', stopRecording);
-// video input 
-// function setupMediaRecorder(canvas) {
-//     const stream = canvas.captureStream(25); // Capture at 25 fps
-//     mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm; codecs=vp9' });
+let videoCanvasElement = document.getElementById('video-scene');
+let mediaRecorder;
+let recordedChunks = [];
+setupMediaRecorder(videoCanvasElement);
+document.getElementById('startRecording').addEventListener('click', startRecording);
+document.getElementById('stopAndDownload').addEventListener('click', stopRecording);
+function setupMediaRecorder(canvas) {
+    const stream = canvas.captureStream(25); // Capture at 25 fps
+    mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm; codecs=vp9' });
 
-//     mediaRecorder.ondataavailable = function (event) {
-//         if (event.data.size > 0) {
-//             recordedChunks.push(event.data);
-//         }
-//     };
+    mediaRecorder.ondataavailable = function (event) {
+        if (event.data.size > 0) {
+            recordedChunks.push(event.data);
+        }
+    };
 
-//     mediaRecorder.onstop = function () {
-//         const blob = new Blob(recordedChunks, {
-//             type: 'video/mp4'
-//         });
-//         const url = URL.createObjectURL(blob);
-//         const a = document.createElement('a');
-//         a.style.display = 'none';
-//         a.href = url;
-//         a.download = 'downloaded_video.mp4';
-//         document.body.appendChild(a);
-//         a.click();
-//         window.URL.revokeObjectURL(url);
-//         document.body.removeChild(a);
-//         recordedChunks = []; // Clear the recorded chunks
-//     };
-// } 
+    mediaRecorder.onstop = function () {
+        const blob = new Blob(recordedChunks, {
+            type: 'video/mp4'
+        });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.style.display = 'none';
+        a.href = url;
+        a.download = 'downloaded_video.mp4';
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+        recordedChunks = []; // Clear the recorded chunks
+    };
+} 
 
-// function startRecording() {
-//     mediaRecorder.start();
-//     console.log("Recording started");
-// }
+function startRecording() {
+    mediaRecorder.start();
+    console.log("Recording started");
+}
 
-// function stopRecording() {
-//     mediaRecorder.stop();
-//     console.log("Recording stopped");
-// }
+function stopRecording() {
+    mediaRecorder.stop();
+    console.log("Recording stopped");
+}
 
-// function fromVideoFile(file) {
-//     return new Promise((resolve, reject) => {
-//         const video = document.createElement('video');
-//         console.log("url ", URL.createObjectURL(file));
-//         video.src = URL.createObjectURL(file);
-//         video.controls = true;  // Add controls so users can play/pause
-//         video.autoplay = true;  // Set autoplay to true to start playing automatically
-//         video.muted = true;     // Mute the video to allow autoplay in most browsers
-//         video.loop = true;      // Optional: Loop the video
-//         video.onloadedmetadata = () => {
-//             document.getElementById('video-container').appendChild(video);  // Append to a specific container
-//             resolve(video);
-//         };
-//         video.onerror = () => {
-//             reject(new Error("Failed to load video"));
-//         };
-//     });
-// }
+function fromVideoFile(file) {
+    return new Promise((resolve, reject) => {
+        const video = document.createElement('video');
+        console.log("url ", URL.createObjectURL(file));
+        video.src = URL.createObjectURL(file);
+        video.controls = true;  // Add controls so users can play/pause
+        video.autoplay = true;  // Set autoplay to true to start playing automatically
+        video.muted = true;     // Mute the video to allow autoplay in most browsers
+        video.loop = true;      // Optional: Loop the video
+        video.onloadedmetadata = () => {
+            document.getElementById('video-container').appendChild(video);  // Append to a specific container
+            resolve(video);
+        };
+        video.onerror = () => {
+            reject(new Error("Failed to load video"));
+        };
+    });
+}
 
 // // video input 
-// document.getElementById('videoInput').addEventListener('change', function (event) {
-//     const file = event.target.files[0];
-//     if (file) {
-//         fromVideoFile(file).then(video => {
-//             console.log("video", video);
-//             aalib.read.video.fromVideoElement(video)
-//                 .map(aalib.aa({ width: 165, height: 68 }))
-//                 .map(aalib.render.canvas({
-//                     width: video.width,//696,
-//                     height: video.height,//476,
-//                     fontFamily: `"${presetInfo.fontFamily}", sans-serif`,
-//                     el: document.querySelector("#video-scene")
-//                 }))
-//                 .subscribe();
-//         }).catch(error => {
-//             console.error("Error loading video:", error);
-//         });
-//     }
-// });
+document.getElementById('videoInput').addEventListener('change', function (event) {
+    const file = event.target.files[0];
+    if (file) {
+        fromVideoFile(file).then(video => {
+            console.log("video", video);
+            aalib.read.video.fromVideoElement(video)
+                .map(aalib.aa({ width: 165, height: 68 }))
+                .map(aalib.render.canvas({
+                    width: video.width,//696,
+                    height: video.height,//476,
+                    fontFamily: `"${presetInfo.fontFamily}", sans-serif`,
+                    el: document.querySelector("#video-scene")
+                }))
+                .subscribe();
+        }).catch(error => {
+            console.error("Error loading video:", error);
+        });
+    }
+});
 
 
 function downloadImageWithRatio(){
@@ -339,7 +338,6 @@ let color3 = document.getElementById('color3');
 let colorPosition1 = document.getElementById('position1');
 let colorPosition2 = document.getElementById('position2');
 let colorPosition3 = document.getElementById('position3');
-let saveGradientButton = document.getElementById("save-gradient");
 let gradientInfo = new GradientInfo();
 let presetInfo = new PresetInfo();
 color1.onchange = updateGradient;
@@ -585,20 +583,6 @@ function savePresetToFile(){
     console.log("Preset saved to file.");
 }
 
-// function saveGradientToFile() {
-//     saveGradient();
-//     const gradientData = JSON.stringify(gradientInfo);
-//     const blob = new Blob([gradientData], { type: 'application/json'});
-//     const url = URL.createObjectURL(blob);
-//     const link = document.createElement('a');
-//     link.href = url;
-//     link.download = 'gradientInfo.json';
-//     document.body.appendChild(link);
-//     link.click();
-//     document.body.removeChild(link);
-//     console.log("Gradient saved to file.");
-// }
-
 // needs to update in the preset info values as well - UI 
 function loadPresetFromFile(file){
     const reader = new FileReader();
@@ -620,33 +604,6 @@ function loadPresetFromFile(file){
     }
     reader.readAsText(file);
 }
-
-// function loadGradientFromFile(file) {
-//     const reader = new FileReader();
-//     reader.onload = function(event) {
-//         const data = JSON.parse(event.target.result);
-//         gradientInfo.color1 = data.color1;
-//         gradientInfo.color2 = data.color2;
-//         gradientInfo.color3 = data.color3;
-//         gradientInfo.colorPosition1 = data.colorPosition1;
-//         gradientInfo.colorPosition2 = data.colorPosition2;
-//         gradientInfo.colorPosition3 = data.colorPosition3;
-//         loadGradient();
-//         updateGradient();
-//         console.log("Gradient loaded from file.");
-//     };
-//     reader.readAsText(file);
-// }
-
-// const fileInput = document.getElementById('gradient-file-input');
-// fileInput.type = 'file';
-// fileInput.addEventListener('change', function() {
-//     if (this.files && this.files[0]) {
-//         console.log("file", this.files[0]);
-//         loadGradientFromFile(this.files[0]);
-//     }
-// });
-
 const presetFileInput = document.getElementById('load-preset');
 presetFileInput.type = 'file';
 
