@@ -20,8 +20,15 @@ body{
     display: flex;
     justify-content: space-between; /* Aligns children to each side of the container */
     overflow: hidden;
-   height: 100vh;
+    height: 100vh;
+    margin: 0 auto;
 }
+
+h2,h3{
+
+    font-size: 18px;
+}
+
 
 #gradient-canvas {
     border: 1px solid white;
@@ -41,13 +48,13 @@ p{
 }
 
 #preset-container{
-    background-color:rgb(224, 212, 189);
+    background-color:#9FF3F0;
     padding: 20px;
     margin: 0 auto;
     display: block;
     overflow-y: scroll;
     overflow-x: hidden; /* Prevents horizontal scrolling */
-    max-height: 95vh;
+    max-height: 100vh;
     max-width: 40vw;
 }
 
@@ -96,8 +103,12 @@ p{
     justify-content: space-between;
 }
 
+hr{
+    border-color: #0A151E;
+}
 .sliderValue{
-    font-weight: bold;
+    font-weight: regular;
+    font-size: smaller;
 }
 /* Base styles for form elements */
 input, select, button {
@@ -136,8 +147,8 @@ input[type="file"] {
 
 /* Styling for buttons */
 button {
-    background-color: #007BFF; /* A pleasant blue */
-    color: white; /* White text */
+    background-color: #00DECC; /* A pleasant blue */
+    color: 0A151E; /* White text */
     border: none; /* No border */
     cursor: pointer; /* Pointer cursor on hover */
     transition: background-color 0.3s; /* Smooth transition for hover effect */

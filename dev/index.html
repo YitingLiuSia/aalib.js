@@ -15,14 +15,16 @@
         <h2>Preset</h2>
         <div class="sliderContainer">
             <input type="file" id="load-preset" accept="application/json">
-       <button id="save-preset">Save Preset</button>
+       <button id="save-preset">Save preset</button>
     </div>
+    <hr>
 
     <h3>Filters</h3>
     <div class="sliderContainer">
         <p style="margin-bottom: 5px;">Inverse</p>
         <input id="inverse" type="checkbox" >
     </div>
+
     <!-- <div><span>Desaturate</span>
         <input id="desaturate" type="checkbox" >
     </div> -->
@@ -53,6 +55,7 @@
             class="myRange"><span class="max">1</span>
             value: <span class="sliderValue">0.5</span>
     </div> -->
+    <hr>
 
     <div class="gradient-container">
         <h3>Gradient</h3>
@@ -75,10 +78,11 @@
             </div>
         </div>
     </div>
+    <hr>
 
-        <h3>Font Selection</h3>
+        <h3>Font selection</h3>
         <div class="sliderContainer" >
-            <p style="margin: 0;">Font Family</p>
+            <p style="margin: 0;">Font family</p>
             <select id="font-dropdown" >
                 <option value="monospace" style="font-family: monospace;">Monospace</option>
                 <option value="Sora" style="font-family: 'Sora';">Sora</option>
@@ -88,17 +92,17 @@
         </div>  
 
         <div class="sliderContainer">
-            <p>Font Size</p>
+            <p>Font size</p>
             <input id="fontSize" type="number"  value="">
         </div>
        
         <div class="sliderContainer">
-            <p>Line Height</p>
+            <p>Line height</p>
             <input id="lineHeight" type="number"  value="">
         </div>
 
         <div class="sliderContainer">
-            <p>Character Width</p>
+            <p>Character width</p>
             <input id="charWidth" type="number"  value="">
         </div>
 
@@ -127,8 +131,8 @@
     </div> -->
 </div>
     <div class="container" class="import-container" id="image-import">
-        <h2>Import Image</h2>
-        <p>Image Settings</p>
+        <h2>Import image</h2>
+        <p>Image settings</p>
         <div id="generated-image"></div>
         <input type="file" id="imageInput" accept="image/*">
         <select id="image-dropdown">
@@ -136,11 +140,11 @@
             <option value="html">HTML</option>
         </select>
         <div id="image-container">
-        <p>Image Export</p>
+        <p>Image export</p>
         <div id="slidercontainer">
             <!-- make it as a dropdown of size change -->
             <input type="number" id="imageRatio" value="1" max="5" min="1">
-            <button id="save-image">Save Image</button>
+            <button id="save-image">Save image</button>
         </div>
         <img id="imported-image"> </img>
         <img id="processed-image"> </img>
