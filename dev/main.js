@@ -158,29 +158,43 @@ imageDropdown.onchange = function(){
 //     }
 // });
 
+
+function downloadImageWithRatio(){
+    console.log("downloadImageWithRatio is ",currentImageRatio);
+    // loadImageFromURL(currentImage,true);
+    let canvas = document.getElementById('processed-image');
+    let dataUrl = canvas.toDataURL('image/png');
+    let link = document.createElement('a');
+    link.href=dataUrl;
+    link.download = 'image.png';
+    link.click();
+}
+
 // image input 
 // image size is the same, but the ascii squished the size 
 // the image is not resized proprtionally but it is closer {"inverseEle":true,"brightnessEle":"1.3","contrastEle":"1.2","gradientInfo":{"color1":"#b0d4fc","color2":"#ffccdb","color3":"#ffe2cc","colorPosition1":"20","colorPosition2":"80","colorPosition3":"100"},"fontSize":"5","fontFamily":"Sora","lineHeight":"4","charWidth":"4","charset":"ASCII"}
 function loadImageFromURL(img, isCanvas){
-    const asciiDimensions = calculateAsciiDimensionsForImageSize(img.width, img.height, charWidth.value, charWidth.value);
+    const imageWidth = imageRatio.value * img.width; 
+    const imageHeight = imageRatio.value * img.height;
+    const asciiDimensions = calculateAsciiDimensionsForImageSize(imageWidth, imageHeight, charWidth.value, charWidth.value);
     console.log('Required ASCII Dimensions:', asciiDimensions);
-    console.log("image size is ", img.width, img.height);
+    console.log("image size is ", imageWidth, imageHeight);
     const aaReq = { width: asciiDimensions.width, height: asciiDimensions.height, colored: false };
     // Example gradient stops
-    gradient = gradientCanvasCTX.createLinearGradient(0, 0, img.width, 0);
+    gradient = gradientCanvasCTX.createLinearGradient(0, 0, imageWidth, 0);
     gradient.addColorStop(colorPosition1.value/100, color1.value);
     gradient.addColorStop(colorPosition2.value/100, color2.value);
     gradient.addColorStop(colorPosition3.value/100, color3.value);
  
-    console.log("gradient is ",gradient);
+    // console.log("gradient is ",gradient);
     const canvasOptions = {
         fontSize: fontSize.value,
         fontFamily: presetInfo.fontFamily,
         lineHeight: lineHeight.value,
         charWidth: charWidth.value,
         charset: presetInfo.charset,
-        width: img.width,  // Use original image width for canvas
-        height: img.height, // Use original image height for canvas
+        width: imageWidth,  // Use original image width for canvas
+        height: imageHeight, // Use original image height for canvas
         background: "rgba(0,0,0,0)",
         color: gradient
     };
@@ -352,6 +366,20 @@ let brightnessEle = document.getElementById("brightness");
 let contrastEle = document.getElementById("contrast");
 let brightnessValue = brightnessEle.nextElementSibling.querySelector(".sliderValue");
 let contrastValue = contrastEle.nextElementSibling.querySelector(".sliderValue");
+let imageRatio = document.getElementById("imageRatio");
+let saveImageButton = document.getElementById("save-image");
+saveImageButton.onclick = downloadImageWithRatio;
+
+let currentImageRatio = 1;
+
+imageRatio.oninput=(e)=>{
+    
+    imageRatio.value = e.target.value;
+    currentImageRatio = imageRatio.value;
+    console.log("current image ratio is ", currentImageRatio);
+    updateImage("imageRatio");
+}
+
 
 // let desaturationValue = desaturation.parentElement.querySelector(".sliderValue");
 fontSize.oninput = (e) => {

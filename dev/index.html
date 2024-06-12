@@ -83,17 +83,17 @@
 
         <div class="sliderContainer">
             <p>Font Size</p>
-            <input id="fontSize" type="number" id="textInput" value="">
+            <input id="fontSize" type="number"  value="">
         </div>
        
         <div class="sliderContainer">
             <p>Line Height</p>
-            <input id="lineHeight" type="number" id="textInput" value="">
+            <input id="lineHeight" type="number"  value="">
         </div>
 
         <div class="sliderContainer">
             <p>Character Width</p>
-            <input id="charWidth" type="number" id="textInput" value="">
+            <input id="charWidth" type="number"  value="">
         </div>
 
         <div class="sliderContainer">
@@ -130,6 +130,11 @@
             <option value="html">HTML</option>
         </select>
         <div id="image-container">
+        <p>Image Ratio</p>
+        <div id="slidercontainer">
+            <input type="number" id="imageRatio" value="1" max="5" min="1">
+            <button id="save-image">Save Image</button>
+        </div>
         <img id="imported-image"> </img>
         <img id="processed-image"> </img>
     </div>
