@@ -161,7 +161,6 @@ imageDropdown.onchange = function(){
 
 function downloadImageWithRatio(){
     console.log("downloadImageWithRatio is ",currentImageRatio);
-    // loadImageFromURL(currentImage,true);
     let canvas = document.getElementById('processed-image');
     let dataUrl = canvas.toDataURL('image/png');
     let link = document.createElement('a');
@@ -186,7 +185,6 @@ function loadImageFromURL(img, isCanvas){
     gradient.addColorStop(colorPosition1.value/100, color1.value);
     gradient.addColorStop(colorPosition2.value/100, color2.value);
     gradient.addColorStop(colorPosition3.value/100, color3.value);
- 
     // console.log("gradient is ",gradient);
     const canvasOptions = {
         fontSize: fontSize.value,
@@ -225,8 +223,7 @@ function loadImageFromURL(img, isCanvas){
         // }]
 
          // imageProcessingPipeline = imageProcessingPipeline.map(aalib.filter.desaturate(1));
-          imageProcessingPipeline = imageProcessingPipeline.map(aalib.aa(aaReq));
-
+        imageProcessingPipeline = imageProcessingPipeline.map(aalib.aa(aaReq));
 
         if (isCanvas) {
         imageProcessingPipeline.map(aalib.render.canvas(canvasOptions))
@@ -345,7 +342,6 @@ let colorPosition3 = document.getElementById('position3');
 let saveGradientButton = document.getElementById("save-gradient");
 let gradientInfo = new GradientInfo();
 let presetInfo = new PresetInfo();
-let fontFamily = "monospace";//"Sora";
 color1.onchange = updateGradient;
 color2.onchange = updateGradient;
 color3.onchange = updateGradient;
@@ -374,14 +370,24 @@ saveImageButton.onclick = downloadImageWithRatio;
 let currentImageRatio = 1;
 
 imageRatio.oninput=(e)=>{
-    
     imageRatio.value = e.target.value;
     currentImageRatio = imageRatio.value;
     console.log("current image ratio is ", currentImageRatio);
     updateImage("imageRatio");
 }
+window.onload = function() {
+    charsetSelector.value = presetInfo.charset;
+    presetInfo.fontFamily = fontDropdown.value;     
+    console.log("Charset selector initialized ",fontDropdown.value);
 
+    //updateImage("chartset");
 
+}
+fontDropdown.onchange=(e)=>{
+    console.log("font dropdown ",e.target.value);
+ 
+    presetInfo.fontFamily = e.target.value;
+}
 // let desaturationValue = desaturation.parentElement.querySelector(".sliderValue");
 fontSize.oninput = (e) => {
     fontSize.value = e.target.value;
@@ -419,13 +425,6 @@ inverseEle.onchange = (e) => {
 //     presetInfo.desaturate = e.target.checked;
 //     updateImage("desaturate");
 // }
-
-fontDropdown.onchange = (e) => {
-    presetInfo.fontFamily =e.target.value;
-    console.log("preset info font family is ",presetInfo.fontFamily);
-    updateImage("fontFamily");
-    // apply font in the text for the image and video reader 
-};
 
 
 charsetSelector.onchange=(e)=>{
@@ -476,7 +475,6 @@ function updatePreset(){
     if(contrastEle.value!=presetInfo.contrastEle){
         contrastEle.value = presetInfo.contrastEle;
     }
-   
     // if(desaturation.value!=presetInfo.desaturation){
     //     desaturation.value = presetInfo.desaturation;
     // }
@@ -486,9 +484,8 @@ function updatePreset(){
     if(fontSize.value!=presetInfo.fontSize){
         fontSize.value = presetInfo.fontSize;
     }
-    if(fontFamily!=presetInfo.fontFamily){
-        fontFamily = presetInfo.fontFamily;
-        fontDropdown.value = fontFamily;
+    if( fontDropdown.value!=presetInfo.fontFamily){
+        fontDropdown.value = presetInfo.fontFamily;
 
     }
     if(lineHeight.value!=presetInfo.lineHeight){
@@ -498,9 +495,16 @@ function updatePreset(){
         charWidth.value = presetInfo.charWidth;
     }
     if(charsetSelector.value!=presetInfo.charset){
-        console.log("charset selector value is ",charsetSelector.value)
-        charsetSelector.value = presetInfo.charset;
+        // charsetSelector.value = presetInfo.charset;
+        if(presetInfo.charset.contains("SIA/")){
+            charsetSelector.target.value = "SIA/";
+        }else{
+            charsetSelector.target.value = "ASCII";
+        }
+
     }
+    console.log("UPADTE Charset selector value is ",charsetSelector.value);
+
     if(gradientInfo!=presetInfo.gradientInfo){
         gradientInfo = presetInfo.gradientInfo;
     }
@@ -534,15 +538,17 @@ function loadPreset(){
     contrastEle.value = presetInfo.contrastEle;
     // desaturation.value = presetInfo.desaturation;
     gradientInfo = presetInfo.gradientInfo;
-  
     brightnessValue.innerHTML = presetInfo.brightnessEle;
     contrastValue.innerHTML = presetInfo.contrastEle;
     // desaturationValue.innerHTML = presetInfo.desaturation;
     fontSize.value = presetInfo.fontSize;
-    fontFamily = presetInfo.fontFamily;
+    fontDropdown.value = presetInfo.fontFamily;
     lineHeight.value = presetInfo.lineHeight;
     charWidth.value = presetInfo.charWidth;
+    console.log("charsetSelector value ", charsetSelector.value);
     charsetSelector.value = presetInfo.charset;
+  
+    console.log("presetInfo charset ", presetInfo.charset);
     loadGradient();
     updateGradient();
     updatePreset();
@@ -559,7 +565,7 @@ function savePreset(){
     presetInfo.gradientInfo = gradientInfo;
     saveGradient();
     presetInfo.fontSize = fontSize.value;
-    presetInfo.fontFamily = fontFamily;
+    presetInfo.fontFamily = fontDropdown.value;
     presetInfo.lineHeight = lineHeight.value;
     presetInfo.charWidth = charWidth.value;
     presetInfo.charset = charsetSelector.value;
