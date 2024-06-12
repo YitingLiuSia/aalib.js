@@ -176,10 +176,11 @@ function downloadImageWithRatio(){
 function loadImageFromURL(img, isCanvas){
     const imageWidth = imageRatio.value * img.width; 
     const imageHeight = imageRatio.value * img.height;
-    const asciiDimensions = calculateAsciiDimensionsForImageSize(imageWidth, imageHeight, charWidth.value, charWidth.value);
+    const canvasRatio= 2; 
+    const asciiDimensions = calculateAsciiDimensionsForImageSize(imageWidth, imageHeight, charWidth.value * fontSize.value, charWidth.value *1260/800*lineHeight.value);
     console.log('Required ASCII Dimensions:', asciiDimensions);
     console.log("image size is ", imageWidth, imageHeight);
-    const aaReq = { width: asciiDimensions.width, height: asciiDimensions.height, colored: false };
+    const aaReq = { width: asciiDimensions.width *canvasRatio, height: asciiDimensions.height*canvasRatio, colored: false };
     // Example gradient stops
     gradient = gradientCanvasCTX.createLinearGradient(0, 0, imageWidth, 0);
     gradient.addColorStop(colorPosition1.value/100, color1.value);
