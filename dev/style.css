@@ -22,6 +22,9 @@ body{
     overflow: hidden;
     height: 100vh;
     margin: 0 auto;
+    scrollbar-color: #8796A9 #F4F6FC ; 
+    background-color: #173044;
+
 }
 h1{
     margin-top: 0;
@@ -42,14 +45,16 @@ h2,h3{
 
 p{
     font-size: small;
-  
 }
 
 
 .container{
     flex-direction: row;
     padding: 20px;
-    margin: 0 auto;}
+    margin: 0 auto;
+    background-color: white;
+
+}
 
 #preset-container{
     background-color:#173044;
@@ -62,6 +67,8 @@ p{
     max-height: 100vh;
     max-width: 40vw;
 }
+
+
 
 #image-import{
     overflow-y: scroll;
@@ -130,7 +137,10 @@ input, select, button {
     justify-content: center;
 
 }
+select option:active, select option:hover{
+    background-color: #00DECC;
 
+}
 input[type="checkbox"]{
     accent-color: #00DECC;
 }
@@ -172,7 +182,7 @@ button {
 }
 
 button:hover, button:focus {
-    background-color: #0056b3; /* Darker blue on hover/focus */
+    background-color: #9FF3F0; /* Darker blue on hover/focus */
 }
 
 /* Styling for dropdowns */
