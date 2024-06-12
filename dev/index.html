@@ -10,7 +10,9 @@
 </head>
 
 <body>
-    <div class = "container" id="preset-container"><h2>Preset</h2>
+    <div class = "container" id="preset-container">
+        <h1>Sia ASCII Generator</h1>
+        <h2>Preset</h2>
         <div class="sliderContainer">
             <input type="file" id="load-preset" accept="application/json">
        <button id="save-preset">Save Preset</button>
@@ -134,8 +136,9 @@
             <option value="html">HTML</option>
         </select>
         <div id="image-container">
-        <p>Image Ratio</p>
+        <p>Image Export</p>
         <div id="slidercontainer">
+            <!-- make it as a dropdown of size change -->
             <input type="number" id="imageRatio" value="1" max="5" min="1">
             <button id="save-image">Save Image</button>
         </div>

@@ -1,6 +1,10 @@
 @font-face {
     font-family: 'Sora';
-    src: url('../resources/sora-otf/Sora-Regular-mono.ttf') format('truetype');
+    src: url('../resources/sora-mono/Sora-Regular-mono.ttf') format('truetype');
+}
+@font-face {
+    font-family: 'SoraFont';
+    src: url('../resources/sora-ttf/Sora-Regular.ttf') format('truetype');
 }
 @font-face {
     font-family: 'Kode';
@@ -12,7 +16,7 @@
 }
 
 body{
-    font-family: 'Times New Roman', Times, serif;
+    font-family: 'SoraFont';
     display: flex;
     justify-content: space-between; /* Aligns children to each side of the container */
     overflow: hidden;
