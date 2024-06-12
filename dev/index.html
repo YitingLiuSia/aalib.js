@@ -13,7 +13,7 @@
     <div class = "container" id="preset-container">
         <h1>Sia ASCII Generator</h1>
         <h2>Preset</h2>
-        <div class="sliderContainer">
+        <div class="sliderContainer" style="margin-top: -10px;">
             <input type="file" id="load-preset" accept="application/json">
        <button id="save-preset">Save preset</button>
     </div>
@@ -21,7 +21,7 @@
 
     <h3>Filters</h3>
     <div class="sliderContainer">
-        <p style="margin-bottom: 5px;">Inverse</p>
+        <p style="margin-top: 0;">Inverse</p>
         <input id="inverse" type="checkbox" >
     </div>
 
@@ -29,7 +29,7 @@
         <input id="desaturate" type="checkbox" >
     </div> -->
     <div class="sliderContainer">
-            <p style="margin-bottom: 5px;">Brightness</p>
+            <p >Brightness</p>
             <input type="range" id="brightness" min="0" max="10" step="0.1" value="0.5" class="myRange">
             <div class="slider-values" >
                 <!-- <span class="min">0</span> -->
@@ -39,7 +39,7 @@
     </div>
 
     <div class="sliderContainer" >
-            <p style="margin-bottom: 5px;">Contrast</p>        
+            <p >Contrast</p>        
             <input type="range" id="contrast" min="0" max="1" step="0.1" value="0.5" class="myRange" >
             <div class="slider-values">
                 <!-- <span class="min">0</span> -->
@@ -63,24 +63,28 @@
         <div id="gradient-picker">
             <canvas id="gradient-canvas" ></canvas>
         </div>
+        <br>
         <div class="gradient-selection-container">
-            <div>
+            <div class="gradient-group">
                 <input type="color" id="color1" value="">
                 <input type="number" id="position1" min="0" max="100" value="20">
             </div>
-            <div>
+            <div class="gradient-group">
                 <input type="color" id="color2" value="">
                 <input type="number" id="position2" value="80">
             </div>
-            <div>
+            <div class="gradient-group">
                 <input type="color" id="color3" value="">
                 <input type="number" id="position3" value="100">
             </div>
         </div>
     </div>
+<!-- intentional spacer -->
+    <h3></h3> 
     <hr>
 
         <h3>Font selection</h3>
+        <div style="margin-top: -5px;">
         <div class="sliderContainer" >
             <p style="margin: 0;">Font family</p>
             <select id="font-dropdown" >
@@ -113,7 +117,7 @@
                 <option value="ASCII">ASCII</option>
             </select>
         </div>
-     
+    </div>
     </div>
         <!-- <button id="save-gradient">Save Gradient</button> -->
 

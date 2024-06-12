@@ -24,6 +24,7 @@ body{
     margin: 0 auto;
 }
 
+
 h2,h3{
 
     font-size: 18px;
@@ -34,21 +35,25 @@ h2,h3{
     border: 1px solid white;
     cursor: pointer;
     display: block;
-    margin: 0 auto;
+    /* margin: 0 auto; */
     width: 100%;
     height:80px;
 }
 
 p{
     font-size: small;
+  
 }
+
+
 .container{
     flex-direction: row;
     margin: 10px;
 }
 
 #preset-container{
-    background-color:#9FF3F0;
+    background-color:#173044;
+    color: white;
     padding: 20px;
     margin: 0 auto;
     display: block;
@@ -80,12 +85,12 @@ p{
 #processed-image{
     max-width: 70%;
     height: auto;
-    
 }
 
 .sliderContainer{
     text-align: left; 
     width: 100%;
+    margin-top: 0;
     display: flex; 
     justify-content: space-between; 
     align-items: center;
@@ -93,9 +98,13 @@ p{
 
 .gradient-selection-container{
    width: 95%;
-   margin: 0 auto;
    justify-content: center;
    align-items: center;
+}
+.gradient-group{
+    display: flex;
+    flex-direction: row;
+    max-height: 60px;
 }
 
 .slider-values{
@@ -104,7 +113,7 @@ p{
 }
 
 hr{
-    border-color: #0A151E;
+    border-color: #8796A9;
 }
 .sliderValue{
     font-weight: regular;
@@ -112,21 +121,37 @@ hr{
 }
 /* Base styles for form elements */
 input, select, button {
-    padding: 8px 12px; /* Adequate padding */
+    padding: 5px 4px; /* Adequate padding */
     margin: 5px; /* Spacing around elements */
     border: 1px solid #ccc; /* Subtle border */
     border-radius: 4px; /* Rounded corners */
     box-sizing: border-box; /* Includes padding and border in the element's total width and height */
     align-self: center;
     justify-content: center;
+
 }
 
+input[type="checkbox"]{
+    accent-color: #00DECC;
+}
 input[type="range"]{
+    accent-color: #00DECC;
+    /* opacity: 0.5; */
     width: 80%; 
     cursor: pointer;
 }
-input[type="color"]{
+input[type="range"]::-webkit-slider-runnable-track{
 
+}
+input[type="range"]::-webkit-slider-thumb{
+    color: red;
+
+}
+input[type="range"]::-moz-range-track{}
+input[type="range"]::-moz-range-thumb{}
+
+
+input[type="color"]{
     max-width: 200px; 
     padding: 0.5px;
 }
@@ -138,8 +163,8 @@ input[type="color"]{
 /* Smaller input sizes */
 input[type="text"],input[type="number"]{
     max-width: 70px; /* Restricting width for smaller inputs */
-}
 
+}
 
 input[type="file"] {
     max-width: 200px; /* Restricting width for smaller inputs */
@@ -148,7 +173,7 @@ input[type="file"] {
 /* Styling for buttons */
 button {
     background-color: #00DECC; /* A pleasant blue */
-    color: 0A151E; /* White text */
+    color: #0A151E; /* White text */
     border: none; /* No border */
     cursor: pointer; /* Pointer cursor on hover */
     transition: background-color 0.3s; /* Smooth transition for hover effect */
