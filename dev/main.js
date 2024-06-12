@@ -375,12 +375,12 @@ imageRatio.oninput=(e)=>{
     console.log("current image ratio is ", currentImageRatio);
     updateImage("imageRatio");
 }
+
 window.onload = function() {
     charsetSelector.value = presetInfo.charset;
     presetInfo.fontFamily = fontDropdown.value;     
     console.log("Charset selector initialized ",fontDropdown.value);
-
-    //updateImage("chartset");
+    updateImage("chartset");
 
 }
 fontDropdown.onchange=(e)=>{
