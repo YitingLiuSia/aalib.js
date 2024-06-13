@@ -84,9 +84,19 @@
     <h3></h3> 
     <hr>
 
+
         <h3>Font selection</h3>
         <div style="margin-top: -5px;">
-        <div class="sliderContainer" >
+            <div class="sliderContainer dropdown" id="font-dropdown">
+                <button class="dropbtn">Font family</button>
+                <div class="dropdown-content">
+                    <a href="#" data-value="monospace" style="font-family: monospace;">Monospace</a>
+                    <a href="#" data-value="Sora" style="font-family: 'Sora';">Sora</a>
+                    <a href="#" data-value="Kode" style="font-family: 'Kode';">Kode-Mono</a>
+                    <a href="#" data-value="OpenSans" style="font-family: 'Open-Sans';">Open-Sans</a>
+                </div>
+            </div>
+        <!-- <div class="sliderContainer" >
             <p style="margin: 0;">Font family</p>
             <select id="font-dropdown" >
                 <option value="monospace" style="font-family: monospace;">Monospace</option>
@@ -94,8 +104,17 @@
                 <option value="Kode" style="font-family: 'Kode';">Kode-Mono</option>
                 <option value="OpenSans" style="font-family: 'Open-Sans';">Open-Sans</option>
             </select>
-        </div>  
-
+        </div>   -->
+<!-- 
+        <div class="dropdown">
+            <button class="dropbtn">Dropdown</button>
+            <div class="dropdown-content">
+                <a href="#">Link 1</a>
+                <a href="#">Link 2</a>
+                <a href="#">Link 3</a>
+            </div>
+        </div> -->
+        
         <div class="sliderContainer">
             <p>Font size</p>
             <input id="fontSize" type="number"  value="">
