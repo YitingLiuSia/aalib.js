@@ -170,10 +170,12 @@ function downloadImageWithRatio(){
 }
 // image input 
 // image size is the same, but the ascii squished the size 
+// set original size of the image itself 
+// add a border on the original image 
 // the image is not resized proprtionally but it is closer {"inverseEle":true,"brightnessEle":"1.3","contrastEle":"1.2","gradientInfo":{"color1":"#b0d4fc","color2":"#ffccdb","color3":"#ffe2cc","colorPosition1":"20","colorPosition2":"80","colorPosition3":"100"},"fontSize":"5","fontFamily":"Sora","lineHeight":"4","charWidth":"4","charset":"ASCII"}
 function loadImageFromURL(img, isCanvas){
-    const imageWidth = imageExportRatio.value * img.width; 
-    const imageHeight = imageExportRatio.value * img.height;
+    const imageWidth = imageExportRatio.value * img.width * 10/3; 
+    const imageHeight = imageExportRatio.value * img.height* 10/3;
     const canvasRatio= 1;
     const asciiDimensions = calculateAsciiDimensionsForImageSize(imageWidth, imageHeight, charWidth.value * fontSize.value, charWidth.value *1260/800*lineHeight.value);
     console.log('Required ASCII Dimensions:', asciiDimensions);

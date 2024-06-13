@@ -136,6 +136,7 @@
     </div> -->
 </div>
     <div class="container" class="import-container" id="image-import">
+        <div></div>
         <h2 style="margin-top: 0;">Import image</h2>
         <p>Image settings</p>
         <div id="generated-image"></div>
@@ -148,10 +149,11 @@
         <p>Image export</p>
         <div id="slidercontainer">
             <!-- make it as a dropdown of size change -->
-            <input type="number" id="imageExportRatio" value="1" max="5" min="1">
+            <input type="number" id="imageExportRatio" value="1" max="10" min="1">
             <button id="save-image">Save image</button>
         </div>
-        <img id="imported-image"> </img>
+        <div id="imported-image-frame">
+        <img id="imported-image"> </img></div>
         <img id="processed-image"> </img>
     </div>
     </div>
