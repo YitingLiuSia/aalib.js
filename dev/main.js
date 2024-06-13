@@ -160,7 +160,7 @@ imageDropdown.onchange = function(){
 
 
 function downloadImageWithRatio(){
-    console.log("downloadImageWithRatio is ",currentImageRatio);
+    console.log("downloadImageWithRatio is ",currentimageExportRatio);
     let canvas = document.getElementById('processed-image');
     let dataUrl = canvas.toDataURL('image/png');
     let link = document.createElement('a');
@@ -173,9 +173,9 @@ function downloadImageWithRatio(){
 // image size is the same, but the ascii squished the size 
 // the image is not resized proprtionally but it is closer {"inverseEle":true,"brightnessEle":"1.3","contrastEle":"1.2","gradientInfo":{"color1":"#b0d4fc","color2":"#ffccdb","color3":"#ffe2cc","colorPosition1":"20","colorPosition2":"80","colorPosition3":"100"},"fontSize":"5","fontFamily":"Sora","lineHeight":"4","charWidth":"4","charset":"ASCII"}
 function loadImageFromURL(img, isCanvas){
-    const imageWidth = imageRatio.value * img.width; 
-    const imageHeight = imageRatio.value * img.height;
-    const canvasRatio= 2; 
+    const imageWidth = imageExportRatio.value * img.width; 
+    const imageHeight = imageExportRatio.value * img.height;
+    const canvasRatio= 1;
     const asciiDimensions = calculateAsciiDimensionsForImageSize(imageWidth, imageHeight, charWidth.value * fontSize.value, charWidth.value *1260/800*lineHeight.value);
     console.log('Required ASCII Dimensions:', asciiDimensions);
     console.log("image size is ", imageWidth, imageHeight);
@@ -192,8 +192,8 @@ function loadImageFromURL(img, isCanvas){
         lineHeight: lineHeight.value,
         charWidth: charWidth.value,
         charset: presetInfo.charset,
-        width: imageWidth,  // Use original image width for canvas
-        height: imageHeight, // Use original image height for canvas
+        width: img.width,  // Use original image width for canvas
+        height: img.height, // Use original image height for canvas
         background: "rgba(0,0,0,0)",
         color: gradient
     };
@@ -363,20 +363,23 @@ let brightnessEle = document.getElementById("brightness");
 let contrastEle = document.getElementById("contrast");
 let brightnessValue = brightnessEle.nextElementSibling.querySelector(".sliderValue");
 let contrastValue = contrastEle.nextElementSibling.querySelector(".sliderValue");
-let imageRatio = document.getElementById("imageRatio");
+let imageExportRatio = document.getElementById("imageExportRatio");
 let saveImageButton = document.getElementById("save-image");
 saveImageButton.onclick = downloadImageWithRatio;
 
-let currentImageRatio = 1;
+let currentimageExportRatio = 1;
 
-imageRatio.oninput=(e)=>{
-    imageRatio.value = e.target.value;
-    currentImageRatio = imageRatio.value;
-    console.log("current image ratio is ", currentImageRatio);
-    updateImage("imageRatio");
+imageExportRatio.oninput=(e)=>{
+    imageExportRatio.value = e.target.value;
+    currentimageExportRatio = imageExportRatio.value;
+    console.log("current image ratio is ", currentimageExportRatio);
+    updateImage("imageExportRatio");
 }
 
 window.onload = function() {
+    console.log("imageExportRatio ",imageExportRatio.value);
+
+    currentimageExportRatio = imageExportRatio.value;
     charsetSelector.value = presetInfo.charset;
     presetInfo.fontFamily = fontDropdown.value;     
     console.log("Charset selector initialized ",fontDropdown.value);
