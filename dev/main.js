@@ -168,7 +168,6 @@ function downloadImageWithRatio(){
     link.download = 'image.png';
     link.click();
 }
-
 // image input 
 // image size is the same, but the ascii squished the size 
 // the image is not resized proprtionally but it is closer {"inverseEle":true,"brightnessEle":"1.3","contrastEle":"1.2","gradientInfo":{"color1":"#b0d4fc","color2":"#ffccdb","color3":"#ffe2cc","colorPosition1":"20","colorPosition2":"80","colorPosition3":"100"},"fontSize":"5","fontFamily":"Sora","lineHeight":"4","charWidth":"4","charset":"ASCII"}

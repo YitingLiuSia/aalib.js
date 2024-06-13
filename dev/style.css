@@ -15,6 +15,31 @@
     src: url('../resources/open-sans/OpenSans-Regular.ttf') format('truetype');
 }
 
+html {
+    overflow: auto;
+}
+
+/* Let's get this party started */
+::-webkit-scrollbar {
+    width: 12px;
+}
+ 
+/* Track */
+::-webkit-scrollbar-track {
+    background: #F4F6FC ;
+}
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+     background: #8796A9 ;
+    /* -webkit-box-shadow: inset 0 0 6px #F4F6FC;  */
+}
+::-webkit-scrollbar-thumb:window-inactive {
+	background: #8796A9;
+}
+
 body{
     font-family: 'SoraFont';
     display: flex;
@@ -22,7 +47,7 @@ body{
     overflow: hidden;
     height: 100vh;
     margin: 0 auto;
-    scrollbar-color: #8796A9 #F4F6FC ; 
+    /* scrollbar-color: #8796A9 #F4F6FC; */
     background-color: #173044;
 
 }
@@ -64,6 +89,8 @@ p{
     display: block;
     overflow-y: scroll;
     overflow-x: hidden; /* Prevents horizontal scrolling */
+    /* scrollbar-width: thin; */
+    /* scrollbar-color: rgba(155, 155, 155, 0.7) transparent; */
     max-height: 100vh;
     max-width: 40vw;
 }
@@ -72,7 +99,7 @@ p{
 
 #image-import{
     overflow-y: scroll;
-    overflow-x: hidden; /* Prevents horizontal scrolling */
+    overflow-x: scroll; /* Prevents horizontal scrolling */
 }
 #image-container{
     flex: 0 1 90%;
@@ -82,15 +109,11 @@ p{
 #imported-image{
     width: 30%;
     opacity: 0.6;
-    overflow-y: scroll;
-    overflow-x: hidden; /* Prevents horizontal scrolling */
     max-height: 100vh;
-    
 }
 
-
 #processed-image{
-    max-width: 70%;
+    max-width: 100%;
     height: auto;
 }
 
@@ -101,6 +124,11 @@ p{
     display: flex; 
     justify-content: space-between; 
     align-items: center;
+}
+#gradient-canvas{
+
+    border-radius: 10px;
+
 }
 
 .gradient-selection-container{
