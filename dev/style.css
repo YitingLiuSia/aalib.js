@@ -109,7 +109,7 @@ body, #image-import {
     overflow-x: scroll; /* Prevents horizontal scrolling */
     display: flex; /* Set the display to flex to use Flexbox properties */
     flex-direction: row; /* Align children horizontally */
-    justify-content: space-between; /* Space between the children */
+    justify-content: start; /* Space between the children */
     align-items: start; /* Align items at the start of the container */
  
 }
@@ -128,6 +128,8 @@ body, #image-import {
     border-radius: 10px;
     border: 1px solid #8796A9;
     margin-left: 20px; /* Add some margin to separate from the rest */
+    position: sticky; /* Sticky position to keep it visible */
+
 }
 #processed-image{
     max-width: 100%;
@@ -275,7 +277,22 @@ input:focus, select:focus, button:focus {
 }
 
 @media (max-width: 768px) {
-    .main-container {
-        flex-direction: row;
-    } 
+    #image-import {
+        display: flex; /* Set the display to flex to use Flexbox properties */
+        flex-direction: column; /* Align children horizontally */
+        justify-content: start; /* Space between the children */
+        align-items: start; /* Align items at the start of the container */
+    }
+    #imported-image-frame {
+        width: 100px; /* Smaller width for smaller screens */
+        height: 100px; /* Smaller height for smaller screens */
+        bottom: 20px; /* Distance from the bottom */
+        right: 20px; /* Distance from the right */
+        z-index: 1000; /* Ensure it's above other content */
+    }
+
+    #image-import {
+        flex-direction: column; /* Stack children vertically in smaller views */
+    }
+
 }
