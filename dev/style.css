@@ -49,6 +49,7 @@ body{
     height: 100vh;
     margin: 0;
 }
+
 h1{
     margin-top: 0;
     font-weight: 400;
@@ -150,15 +151,25 @@ body, #image-import {
     align-items: center;
 }
 
-#gradient-picker{
+#brightness, #contrast{
+    width: 300px;
+    min-width: 100px;
+}
+/* #gradient-picker{
     display: flex;
     flex-direction: column;
-}
+} */
 .gradient-selection-container{
    display: flex;
    flex-direction: row;
    justify-content: flex-start;
-   align-items: flex-start;
+   align-content: center;
+   margin-left: -4.5px;
+
+}
+.gradient-group{
+    display: flex;
+    flex-direction: column;
 }
 .slider-values{
     display: flex; 
