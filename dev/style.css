@@ -22,7 +22,9 @@
 ::-webkit-scrollbar {
     width: 8px;
 }
- 
+ .sliderContainer > p{
+    margin: 8px 0;
+ }
 /* Track */
 ::-webkit-scrollbar-track {
     background: #F4F6FC ;
@@ -49,6 +51,7 @@ body{
 }
 h1{
     margin-top: 0;
+    font-weight: 400;
 }
 h2,h3{
 
@@ -58,12 +61,11 @@ h2,h3{
 #gradient-canvas {
     border: 1px solid white;
     cursor: pointer;
-    display: block;
+    display: flex;
     width: 100%;
     height:80px;
     border-radius: 8px;
 }
-
 p{
     font-size: small;
 }
@@ -112,7 +114,6 @@ body, #image-import {
  
 }
 
-
 /* a container for the image, place the image in the middle */
 /* move the vertical one to the center */
 #imported-image{
@@ -123,8 +124,8 @@ body, #image-import {
 }
 
 #imported-image-frame {
-    width: 100px; /* Set a fixed width */
-    height: 100px; /* Set a fixed height */
+    width: 224px; /* Set a fixed width */
+    height: 168px; /* Set a fixed height */
     border-radius: 10px;
     border: 1px solid #8796A9;
     margin-left: 20px; /* Add some margin to separate from the rest */
@@ -149,22 +150,20 @@ body, #image-import {
     align-items: center;
 }
 
-.gradient-selection-container{
-   width: 95%;
-   justify-content: center;
-   align-items: center;
-}
-.gradient-group{
+#gradient-picker{
     display: flex;
-    flex-direction: row;
-    max-height: 60px;
+    flex-direction: column;
 }
-
+.gradient-selection-container{
+   display: flex;
+   flex-direction: row;
+   justify-content: flex-start;
+   align-items: flex-start;
+}
 .slider-values{
     display: flex; 
     justify-content: space-between;
 }
-
 hr{
     border-color: #8796A9;
 }
@@ -187,6 +186,7 @@ select option:active, select option:hover{
     background-color: #00DECC;
 
 }
+
 input[type="checkbox"]{
     accent-color: #00DECC;
 }
@@ -194,7 +194,7 @@ input[type="checkbox"]{
 input[type="range"] {
     -webkit-appearance: none;
     appearance: none; 
-    max-width: 280px;
+    width: 90%;
     cursor: pointer;
     outline: none;
     overflow: hidden;
@@ -235,7 +235,7 @@ input[type="range"] {
   }
 
 input[type="color"]{
-    max-width: 200px; 
+    width:70px; 
     padding: 0.5px;
 }
 
@@ -248,11 +248,15 @@ input[type="text"],input[type="number"]{
     max-width: 70px; /* Restricting width for smaller inputs */
 
 }
+#inverse {
+    display: inline-block;
+    margin-top: 0;
+}
 
 input[type="file"] {
     max-width: 200px; /* Restricting width for smaller inputs */
+    margin-right: 10px; /* Adjust as needed */
 }
-
 /* Styling for buttons */
 button {
     background-color: #00DECC; /* A pleasant blue */
@@ -262,6 +266,8 @@ button {
     border: none; /* No border */
     cursor: pointer; /* Pointer cursor on hover */
     transition: background-color 0.3s; /* Smooth transition for hover effect */
+    white-space: nowrap;
+    text-align: center;
 }
 
 button:hover, button:focus {
@@ -288,8 +294,8 @@ input:focus, select:focus, button:focus {
         align-items: start; /* Align items at the start of the container */
     }
     #imported-image-frame {
-        width: 100px; /* Smaller width for smaller screens */
-        height: 100px; /* Smaller height for smaller screens */
+        width: 224px; /* Smaller width for smaller screens */
+        height: 168px; /* Smaller height for smaller screens */
         bottom: 20px; /* Distance from the bottom */
         right: 20px; /* Distance from the right */
         z-index: 1000; /* Ensure it's above other content */

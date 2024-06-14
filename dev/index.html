@@ -13,7 +13,7 @@
     <div class = "container" id="preset-container">
         <h1>Sia ASCII Generator</h1>
         <h2>Preset</h2>
-        <div class="sliderContainer" style="margin-top: -10px;">
+        <div style="justify-content: start;" class="sliderContainer" style="margin-top: -10px;">
             <input type="file" id="load-preset" accept="application/json">
        <button id="save-preset">Save preset</button>
     </div>
@@ -21,7 +21,7 @@
     <hr>
 
     <h3>Filters</h3>
-    <div class="sliderContainer">
+    <div class="sliderContainer" >
         <p style="margin-top: 0;">Inverse</p>
         <input id="inverse" type="checkbox" >
     </div>
@@ -63,9 +63,8 @@
         <!-- <input type="file" id="gradient-file-input" accept="application/json"> -->
         <div id="gradient-picker">
             <canvas id="gradient-canvas" ></canvas>
-        </div>
-        <br>
-        <div class="gradient-selection-container">
+        
+        <div style="margin-top: 10px;" class="gradient-selection-container">
             <div class="gradient-group">
                 <input type="color" id="color1" value="">
                 <input type="number" id="position1" min="0" max="100" value="20">
@@ -78,7 +77,7 @@
                 <input type="color" id="color3" value="">
                 <input type="number" id="position3" value="100">
             </div>
-        </div>
+        </div></div>
     </div>
 <!-- intentional spacer -->
     <h3></h3> 
@@ -140,11 +139,13 @@
         <h2 style="margin-top: 0;">Import image</h2>
         <p>Image settings</p>
         <div id="generated-image"></div>
+        <div class="sliderContainer">
         <input type="file" id="imageInput" accept="image/*">
         <select id="image-dropdown">
             <option value="canvas">Canvas</option>
             <option value="html">HTML</option>
         </select>
+    </div>
         <div id="image-container">
         <p>Image export</p>
         <div id="slidercontainer">
