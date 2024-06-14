@@ -175,12 +175,12 @@ function downloadImageWithRatio(){
 // the image is not resized proprtionally but it is closer {"inverseEle":true,"brightnessEle":"1.3","contrastEle":"1.2","gradientInfo":{"color1":"#b0d4fc","color2":"#ffccdb","color3":"#ffe2cc","colorPosition1":"20","colorPosition2":"80","colorPosition3":"100"},"fontSize":"5","fontFamily":"Sora","lineHeight":"4","charWidth":"4","charset":"ASCII"}
 function loadImageFromURL(img, isCanvas){
     const canvasRatio= 1;
-    const imageWidth = imageExportRatio.value * img.width *canvasRatio ; 
-    const imageHeight = imageExportRatio.value * img.height *canvasRatio;
+    const imageWidth = imageExportRatio.value * img.width  ; 
+    const imageHeight = imageExportRatio.value * img.height;
     const asciiDimensions = calculateAsciiDimensionsForImageSize(imageWidth, imageHeight, charWidth.value * fontSize.value, charWidth.value *1260/800*lineHeight.value);
     console.log('Required ASCII Dimensions:', asciiDimensions);
     console.log("image size is ", imageWidth, imageHeight);
-    const aaReq = { width: asciiDimensions.width , height: asciiDimensions.height, colored: false };
+    const aaReq = { width: asciiDimensions.width *canvasRatio , height: asciiDimensions.height *canvasRatio, colored: false };
     // Example gradient stops
     gradient = gradientCanvasCTX.createLinearGradient(0, 0, imageWidth, 0);
     gradient.addColorStop(colorPosition1.value/100, color1.value);
