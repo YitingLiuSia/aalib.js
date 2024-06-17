@@ -174,18 +174,22 @@ function downloadImageWithRatio(){
 // add a border on the original image 
 // the image is not resized proprtionally but it is closer {"inverseEle":true,"brightnessEle":"1.3","contrastEle":"1.2","gradientInfo":{"color1":"#b0d4fc","color2":"#ffccdb","color3":"#ffe2cc","colorPosition1":"20","colorPosition2":"80","colorPosition3":"100"},"fontSize":"5","fontFamily":"Sora","lineHeight":"4","charWidth":"4","charset":"ASCII"}
 function loadImageFromURL(img, isCanvas){
-    const canvasRatio= 1;
-    const imageWidth = imageExportRatio.value * img.width  ; 
+    const imageWidth = imageExportRatio.value * img.width; 
     const imageHeight = imageExportRatio.value * img.height;
-    const asciiDimensions = calculateAsciiDimensionsForImageSize(imageWidth, imageHeight, charWidth.value * fontSize.value, charWidth.value *1260/800*lineHeight.value);
-    console.log('Required ASCII Dimensions:', asciiDimensions);
+    let canvas = document.getElementById('processed-image');
+    const ratioX = 13.5;// imageWidth/(fontSize.value+charWidth.value);
+    const ratioY = 13.5 ;//imageHeight/(fontSize.value+lineHeight.value);
+    const asciiDimensions = calculateAsciiDimensionsForImageSize(imageWidth, imageHeight, (fontSize.value+charWidth.value) /ratioX , (fontSize.value+lineHeight.value)/ratioY);
+    const aaReq = { width:asciiDimensions.width  , height: asciiDimensions.height, colored: false };
     console.log("image size is ", imageWidth, imageHeight);
-    const aaReq = { width: asciiDimensions.width *canvasRatio , height: asciiDimensions.height *canvasRatio, colored: false };
+    console.log("ratio is ", ratioX, ratioY);
+    console.log('Required ASCII Dimensions:', asciiDimensions);
     // Example gradient stops
     gradient = gradientCanvasCTX.createLinearGradient(0, 0, imageWidth, 0);
     gradient.addColorStop(colorPosition1.value/100, color1.value);
     gradient.addColorStop(colorPosition2.value/100, color2.value);
     gradient.addColorStop(colorPosition3.value/100, color3.value);
+  
     // console.log("gradient is ",gradient);
     const canvasOptions = {
         fontSize: fontSize.value,
@@ -193,10 +197,11 @@ function loadImageFromURL(img, isCanvas){
         lineHeight: lineHeight.value,
         charWidth: charWidth.value,
         charset: presetInfo.charset,
-        width: img.width * imageExportRatio.value,  // Use original image width for canvas
-        height: img.height * imageExportRatio.value, // Use original image height for canvas
+        width: imageWidth ,  //* imageExportRatio.value// Use original image width for canvas
+        height: imageHeight , // Use original image height for canvas
         background: "rgba(0,0,0,0)",
         color: gradient
+
     };
 
     let imageProcessingPipeline = aalib.read.image.fromURL(img.src);
@@ -227,11 +232,18 @@ function loadImageFromURL(img, isCanvas){
         imageProcessingPipeline = imageProcessingPipeline.map(aalib.aa(aaReq));
 
         if (isCanvas) {
-        imageProcessingPipeline.map(aalib.render.canvas(canvasOptions))
-        .do(function (el) {
-           replaceImageToDiv(el);
-        })
-        .subscribe(); 
+            imageProcessingPipeline.map(aalib.render.canvas(canvasOptions))
+    .do(function (el) {
+        canvas.width =  canvasOptions.width;// Set this based on your content's needs
+       canvas.height = canvasOptions.height;//asciiDimensions.height * canvasRatio; // Set this based on your content's needs
+    console.log("canvas size is ", canvas.width, canvas.height);
+      replaceImageToDiv(el);
+       
+    
+
+    })
+    .subscribe(); 
+    
         } else {
         imageProcessingPipeline.map(aalib.render.html(canvasOptions))
         .do(function (el) {

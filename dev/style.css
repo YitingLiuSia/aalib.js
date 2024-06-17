@@ -38,16 +38,13 @@
 ::-webkit-scrollbar-thumb:window-inactive {
 	background: #8796A9;
 }
-body, #preset-container, #image-import {
-    overflow-x: hidden;
-}
 body{
     font-family: 'SoraFont';
     display: flex;
-    justify-content: space-between; /* Aligns children to each side of the container */
-    overflow: hidden;
+    justify-content: flex-start; /* Aligns children to each side of the container */
     height: 100vh;
     margin: 0;
+    overflow: auto;
 }
 
 h1{
@@ -64,7 +61,7 @@ h2,h3{
     cursor: pointer;
     display: flex;
     width: 100%;
-    height:80px;
+    height: 80px;
     border-radius: 8px;
 }
 p{
@@ -91,23 +88,18 @@ p{
     margin-right: 0;
     display: block;
     overflow-y: scroll;
-    overflow-x: hidden; /* Prevents horizontal scrolling */
-    /* scrollbar-width: thin; */
-    /* scrollbar-color: rgba(155, 155, 155, 0.7) transparent; */
+    overflow-x: hidden; 
     max-height: 100vh;
     max-width: 40vw;
 }
 
-body, #image-import {
-    overflow-y: auto; /* Adjust as needed */
-}
 
 #image-import{
     padding-top: 30px;
     padding-left: 15px;
     flex-grow: 1;  
-    overflow-y: scroll;
-    overflow-x: scroll; 
+    /* overflow-y: scroll;
+    overflow-x: scroll;  */
     display: flex; 
     flex-direction: row; 
     justify-content: space-between; 
@@ -136,9 +128,17 @@ body, #image-import {
     align-content: center;
 
 }
-#processed-image{
-    max-width: 100%;
-    height: auto;
+#canvas-container {
+    width: 600px; /* Fixed width */
+    height: 400px; /* Fixed height */
+    overflow: auto; /* Enable scroll bars when content overflows */
+    border: 1px solid #ccc; /* Optional: adds a border around the container */
+    scrollbar-width: thin;
+}
+
+#processed-image {
+    display: block; /* Ensures the canvas is treated as a block-level element */
+    max-width: none; /* Prevents the canvas from being resized */
 }
 
 .sliderContainer{
