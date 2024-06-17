@@ -19,15 +19,14 @@
     overflow: auto;
 } */
 /* Let's get this party started */
-::-webkit-scrollbar {
-    width: 8px;
-}
+
  .sliderContainer > p{
     margin: 8px 0;
  }
 /* Track */
 ::-webkit-scrollbar-track {
     background: #F4F6FC ;
+
 }
  
 /* Handle */
@@ -38,6 +37,12 @@
 ::-webkit-scrollbar-thumb:window-inactive {
 	background: #8796A9;
 }
+
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;              /* height of horizontal scrollbar ← You're missing this */
+}
+
 body{
     font-family: 'SoraFont';
     display: flex;
@@ -76,9 +81,7 @@ p{
 .image-section .div{
     /* background-color: white; */
     /* justify-content: space-evenly; */
-
 }
-
 
 #preset-container{
     background-color:#173044;
@@ -93,17 +96,16 @@ p{
     max-width: 40vw;
 }
 
-
 #image-import{
     padding-top: 30px;
     padding-left: 15px;
-    flex-grow: 1;  
+    /* flex-grow: 1;   */
     /* overflow-y: scroll;
     overflow-x: scroll;  */
     display: flex; 
     flex-direction: row; 
-    justify-content: space-between; 
-    align-items: space-between; 
+    justify-content: space-around; 
+    align-items: space-around; 
 }
 
 /* a container for the image, place the image in the middle */
@@ -112,6 +114,7 @@ p{
     max-width: 100%; /* Ensure the image does not exceed the frame's width */
     max-height: 100%; /* Ensure the image does not exceed the frame's height */
     object-fit: contain; /* Ensures the image maintains its aspect ratio */
+    border-radius: 10px; /* Match the frame's border-radius to create a mask effect */
 
 }
 
@@ -121,7 +124,8 @@ p{
     border-radius: 10px;
     border: 1px solid #8796A9;
     margin-left: 20px; /* Add some margin to separate from the rest */
-    position: sticky; /* Sticky position to keep it visible */
+    margin-right: 20px;   
+    position: sticky; 
     display: flex;
     justify-content: center;
     align-items: center;
@@ -132,8 +136,7 @@ p{
     width: 600px; /* Fixed width */
     height: 400px; /* Fixed height */
     overflow: auto; /* Enable scroll bars when content overflows */
-    border: 1px solid #ccc; /* Optional: adds a border around the container */
-    scrollbar-width: thin;
+
 }
 
 #processed-image {

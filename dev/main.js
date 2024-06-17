@@ -179,7 +179,7 @@ function loadImageFromURL(img, isCanvas){
     let canvas = document.getElementById('processed-image');
     const ratioX = 13.5;// imageWidth/(fontSize.value+charWidth.value);
     const ratioY = 13.5 ;//imageHeight/(fontSize.value+lineHeight.value);
-    const asciiDimensions = calculateAsciiDimensionsForImageSize(imageWidth, imageHeight, (fontSize.value+charWidth.value) /ratioX , (fontSize.value+lineHeight.value)/ratioY);
+    const asciiDimensions = calculateAscfiiDimensionsForImageSize(imageWidth, imageHeight, (fontSize.value+charWidth.value) /ratioX , (fontSize.value+lineHeight.value)/ratioY);
     const aaReq = { width:asciiDimensions.width  , height: asciiDimensions.height, colored: false };
     console.log("image size is ", imageWidth, imageHeight);
     console.log("ratio is ", ratioX, ratioY);
@@ -366,7 +366,7 @@ let savePresetButton = document.getElementById("save-preset");
 // let desaturate = document.getElementById("desaturate");
 let inverseEle = document.getElementById("inverse");
 // let desaturation = document.getElementById("desaturation");
-let fontDropdown = document.getElementById("font-dropdown");
+// let fontDropdown = document.getElementById("font-dropdown");
 let fontSize = document.getElementById("fontSize");
 let charWidth = document.getElementById("charWidth");
 let lineHeight = document.getElementById("lineHeight");
@@ -399,11 +399,10 @@ window.onload = function() {
     updateImage("chartset");
 
 }
-fontDropdown.onchange=(e)=>{
-    console.log("font dropdown ",e.target.value);
- 
-    presetInfo.fontFamily = e.target.value;
-}
+// fontDropdown.onchange=(e)=>{
+//     console.log("font dropdown ",e.target.value);
+//      presetInfo.fontFamily = e.target.value;
+// }
 // let desaturationValue = desaturation.parentElement.querySelector(".sliderValue");
 fontSize.oninput = (e) => {
     fontSize.value = e.target.value;
@@ -500,10 +499,10 @@ function updatePreset(){
     if(fontSize.value!=presetInfo.fontSize){
         fontSize.value = presetInfo.fontSize;
     }
-    if( fontDropdown.value!=presetInfo.fontFamily){
-        fontDropdown.value = presetInfo.fontFamily;
+    // if( fontDropdown.value!=presetInfo.fontFamily){
+    //     fontDropdown.value = presetInfo.fontFamily;
 
-    }
+    // }
     if(lineHeight.value!=presetInfo.lineHeight){
         lineHeight.value = presetInfo.lineHeight;
     }
@@ -558,7 +557,7 @@ function loadPreset(){
     contrastValue.innerHTML = presetInfo.contrastEle;
     // desaturationValue.innerHTML = presetInfo.desaturation;
     fontSize.value = presetInfo.fontSize;
-    fontDropdown.value = presetInfo.fontFamily;
+    // fontDropdown.value = presetInfo.fontFamily;
     lineHeight.value = presetInfo.lineHeight;
     charWidth.value = presetInfo.charWidth;
     console.log("charsetSelector value ", charsetSelector.value);
@@ -581,7 +580,7 @@ function savePreset(){
     presetInfo.gradientInfo = gradientInfo;
     saveGradient();
     presetInfo.fontSize = fontSize.value;
-    presetInfo.fontFamily = fontDropdown.value;
+    presetInfo.fontFamily = "Sora";//fontDropdown.value;
     presetInfo.lineHeight = lineHeight.value;
     presetInfo.charWidth = charWidth.value;
     presetInfo.charset = charsetSelector.value;
