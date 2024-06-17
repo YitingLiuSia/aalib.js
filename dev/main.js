@@ -179,7 +179,7 @@ function loadImageFromURL(img, isCanvas){
     let canvas = document.getElementById('processed-image');
     const ratioX = 13.5;// imageWidth/(fontSize.value+charWidth.value);
     const ratioY = 13.5 ;//imageHeight/(fontSize.value+lineHeight.value);
-    const asciiDimensions = calculateAscfiiDimensionsForImageSize(imageWidth, imageHeight, (fontSize.value+charWidth.value) /ratioX , (fontSize.value+lineHeight.value)/ratioY);
+    const asciiDimensions = calculateAsciiDimensionsForImageSize(imageWidth, imageHeight, (fontSize.value+charWidth.value) /ratioX , (fontSize.value+lineHeight.value)/ratioY);
     const aaReq = { width:asciiDimensions.width  , height: asciiDimensions.height, colored: false };
     console.log("image size is ", imageWidth, imageHeight);
     console.log("ratio is ", ratioX, ratioY);
@@ -394,8 +394,8 @@ window.onload = function() {
 
     currentimageExportRatio = imageExportRatio.value;
     charsetSelector.value = presetInfo.charset;
-    presetInfo.fontFamily = fontDropdown.value;     
-    console.log("Charset selector initialized ",fontDropdown.value);
+    presetInfo.fontFamily = "Sora";//fontDropdown.value;     
+    // console.log("Charset selector initialized ",fontDropdown.value);
     updateImage("chartset");
 
 }

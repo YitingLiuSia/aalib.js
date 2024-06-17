@@ -83,7 +83,7 @@
     <h3></h3> 
     <hr>
         <h3>Character Setting</h3>
-        <div style="margin-top: -5px;">
+        <!-- <div style="margin-top: -5px;"> -->
         <!-- <div class="sliderContainer" >
             <p style="margin: 0;">Font family</p>
             <select id="font-dropdown" >
@@ -117,7 +117,7 @@
             </select>
         </div>
     </div>
-    </div>
+</div>
         <!-- <button id="save-gradient">Save Gradient</button> -->
 
 
@@ -133,35 +133,40 @@
         <canvas id="video-scene"></canvas>
     </div> -->
 </div>
-    <div class="image-section import-container " id="image-import">
-        <div>
+<div style="overflow-y: scroll;"class="container">
+
+<div class="image-section import-container " id="image-import">
+    <div>
         <h2 style="margin-top: 0;">Import image</h2>
         <p>Image settings</p>
         <div id="generated-image"></div>
-        <div class="sliderContainer">
-        <input type="file" id="imageInput" accept="image/*">
-        <select id="image-dropdown">
-            <option value="canvas">Canvas</option>
-            <option value="html">HTML</option>
-        </select>
-    </div>
-        <div id="image-container">
-        <p>Image export</p>
-        <div id="slidercontainer">
-            <!-- make it as a dropdown of size change -->
-            <input type="number" id="imageExportRatio" value="1" max="10" min="1">
-            <button id="save-image">Save image</button>
+        <div style="display: flex; justify-content: flex-start; width: 400px; "class="sliderContainer">
+            <input type="file" id="imageInput" accept="image/*">
+            <select  id="image-dropdown">
+                <option value="canvas">Canvas</option>
+                <option value="html">HTML</option>
+            </select>
         </div>
-        <div id="canvas-container">
-            <canvas id="processed-image"></canvas>
-        </div>    </div>
-</div>
-
+        <div id="image-container">
+            <p>Image export</p>
+            <div id="slidercontainer">
+                <!-- make it as a dropdown of size change -->
+                <input type="number" id="imageExportRatio" value="1" max="10" min="1">
+                <button id="save-image">Save image</button>
+            </div>
+        </div>
+    </div>
+    
     <div id="imported-image-frame">
         <img id="imported-image"> </img>
     </div>
-    </div>
-
+</div>
+   
+<div id="canvas-container">
+    <canvas id="processed-image"></canvas>
+</div> 
+</div>
+    
 </body>
 
 </html>
