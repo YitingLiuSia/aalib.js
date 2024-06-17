@@ -16,7 +16,8 @@
     "clean": "rm -rf lib dist",
     "test": "karma start",
     "test:perf": "node ./test/perf/bin/run-perf.js",
-    "lint": "eslint src/** test/**"
+    "lint": "eslint src/** test/**",
+    "build:dev": "webpack --config dev/webpack.config.js"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
