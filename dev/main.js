@@ -15,7 +15,7 @@ import videoCanvas from "../src/renderers/CanvasRenderer";
 import { appendToBody } from "./utils";
 import { json } from "body-parser";
 const charset_ascii = ASCII_CHARSET;
-const charset_sia = "SIA/";
+const charset_sia = "SIA/- ";
 const resource = filename => `../resources/${ filename }`;
 
 // loading default presetInfo in resources location on start 
@@ -32,9 +32,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 // data.desaturation, 
                 data.gradientInfo, 
                 data.fontSize, 
-                data.fontFamily, 
-                data.lineHeight,
-                data.charWidth,
+                // data.fontFamily, 
+                // data.lineHeight,
+                // data.charWidth,
                 data.charset
             );
 
@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 const FONTS = {
-    Sora: resource("sora-ttf/Sora-Regular.ttf"),
+    Sora: resource("sora-ttf/Sora-Regular-mono.ttf"),
     Kode: resource("kode-mono/KodeMono-Regular.ttf"),
     OpenSans: resource("open-sans/OpenSans-Regular.ttf")
 }
@@ -70,6 +70,7 @@ let isCanvas = true;
 
 imageDropdown.onchange = function(){
     isCanvas = this.value === "canvas";
+    updateImage("canvasORHTML");
     console.log("iscanvas", isCanvas);
 }
 
@@ -157,56 +158,119 @@ imageDropdown.onchange = function(){
 //     }
 // });
 
+
+function downloadImageWithRatio(){
+    console.log("downloadImageWithRatio is ", currentimageExportRatio);
+    let canvas = document.getElementById('processed-image');
+    // Create a temporary canvas to draw the scaled image
+    let tempCanvas = document.createElement('canvas');
+    let tempCtx = tempCanvas.getContext('2d');
+
+    // Calculate new dimensions based on the current image export ratio
+    let newWidth = canvas.width * currentimageExportRatio;
+    let newHeight = canvas.height * currentimageExportRatio;
+
+    // Set the temporary canvas size
+    tempCanvas.width = newWidth;
+    tempCanvas.height = newHeight;
+
+    // Draw the scaled image on the temporary canvas
+    tempCtx.drawImage(canvas, 0, 0, newWidth, newHeight);
+
+    // Generate the data URL from the temporary canvas
+    let dataUrl = tempCanvas.toDataURL('image/png');
+
+    // Create the download link and trigger the download
+    let link = document.createElement('a');
+    link.href = dataUrl;
+    link.download = 'image.png';
+    link.click();
+
+    // Clean up: remove the temporary canvas
+    tempCanvas.remove();
+}
 // image input 
 // image size is the same, but the ascii squished the size 
-// the image is not resized proprtionally but it is closer 
+// set original size of the image itself 
+// add a border on the original image 
+// the image is not resized proprtionally but it is closer {"inverseEle":true,"brightnessEle":"1.3","contrastEle":"1.2","gradientInfo":{"color1":"#b0d4fc","color2":"#ffccdb","color3":"#ffe2cc","colorPosition1":"20","colorPosition2":"80","colorPosition3":"100"},"fontSize":"5","fontFamily":"Sora","lineHeight":"4","charWidth":"4","charset":"ASCII"}
 function loadImageFromURL(img, isCanvas){
-    const asciiDimensions = calculateAsciiDimensionsForImageSize(img.width, img.height, charWidth.value, charWidth.value);
+    const imageWidth = img.width; //imageExportRatio.value * img.width; 
+    const imageHeight = img.height;//imageExportRatio.value * img.height;
+    let canvas = document.getElementById('processed-image');
+    // figure out the ratio of cutting off 
+    const charWidthValue = fontSize.value*0.8;
+    const lineHeightValue = fontSize.value*0.8;
+    const ratioX =imageWidth/(fontSize.value+charWidthValue)*2; //2* fontSize.value/5*13.5;// 
+    const ratioY = imageHeight/(fontSize.value+lineHeightValue)*2;//2*fontSize.value/5*13.5 ;//
+    //const asciiDimensions = calculateAsciiDimensionsForImageSize(imageWidth, imageHeight, (fontSize.value+charWidthValue) /ratioX , (fontSize.value+lineHeightValue)/ratioY);
+    const asciiDimensions = calculateAsciiDimensionsForImageSize(imageWidth, imageHeight, fontSize.value , fontSize.value);
+    const aaReq = { width:asciiDimensions.width  , height: asciiDimensions.height, colored: false};
+    console.log("image size is ", imageWidth, imageHeight);
+    console.log("ratio is ", ratioX, ratioY);
     console.log('Required ASCII Dimensions:', asciiDimensions);
-    console.log("image size is ", img.width, img.height);
-    // const aspectRatio = img.width / img.height;
-    // const aaHeight = 165; // Height for ASCII art
-    // const aaWidth = Math.round(aaHeight * aspectRatio); // Maintain aspect ratio for ASCII art width
-    const aaReq = { width: asciiDimensions.width, height: asciiDimensions.height, colored: false };
-
+    // Example gradient stops
+    gradient = gradientCanvasCTX.createLinearGradient(0, 0, imageWidth, 0);
+    gradient.addColorStop(colorPosition1.value/100, color1.value);
+    gradient.addColorStop(colorPosition2.value/100, color2.value);
+    gradient.addColorStop(colorPosition3.value/100, color3.value);
+  
+    // console.log("gradient is ",gradient);
     const canvasOptions = {
         fontSize: fontSize.value,
-        fontFamily: presetInfo.fontFamily,
-        lineHeight: lineHeight.value,
-        charWidth: charWidth.value,
+        fontFamily: "Sora",
+        lineHeight: lineHeightValue,//lineHeight.value,
+        charWidth: charWidthValue,//charWidth.value,
         charset: presetInfo.charset,
-        width: img.width,  // Use original image width for canvas
-        height: img.height, // Use original image height for canvas
+        width:  imageWidth ,  //* imageExportRatio.value// Use original image width for canvas
+        height: imageHeight , // Use original image height for canvas
         background: "rgba(0,0,0,0)",
         color: gradient
+
     };
 
-    let imageProcessingPipeline = aalib.read.image.fromURL(img.src)
-            .map(aalib.aa(aaReq));
-        if (inverseEle.checked) {
+    // canvas.width =  canvasOptions.width;// Set this based on your content's needs
+    // canvas.height = canvasOptions.height;//asciiDimensions.height * canvasRatio; // Set this based on your content's needs
+    // console.log("canvas size is ", canvas.width, canvas.height);
+
+
+    let imageProcessingPipeline = aalib.read.image.fromURL(img.src);
+       
+    if (inverseEle.checked) {
+            console.log("inverse elemenet is checked ", inverseEle.checked)
             imageProcessingPipeline = imageProcessingPipeline.map(aalib.filter.inverse());
         }
+       // imageProcessingPipeline = imageProcessingPipeline.map(aalib.filter.desaturate());
+
         // if (desaturate.checked) {
         //     imageProcessingPipeline = imageProcessingPipeline.map(aalib.filter.desaturate());
         // }
+   
         if (brightnessValue.value !== undefined) {
+            console.log("brightnessValue value ", brightnessValue.value);
             imageProcessingPipeline = imageProcessingPipeline.map(aalib.filter.brightness(brightnessValue.value));
         }
         if (contrastValue.value !== undefined) {
+            console.log("contrastValue value ", contrastValue.value);
             imageProcessingPipeline = imageProcessingPipeline.map(aalib.filter.contrast(contrastValue.value));
         }
         // if (desaturationValue.value !== undefined) {
         //     imageProcessingPipeline = imageProcessingPipeline.map(aalib.filter.desaturate(desaturationValue.value));
-        // }
-        
+        // }]
+
+         // imageProcessingPipeline = imageProcessingPipeline.map(aalib.filter.desaturate(1));
+        imageProcessingPipeline = imageProcessingPipeline.map(aalib.aa(aaReq));
+
         if (isCanvas) {
-        imageProcessingPipeline.map(aalib.render.canvas(canvasOptions))
-        .do(function (el) {
-           replaceImageToDiv(el);
-        })
-        .subscribe(); 
-        
-    } else {
+            imageProcessingPipeline.map(aalib.render.canvas(canvasOptions))
+    .do(function (el) {
+       
+        replaceImageToDiv(el);
+       
+    })
+    .subscribe(); 
+    
+        } else {
         imageProcessingPipeline.map(aalib.render.html(canvasOptions))
         .do(function (el) {
             replaceImageToDiv(el);
@@ -288,7 +352,7 @@ class GradientInfo {
 }
 
 class PresetInfo {
-    constructor(inverseEle, brightnessEle, contrastEle, gradientInfo, fontSize, fontFamily, lineHeight,charWidth, charset) {
+    constructor(inverseEle, brightnessEle, contrastEle, gradientInfo, fontSize,  charset) {
         this.inverseEle = inverseEle;
         // this.desaturate = desaturate;
         this.brightnessEle = brightnessEle;
@@ -296,9 +360,9 @@ class PresetInfo {
         // this.desaturation = desaturation;
         this.gradientInfo = gradientInfo;
         this.fontSize = fontSize;
-        this.fontFamily = fontFamily;
-        this.lineHeight = lineHeight;
-        this.charWidth = charWidth;
+        // this.fontFamily = fontFamily;
+        // this.lineHeight = lineHeight;
+        // this.charWidth = charWidth;
         this.charset = charset;
     }
 }
@@ -317,7 +381,6 @@ let colorPosition3 = document.getElementById('position3');
 let saveGradientButton = document.getElementById("save-gradient");
 let gradientInfo = new GradientInfo();
 let presetInfo = new PresetInfo();
-let fontFamily = "Sora";
 color1.onchange = updateGradient;
 color2.onchange = updateGradient;
 color3.onchange = updateGradient;
@@ -329,33 +392,58 @@ let savePresetButton = document.getElementById("save-preset");
 // let desaturate = document.getElementById("desaturate");
 let inverseEle = document.getElementById("inverse");
 // let desaturation = document.getElementById("desaturation");
-let fontDropdown = document.getElementById("font-dropdown");
+// let fontDropdown = document.getElementById("font-dropdown");
 let fontSize = document.getElementById("fontSize");
-let charWidth = document.getElementById("charWidth");
-let lineHeight = document.getElementById("lineHeight");
+// let charWidth = document.getElementById("charWidth");
+// let lineHeight = document.getElementById("lineHeight");
 let charsetSelector = document.getElementById("charset-selector");
 
 let brightnessEle = document.getElementById("brightness");
 let contrastEle = document.getElementById("contrast");
 let brightnessValue = brightnessEle.nextElementSibling.querySelector(".sliderValue");
 let contrastValue = contrastEle.nextElementSibling.querySelector(".sliderValue");
+let imageExportRatio = document.getElementById("imageExportRatio");
+let saveImageButton = document.getElementById("save-image");
+saveImageButton.onclick = downloadImageWithRatio;
 
+let currentimageExportRatio = 1;
+
+imageExportRatio.oninput=(e)=>{
+    imageExportRatio.value = e.target.value;
+    currentimageExportRatio = imageExportRatio.value;
+    console.log("current image ratio is ", currentimageExportRatio);
+    updateImage("imageExportRatio");
+}
+
+window.onload = function() {
+    console.log("imageExportRatio ",imageExportRatio.value);
+
+    currentimageExportRatio = imageExportRatio.value;
+    charsetSelector.value = presetInfo.charset;
+    presetInfo.fontFamily = "Sora";//fontDropdown.value;     
+    // console.log("Charset selector initialized ",fontDropdown.value);
+    updateImage("chartset");
+
+}
+// fontDropdown.onchange=(e)=>{
+//     console.log("font dropdown ",e.target.value);
+//      presetInfo.fontFamily = e.target.value;
+// }
 // let desaturationValue = desaturation.parentElement.querySelector(".sliderValue");
-
 fontSize.oninput = (e) => {
     fontSize.value = e.target.value;
     updateImage("fontSize");
 }
 
-charWidth.oninput=(e)=>{
-    charWidth.value = e.target.value;
-    updateImage("charWidth");
-}
+// charWidth.oninput=(e)=>{
+//     charWidth.value = e.target.value;
+//     updateImage("charWidth");
+// }
 
-lineHeight.oninput=(e)=>{
-    lineHeight.value = e.target.value;
-    updateImage("lineHeight");
-}
+// lineHeight.oninput=(e)=>{
+//     lineHeight.value = e.target.value;
+//     updateImage("lineHeight");
+// }
 
 brightnessEle.oninput = (e) => {
     brightnessValue.textContent =e.target.value;
@@ -369,6 +457,26 @@ contrastEle.oninput=(e)=>{
     console.log("contrast value ", contrastValue.value);
     updateImage("contrast");
 }
+
+inverseEle.onchange = (e) => {
+    presetInfo.inverseEle = e.target.checked;
+    updateImage("inverseEle");
+}
+// desaturate.onchange=(e)=>{
+//     presetInfo.desaturate = e.target.checked;
+//     updateImage("desaturate");
+// }
+
+
+charsetSelector.onchange=(e)=>{
+    if(e.target.value==="SIA/"){
+        presetInfo.charset =charset_sia;
+    }else{
+        presetInfo.charset =charset_ascii;
+    }
+    updateImage("charset");
+}
+
 
 // desaturation.oninput=(e)=>{
 //    desaturationValue.value=e.target.value;
@@ -417,18 +525,27 @@ function updatePreset(){
     if(fontSize.value!=presetInfo.fontSize){
         fontSize.value = presetInfo.fontSize;
     }
-    if(fontFamily!=presetInfo.fontFamily){
-        fontFamily = presetInfo.fontFamily;
-    }
-    if(lineHeight.value!=presetInfo.lineHeight){
-        lineHeight.value = presetInfo.lineHeight;
-    }
-    if(charWidth.value!=presetInfo.charWidth){
-        charWidth.value = presetInfo.charWidth;
-    }
+    // if( fontDropdown.value!=presetInfo.fontFamily){
+    //     fontDropdown.value = presetInfo.fontFamily;
+
+    // }
+    // if(lineHeight.value!=presetInfo.lineHeight){
+    //     lineHeight.value = presetInfo.lineHeight;
+    // }
+    // if(charWidth.value!=presetInfo.charWidth){
+    //     charWidth.value = presetInfo.charWidth;
+    // }
     if(charsetSelector.value!=presetInfo.charset){
-        charsetSelector.value = presetInfo.charset;
+        // charsetSelector.value = presetInfo.charset;
+        if(presetInfo.charset.contains("SIA/")){
+            charsetSelector.target.value = "SIA/";
+        }else{
+            charsetSelector.target.value = "ASCII";
+        }
+
     }
+    console.log("UPADTE Charset selector value is ",charsetSelector.value);
+
     if(gradientInfo!=presetInfo.gradientInfo){
         gradientInfo = presetInfo.gradientInfo;
     }
@@ -462,17 +579,21 @@ function loadPreset(){
     contrastEle.value = presetInfo.contrastEle;
     // desaturation.value = presetInfo.desaturation;
     gradientInfo = presetInfo.gradientInfo;
-    loadGradient();
-    updateGradient();
-    updatePreset();
     brightnessValue.innerHTML = presetInfo.brightnessEle;
     contrastValue.innerHTML = presetInfo.contrastEle;
     // desaturationValue.innerHTML = presetInfo.desaturation;
     fontSize.value = presetInfo.fontSize;
-    fontFamily = presetInfo.fontFamily;
-    lineHeight.value = presetInfo.lineHeight;
-    charWidth.value = presetInfo.charWidth;
+    // fontDropdown.value = presetInfo.fontFamily;
+    // lineHeight.value = presetInfo.lineHeight;
+    // charWidth.value = presetInfo.charWidth;
+    console.log("charsetSelector value ", charsetSelector.value);
     charsetSelector.value = presetInfo.charset;
+  
+    console.log("presetInfo charset ", presetInfo.charset);
+    loadGradient();
+    updateGradient();
+    updatePreset();
+
 }
 
 function savePreset(){
@@ -485,9 +606,9 @@ function savePreset(){
     presetInfo.gradientInfo = gradientInfo;
     saveGradient();
     presetInfo.fontSize = fontSize.value;
-    presetInfo.fontFamily = fontFamily;
-    presetInfo.lineHeight = lineHeight.value;
-    presetInfo.charWidth = charWidth.value;
+    presetInfo.fontFamily = "Sora";//fontDropdown.value;
+    // presetInfo.lineHeight = fontSize.value*0.8;
+    // presetInfo.charWidth =fontSize.value*0.8;
     presetInfo.charset = charsetSelector.value;
 }
 
@@ -531,9 +652,9 @@ function loadPresetFromFile(file){
         presetInfo.inverseEle = data.inverseEle;
         presetInfo.gradientInfo = data.gradientInfo;
         presetInfo.fontSize = data.fontSize;
-        presetInfo.fontFamily = data.fontFamily;
-        presetInfo.lineHeight = data.lineHeight;
-        presetInfo.charWidth = data.charWidth;
+        // presetInfo.fontFamily = data.fontFamily;
+        // presetInfo.lineHeight = data.lineHeight;
+        // presetInfo.charWidth = data.charWidth;
         presetInfo.charset = data.charset;
         console.log("preset loaded from file: ",presetInfo);
         loadPreset();
@@ -569,6 +690,7 @@ function loadPresetFromFile(file){
 
 const presetFileInput = document.getElementById('load-preset');
 presetFileInput.type = 'file';
+
 presetFileInput.addEventListener('change', function() {
     if (this.files && this.files[0]) {
         console.log("file", this.files[0]);
@@ -576,36 +698,8 @@ presetFileInput.addEventListener('change', function() {
     }
 });
 
-// Event listener for brightness changes
-brightnessEle.addEventListener('input', (e) => {
-    brightnessValue.innerHTML = e.target.value;
-    updateImage("brightnessEle");
-
-});
-inverseEle.onchange = (e) => {
-    presetInfo.inverseEle = e.target.checked;
-    updateImage("inverseEle");
-}
-// desaturate.onchange=(e)=>{
-//     presetInfo.desaturate = e.target.checked;
-//     updateImage("desaturate");
-// }
-
-fontDropdown.onchange = (e) => {
-    presetInfo.fontFamily =e.target.value;
-    // apply font in the text for the image and video reader 
-};
-
-charsetSelector.onchange=(e)=>{
-    if(e.target.value==="SIA/"){
-        presetInfo.charset =charset_sia;
-    }else{
-        presetInfo.charset =charset_ascii;
-    }
-    updateImage("charset");
-}
-
 function calculateAsciiDimensionsForImageSize(pixelWidth, pixelHeight, charPixelWidth, charPixelHeight) {
+    ///1260 width and 800 height
     if(charPixelHeight!=0 && charPixelWidth!=0){
     const asciiWidth = Math.ceil(pixelWidth / charPixelWidth);
     const asciiHeight = Math.ceil(pixelHeight / charPixelHeight);
