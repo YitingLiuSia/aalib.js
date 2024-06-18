@@ -18,31 +18,50 @@ const charset_ascii = ASCII_CHARSET;
 const charset_sia = "SIA/- ";
 const resource = filename => `../resources/${ filename }`;
 
-// loading default presetInfo in resources location on start 
-document.addEventListener('DOMContentLoaded', () => {
-    fetch(resource("presetInfo.json"))
-        .then(response => response.json())
-        .then(data => {
-            console.log("data is ",data);
-            presetInfo = new PresetInfo(
-                data.inverseEle, 
-                // data.desaturate, 
-                data.brightnessEle, 
-                data.contrastEle, 
-                // data.desaturation, 
-                data.gradientInfo, 
-                data.fontSize, 
-                // data.fontFamily, 
-                // data.lineHeight,
-                // data.charWidth,
-                data.charset
-            );
+const presetSelection = document.getElementById("preset-selection");
 
-            loadPreset();
-        })
-        .catch(error => console.error('Error loading preset:', error));
+const presetFolderName = "Presets/";
+presetSelection.addEventListener('change',function(){
+    var selectedPreset = this.value;
+    switch(selectedPreset){
+        case 'preset-1':
+            fetchPresetFromJson(presetFolderName+"presetsInfo.json");
+        break;
+        case 'preset-2':
+            fetchPresetFromJson(presetFolderName+"preset-2.json");
+        break;
+        case 'preset-3':
+            fetchPresetFromJson(presetFolderName+"preset-3.json");
+        break;
+    }
 });
 
+document.addEventListener('DOMContentLoaded', () => fetchPresetFromJson("Presets/presetInfo.json"));
+
+function fetchPresetFromJson(filePath){
+    fetch(resource(filePath))
+    .then(response => response.json())
+    .then(data => {
+        console.log(`data from ${filePath} is ${data}`);
+        presetInfo = new PresetInfo(
+            data.inverseEle, 
+            // data.desaturate, 
+            data.brightnessEle, 
+            data.contrastEle, 
+            // data.desaturation, 
+            data.gradientInfo, 
+            data.fontSize, 
+            // data.fontFamily, 
+            // data.lineHeight,
+            // data.charWidth,
+            data.charset
+        );
+
+        loadPreset();
+    })
+    .catch(error => console.error('Error loading preset:', error));
+
+}
 
 const FONTS = {
     Sora: resource("sora-ttf/Sora-Regular-mono.ttf"),
@@ -224,7 +243,7 @@ function loadImageFromURL(img, isCanvas){
         background: "rgba(0,0,0,0)",
         color: gradient
     };
-    
+
     let imageProcessingPipeline = aalib.read.image.fromURL(img.src);
        
     if (inverseEle.checked) {
