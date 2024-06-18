@@ -1,8 +1,9 @@
 const webpack = require("webpack");
 const path = require("path");
+const { mode } = require("./dev/webpack.config");
 
 module.exports = {
-
+    mode: 'production',
     entry: "./src/index.js",
 
     output: {
@@ -12,16 +13,16 @@ module.exports = {
         filename: "aalib.js"
     },
 
-    module: {
-        rules: [
-            { test: /\.js$/, exclude: /node_modules/, loader: "babel-loader" }
-        ]
-    },
+    // module: {
+    //     rules: [
+    //         { test: /\.js$/, exclude: /node_modules/, loader: "babel-loader" }
+    //     ]
+    // },
 
-    plugins: [
-        new webpack.optimize.UglifyJsPlugin({ minimize: true }),
-        new webpack.BannerPlugin(require("fs").readFileSync("LICENSE", { encoding: "utf8" }))
-    ],
+    // plugins: [
+    //     new webpack.optimize.UglifyJsPlugin({ minimize: true }),
+    //     new webpack.BannerPlugin(require("fs").readFileSync("LICENSE", { encoding: "utf8" }))
+    // ],
 
     devtool: "source-map"
 };

@@ -1,54 +1,141 @@
-@import url("https://fonts.googleapis.com/css?family=Open+Sans&display=swap|Kode+Mono|Sora|Danfo|Lato|Inconsolata|Roboto+Mono|Source+Code+Pro|Ubuntu+Mono|Cutive+Mono");
-
-/* @font-face {
-    font-family: 'Open Sans', sans-serif;
-    src: url('../../../resources/kode-mono/KodeMono-Regular.ttf') format('truetype');
-  } */
-/* @font-face {
-    font-family: 'Sora', sans-serif;
-    src: url('../../../resources/sora-otf/Sora-Regular.otf') format('opentype');
-    font-weight: 400;
-  }
-
-  @font-face {
-    font-family: 'Kode Mono', sans-serif;
-    src: url('../../../resources/kode-mono/KodeMono-Regular.ttf') format('truetype');
-  } */
-
-* {
-    box-sizing: border-box;
+body{
+    display: flex;
+    justify-content: space-between; /* Aligns children to each side of the container */
+    overflow: hidden;
+}
+#gradient-canvas {
+    border: 1px solid #000;
+    cursor: pointer;
+    display: block;
+    margin: 0 auto;
 }
 
-body {
-    margin: 0;
-    padding: 0;
+p{
+    font-size: small;
+}
+.container{
+    flex-direction: row;
+    margin: 10px;
 }
 
-pre {
-    margin: 0;
-    padding: 0;
+#preset-container{
+    background-color:rgb(224, 212, 189);
+    padding: 20px;
+    margin: 0 auto;
+    display: block;
+    overflow-y: scroll;
+    overflow-x: hidden; /* Prevents horizontal scrolling */
+    max-height: 90vh;
+    max-width: 40vw;
+
 }
 
-input:not([type="file"]),
+
+#image-container{
+    flex: 0 1 90%;
+    width: 70vw;
+}
+
+#imported-image{
+    width: 30%;
+    opacity: 0.6;
+    overflow-y: scroll;
+    overflow-x: hidden; /* Prevents horizontal scrolling */
+    max-height: 100vh;
+}
+
+
+#processed-image{
+    max-width: 70%;
+    height: auto;
+}
+
+.sliderContainer{
+    text-align: left; 
+    width: 100%;
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center;
+}
+
+.gradient-selection-container{
+    width: 80%;
+   margin: 0 auto;
+   justify-content: center;
+   align-items: center;
+}
+
+.slider-values{
+    display: flex; 
+    justify-content: space-between;
+}
+
+.sliderValue{
+    font-weight: bold;
+}
+/* Base styles for form elements */
+input, select, button {
+    font-family: 'Sora', sans-serif; /* Consistent font family */
+    padding: 8px 12px; /* Adequate padding */
+    margin: 5px; /* Spacing around elements */
+    border: 1px solid #ccc; /* Subtle border */
+    border-radius: 4px; /* Rounded corners */
+    box-sizing: border-box; /* Includes padding and border in the element's total width and height */
+    align-self: center;
+    justify-content: center;
+}
+
+input[type="range"]{
+    width: 80%; 
+    cursor: pointer;
+}
+input[type="color"]{
+
+    max-width: 200px; 
+    padding: 0.5px;
+}
+
+.slider-values{
+    display:flex;
+    justify-content: space-between
+}
+/* Smaller input sizes */
+input[type="text"],input[type="number"]{
+    max-width: 70px; /* Restricting width for smaller inputs */
+}
+
+
+input[type="file"] {
+    max-width: 200px; /* Restricting width for smaller inputs */
+}
+
+/* Styling for buttons */
+button {
+    background-color: #007BFF; /* A pleasant blue */
+    color: white; /* White text */
+    border: none; /* No border */
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: background-color 0.3s; /* Smooth transition for hover effect */
+}
+
+button:hover, button:focus {
+    background-color: #0056b3; /* Darker blue on hover/focus */
+}
+
+/* Styling for dropdowns */
 select {
-    border: 1px solid #a1a6af;
-    border-radius: 4px;
-    background-color: #fff;
-    height: 23px;
+    min-width: 150px; /* Minimum width */
+    cursor: pointer; /* Pointer cursor on hover */
 }
 
-input:not([type="file"]) {
-    padding: 0 5px;
-    vertical-align: middle;
-    font-size: 14px;
+/* Focus styles for inputs and buttons */
+input:focus, select:focus, button:focus {
+    border-color: #66afe9; /* Highlight focus with a light blue border */
+    outline: none; /* Remove default focus outline */
 }
 
-input:disabled {
-    background: rgba(100, 100, 100, 0.1);
-}
-
-input:focus,
-select:focus {
-    border-color: #7b7d82;
-    outline: none;
+@media (max-width: 768px) {
+    .main-container {
+        flex-direction: row;
+    }
 }
