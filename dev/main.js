@@ -18,21 +18,21 @@ const charset_ascii = ASCII_CHARSET;
 const charset_sia = "SIA/- ";
 const resource = filename => `../resources/${ filename }`;
 
-// loading default presetInfo in resources location on start 
+// loading default presetInfo in resources location on start
 document.addEventListener('DOMContentLoaded', () => {
     fetch(resource("presetInfo.json"))
         .then(response => response.json())
         .then(data => {
             console.log("data is ",data);
             presetInfo = new PresetInfo(
-                data.inverseEle, 
-                // data.desaturate, 
-                data.brightnessEle, 
-                data.contrastEle, 
-                // data.desaturation, 
-                data.gradientInfo, 
-                data.fontSize, 
-                // data.fontFamily, 
+                data.inverseEle,
+                // data.desaturate,
+                data.brightnessEle,
+                data.contrastEle,
+                // data.desaturation,
+                data.gradientInfo,
+                data.fontSize,
+                // data.fontFamily,
                 // data.lineHeight,
                 // data.charWidth,
                 data.charset
@@ -63,10 +63,10 @@ function pipeline(...args) {
         .reduce((acc, it) => acc.map(it), src)
         .subscribe();
 }
-// media recorder and video exporter 
+// media recorder and video exporter
 
 const imageDropdown = document.getElementById('image-dropdown');
-let isCanvas = true; 
+let isCanvas = true;
 
 imageDropdown.onchange = function(){
     isCanvas = this.value === "canvas";
@@ -80,7 +80,7 @@ imageDropdown.onchange = function(){
 // setupMediaRecorder(videoCanvasElement);
 // document.getElementById('startRecording').addEventListener('click', startRecording);
 // document.getElementById('stopAndDownload').addEventListener('click', stopRecording);
-// video input 
+// video input
 // function setupMediaRecorder(canvas) {
 //     const stream = canvas.captureStream(25); // Capture at 25 fps
 //     mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm; codecs=vp9' });
@@ -106,7 +106,7 @@ imageDropdown.onchange = function(){
 //         document.body.removeChild(a);
 //         recordedChunks = []; // Clear the recorded chunks
 //     };
-// } 
+// }
 
 // function startRecording() {
 //     mediaRecorder.start();
@@ -137,7 +137,7 @@ imageDropdown.onchange = function(){
 //     });
 // }
 
-// // video input 
+// // video input
 // document.getElementById('videoInput').addEventListener('change', function (event) {
 //     const file = event.target.files[0];
 //     if (file) {
@@ -189,19 +189,19 @@ function downloadImageWithRatio(){
     // Clean up: remove the temporary canvas
     tempCanvas.remove();
 }
-// image input 
-// image size is the same, but the ascii squished the size 
-// set original size of the image itself 
-// add a border on the original image 
+// image input
+// image size is the same, but the ascii squished the size
+// set original size of the image itself
+// add a border on the original image
 // the image is not resized proprtionally but it is closer {"inverseEle":true,"brightnessEle":"1.3","contrastEle":"1.2","gradientInfo":{"color1":"#b0d4fc","color2":"#ffccdb","color3":"#ffe2cc","colorPosition1":"20","colorPosition2":"80","colorPosition3":"100"},"fontSize":"5","fontFamily":"Sora","lineHeight":"4","charWidth":"4","charset":"ASCII"}
 function loadImageFromURL(img, isCanvas){
-    const imageWidth = img.width; //imageExportRatio.value * img.width; 
+    const imageWidth = img.width; //imageExportRatio.value * img.width;
     const imageHeight = img.height;//imageExportRatio.value * img.height;
     let canvas = document.getElementById('processed-image');
-    // figure out the ratio of cutting off 
+    // figure out the ratio of cutting off
     const charWidthValue = fontSize.value*0.8;
     const lineHeightValue = fontSize.value*0.8;
-    const ratioX =imageWidth/(fontSize.value+charWidthValue)*2; //2* fontSize.value/5*13.5;// 
+    const ratioX =imageWidth/(fontSize.value+charWidthValue)*2; //2* fontSize.value/5*13.5;//
     const ratioY = imageHeight/(fontSize.value+lineHeightValue)*2;//2*fontSize.value/5*13.5 ;//
     //const asciiDimensions = calculateAsciiDimensionsForImageSize(imageWidth, imageHeight, (fontSize.value+charWidthValue) /ratioX , (fontSize.value+lineHeightValue)/ratioY);
     const asciiDimensions = calculateAsciiDimensionsForImageSize(imageWidth, imageHeight, fontSize.value , fontSize.value);
@@ -214,7 +214,7 @@ function loadImageFromURL(img, isCanvas){
     gradient.addColorStop(colorPosition1.value/100, color1.value);
     gradient.addColorStop(colorPosition2.value/100, color2.value);
     gradient.addColorStop(colorPosition3.value/100, color3.value);
-  
+
     // console.log("gradient is ",gradient);
     const canvasOptions = {
         fontSize: fontSize.value,
@@ -235,7 +235,7 @@ function loadImageFromURL(img, isCanvas){
 
 
     let imageProcessingPipeline = aalib.read.image.fromURL(img.src);
-       
+
     if (inverseEle.checked) {
             console.log("inverse elemenet is checked ", inverseEle.checked)
             imageProcessingPipeline = imageProcessingPipeline.map(aalib.filter.inverse());
@@ -245,7 +245,7 @@ function loadImageFromURL(img, isCanvas){
         // if (desaturate.checked) {
         //     imageProcessingPipeline = imageProcessingPipeline.map(aalib.filter.desaturate());
         // }
-   
+
         if (brightnessValue.value !== undefined) {
             console.log("brightnessValue value ", brightnessValue.value);
             imageProcessingPipeline = imageProcessingPipeline.map(aalib.filter.brightness(brightnessValue.value));
@@ -264,18 +264,18 @@ function loadImageFromURL(img, isCanvas){
         if (isCanvas) {
             imageProcessingPipeline.map(aalib.render.canvas(canvasOptions))
     .do(function (el) {
-       
+
         replaceImageToDiv(el);
-       
+
     })
-    .subscribe(); 
-    
+    .subscribe();
+
         } else {
         imageProcessingPipeline.map(aalib.render.html(canvasOptions))
         .do(function (el) {
             replaceImageToDiv(el);
         })
-        .subscribe(); 
+        .subscribe();
     }
 }
 
@@ -314,14 +314,14 @@ function loadImageAndProcess(url) {
         console.error('Error loading the image');
     };
 }
-// this should update when the url is the same but when the changes of preset is applied 
+// this should update when the url is the same but when the changes of preset is applied
 function handleImageInputChange(event) {
     const file = event.target.files[0];
-   
+
     if (file && file.type.startsWith('image/')) {
         const reader = new FileReader();
         reader.onload = function (e) {
-            // const uniqueSuffix = '#nocache=' + new Date().getTime();// this does not work 
+            // const uniqueSuffix = '#nocache=' + new Date().getTime();// this does not work
             // console.log("uniqueSuffix ",uniqueSuffix);
            // const safeUrl = encodeURI(e.target.result);// + uniqueSuffix;
            loadImageAndProcess(e.target.result);
@@ -420,7 +420,7 @@ window.onload = function() {
 
     currentimageExportRatio = imageExportRatio.value;
     charsetSelector.value = presetInfo.charset;
-    presetInfo.fontFamily = "Sora";//fontDropdown.value;     
+    presetInfo.fontFamily = "Sora";//fontDropdown.value;
     // console.log("Charset selector initialized ",fontDropdown.value);
     updateImage("chartset");
 
@@ -520,7 +520,7 @@ function updatePreset(){
     //     desaturation.value = presetInfo.desaturation;
     // }
     if(inverseEle.value!=presetInfo.inverseEle){
-        inverseEle.value = presetInfo.inverseEle;     
+        inverseEle.value = presetInfo.inverseEle;
     }
     if(fontSize.value!=presetInfo.fontSize){
         fontSize.value = presetInfo.fontSize;
@@ -588,7 +588,7 @@ function loadPreset(){
     // charWidth.value = presetInfo.charWidth;
     console.log("charsetSelector value ", charsetSelector.value);
     charsetSelector.value = presetInfo.charset;
-  
+
     console.log("presetInfo charset ", presetInfo.charset);
     loadGradient();
     updateGradient();
@@ -640,7 +640,7 @@ function savePresetToFile(){
 //     console.log("Gradient saved to file.");
 // }
 
-// needs to update in the preset info values as well - UI 
+// needs to update in the preset info values as well - UI
 function loadPresetFromFile(file){
     const reader = new FileReader();
     reader.onload = function(event){
@@ -708,4 +708,3 @@ function calculateAsciiDimensionsForImageSize(pixelWidth, pixelHeight, charPixel
         height: asciiHeight
     };}
 }
-
