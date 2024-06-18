@@ -25,7 +25,7 @@ presetSelection.addEventListener('change',function(){
     var selectedPreset = this.value;
     switch(selectedPreset){
         case 'preset-1':
-            fetchPresetFromJson(presetFolderName+"presetsInfo.json");
+            fetchPresetFromJson(presetFolderName+"presetInfo.json");
         break;
         case 'preset-2':
             fetchPresetFromJson(presetFolderName+"preset-2.json");
