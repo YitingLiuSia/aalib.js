@@ -16,7 +16,9 @@ module.exports = {
             "stream": require.resolve("stream-browserify"),
             "path": require.resolve("path-browserify"),
             "assert": require.resolve("assert/"),
-            "util": require.resolve("util/")
+            "util": require.resolve("util/"),
+            "async_hooks": false,
+            "fs": false
         }
     }
     // module: {

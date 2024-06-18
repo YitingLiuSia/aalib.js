@@ -70,6 +70,13 @@
  */
 
 /*!
+ * destroy
+ * Copyright(c) 2014 Jonathan Ong
+ * Copyright(c) 2015-2022 Douglas Christopher Wilson
+ * MIT Licensed
+ */
+
+/*!
  * ee-first
  * Copyright(c) 2014 Jonathan Ong
  * MIT Licensed
@@ -91,6 +98,7 @@
 /*!
  * mime-db
  * Copyright(c) 2014 Jonathan Ong
+ * Copyright(c) 2015-2022 Douglas Christopher Wilson
  * MIT Licensed
  */
 
@@ -111,13 +119,19 @@
 /*!
  * raw-body
  * Copyright(c) 2013-2014 Jonathan Ong
- * Copyright(c) 2014-2015 Douglas Christopher Wilson
+ * Copyright(c) 2014-2022 Douglas Christopher Wilson
  * MIT Licensed
  */
 
 /*!
  * statuses
  * Copyright(c) 2014 Jonathan Ong
+ * Copyright(c) 2016 Douglas Christopher Wilson
+ * MIT Licensed
+ */
+
+/*!
+ * toidentifier
  * Copyright(c) 2016 Douglas Christopher Wilson
  * MIT Licensed
  */
