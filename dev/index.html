@@ -91,24 +91,28 @@
             <canvas id="gradient-canvas" ></canvas>
         
             <div class="gradient-selection-container">
-                <div class="gradient-group">
-                    <input type="color" id="color1" value="#ff0000">
-                    <!-- <input type="range" id="position1" min="0" max="100" value="20" oninput="updateColorPercentage('position1', 'percentage1')"> -->
-                    <span id="percentage1">20%</span>
-                </div>
-                <div class="gradient-group">
-                    <input type="color" id="color2" value="#00ff00">
-                    <!-- <input type="range" id="position2" min="0" max="100" value="50" oninput="updateColorPercentage('position2', 'percentage2')"> -->
-                    <span id="percentage2">50%</span>
-                </div>
-                <div class="gradient-group">
-                    <input type="color" id="color3" value="#0000ff">
-                    <!-- <input type="range" id="position3" min="0" max="100" value="80" oninput="updateColorPercentage('position3', 'percentage3')"> -->
-                    <span id="percentage3">80%</span>
-                </div>
+                <div> <div id="color1" > </div>
+                <div id="position1" > </div>
+                <div id="color2" > </div>
+                <div id="position2" > </div>
+                <div id="color3" > </div>
+                <div id="position3" > </div>
+            </div>  
+            
+            <div class="gradient-group">
+                <span id="percentage1">20</span>
+                <span id="percentage2">50</span>
+                <span id="percentage3">100</span>
             </div>
+        </div>
 
             <div id="color-slider"></div>
+
+            <div class="sliderContainer">
+                <p>Angle</p>
+                <input type="range" id="gradient-angle" value="" min="0" max="180">
+                <span id="angleValue">90</span>
+            </div>
     </div>
 <!-- intentional spacer -->
     <h3></h3> 

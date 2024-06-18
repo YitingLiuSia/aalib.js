@@ -20,29 +20,13 @@ const resource = filename => `../resources/${ filename }`;
 
 
 
-var slider = document.getElementById('color-slider');
 
-noUiSlider.create(slider, {
-    start: [20, 50, 80],
-    connect: true,
-    range: {
-        'min': 0,
-        'max': 100
-    }
-});
+// slider.noUiSlider.on('input', function(values, handle) {
 
-slider.noUiSlider.on('update', function(values, handle) {
-    var color = document.getElementById('color' + (handle + 1));
-    var percentage = document.getElementById('percentage' + (handle + 1));
-    color.value = '#' + Math.floor(values[handle]).toString(16);
-    percentage.textContent = Math.floor(values[handle]) + '%';
-});
-
+//     console.log("updating the slider ", values, handle);
+// });
 
 const presetSelection = document.getElementById("preset-selection");
-
-
-
 const presetFolderName = "Presets/";
 presetSelection.addEventListener('change',function(){
     var selectedPreset = this.value;
@@ -411,7 +395,6 @@ let color3 = document.getElementById('color3');
 let colorPosition1 = document.getElementById('position1');
 let colorPosition2 = document.getElementById('position2');
 let colorPosition3 = document.getElementById('position3');
-let saveGradientButton = document.getElementById("save-gradient");
 let gradientInfo = new GradientInfo();
 let presetInfo = new PresetInfo();
 color1.onchange = updateGradient;
@@ -440,6 +423,45 @@ let saveImageButton = document.getElementById("save-image");
 saveImageButton.onclick = downloadImageWithRatio;
 
 let currentimageExportRatio = 1;
+let percentage1 = document.getElementById('percentage1');
+let percentage2 = document.getElementById('percentage2');
+let percentage3 = document.getElementById('percentage3');
+
+percentage1.addEventListener('change', function() {
+    slider.noUiSlider.set([this.textContent, null, null]);
+});
+
+percentage2.addEventListener('change', function() {
+    slider.noUiSlider.set([null, this.textContent, null]);
+});
+
+percentage3.addEventListener('change', function() {
+    slider.noUiSlider.set([null, null, this.textContent]);
+});
+
+var slider = document.getElementById('color-slider');
+
+noUiSlider.create(slider, {
+    start: [0, 50, 100],
+    connect: true,
+    range: {
+        'min': 0,
+        'max': 100
+    }
+});
+
+slider.noUiSlider.on('update', function(values, handle) {
+    var percentage = document.getElementById('percentage' + (handle + 1));
+    percentage.textContent = Math.floor(values[handle]);
+       // Update colorPosition values based on slider values
+       colorPosition1.value = values[0];
+       colorPosition2.value = values[1];
+       colorPosition3.value = values[2];
+       // Update the gradient
+       updateGradient();
+
+});
+
 
 imageExportRatio.oninput=(e)=>{
     imageExportRatio.value = e.target.value;
