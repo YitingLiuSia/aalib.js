@@ -18,7 +18,30 @@ const charset_ascii = ASCII_CHARSET;
 const charset_sia = "SIA/- ";
 const resource = filename => `../resources/${ filename }`;
 
+
+
+var slider = document.getElementById('color-slider');
+
+noUiSlider.create(slider, {
+    start: [20, 50, 80],
+    connect: true,
+    range: {
+        'min': 0,
+        'max': 100
+    }
+});
+
+slider.noUiSlider.on('update', function(values, handle) {
+    var color = document.getElementById('color' + (handle + 1));
+    var percentage = document.getElementById('percentage' + (handle + 1));
+    color.value = '#' + Math.floor(values[handle]).toString(16);
+    percentage.textContent = Math.floor(values[handle]) + '%';
+});
+
+
 const presetSelection = document.getElementById("preset-selection");
+
+
 
 const presetFolderName = "Presets/";
 presetSelection.addEventListener('change',function(){

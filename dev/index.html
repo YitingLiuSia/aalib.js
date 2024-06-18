@@ -7,6 +7,9 @@
     <script type="text/javascript" defer src="bundle.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.3.2/html2canvas.min.js"></script>
     <link rel="stylesheet" href="style.css">
+    <link href="https://cdn.jsdelivr.net/npm/nouislider@14.6.3/distribute/nouislider.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/nouislider@14.6.3/distribute/nouislider.min.js"></script>
+
 </head>
 
 <body>
@@ -65,25 +68,47 @@
     <hr>
 
     <div class="gradient-container">
-        <h3>Gradient</h3>
+        <h3>Colors</h3>
+
+        <select name="" id="color-selection">
+            <option value="Sia Gradient">Sia Gradient</option>
+            <option value="Cool Black">Cool Black</option>
+            <option value="white"> White</option>
+            <option value="">Medium Gray</option>
+        </select>
+
+        <div class="sliderContainer">
+            <p >Saturation</p>
+            <input type="range" id="saturation" min="0" max="1" step="0.1" value="0.5" class="myRange">
+            <div class="slider-values" >
+                <!-- <span class="min">0</span> -->
+                <span class="sliderValue">0.5</span>
+                <!-- <span class="max">1</span> -->
+        </div>
+    </div>
         <!-- <input type="file" id="gradient-file-input" accept="application/json"> -->
         <div id="gradient-picker">
             <canvas id="gradient-canvas" ></canvas>
         
-        <div style="margin-top: 10px;" class="gradient-selection-container">
-            <div class="gradient-group">
-                <input type="color" id="color1" value="">
-                <input type="number" id="position1" min="0" max="100" value="20">
+            <div class="gradient-selection-container">
+                <div class="gradient-group">
+                    <input type="color" id="color1" value="#ff0000">
+                    <!-- <input type="range" id="position1" min="0" max="100" value="20" oninput="updateColorPercentage('position1', 'percentage1')"> -->
+                    <span id="percentage1">20%</span>
+                </div>
+                <div class="gradient-group">
+                    <input type="color" id="color2" value="#00ff00">
+                    <!-- <input type="range" id="position2" min="0" max="100" value="50" oninput="updateColorPercentage('position2', 'percentage2')"> -->
+                    <span id="percentage2">50%</span>
+                </div>
+                <div class="gradient-group">
+                    <input type="color" id="color3" value="#0000ff">
+                    <!-- <input type="range" id="position3" min="0" max="100" value="80" oninput="updateColorPercentage('position3', 'percentage3')"> -->
+                    <span id="percentage3">80%</span>
+                </div>
             </div>
-            <div class="gradient-group">
-                <input type="color" id="color2" value="">
-                <input type="number" id="position2" value="80">
-            </div>
-            <div class="gradient-group">
-                <input type="color" id="color3" value="">
-                <input type="number" id="position3" value="100">
-            </div>
-        </div></div>
+
+            <div id="color-slider"></div>
     </div>
 <!-- intentional spacer -->
     <h3></h3> 
