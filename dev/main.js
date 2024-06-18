@@ -189,32 +189,29 @@ function downloadImageWithRatio(){
     // Clean up: remove the temporary canvas
     tempCanvas.remove();
 }
-// image input 
-// image size is the same, but the ascii squished the size 
-// set original size of the image itself 
-// add a border on the original image 
-// the image is not resized proprtionally but it is closer {"inverseEle":true,"brightnessEle":"1.3","contrastEle":"1.2","gradientInfo":{"color1":"#b0d4fc","color2":"#ffccdb","color3":"#ffe2cc","colorPosition1":"20","colorPosition2":"80","colorPosition3":"100"},"fontSize":"5","fontFamily":"Sora","lineHeight":"4","charWidth":"4","charset":"ASCII"}
+const charWidthOffsetRatio = 0.8;
+const lineHeightOffsetRatio = 1.8;
+const ratioValue = 2;
+
 function loadImageFromURL(img, isCanvas){
     const imageWidth = img.width; //imageExportRatio.value * img.width; 
     const imageHeight = img.height;//imageExportRatio.value * img.height;
-    let canvas = document.getElementById('processed-image');
-    // figure out the ratio of cutting off 
-    const charWidthValue = fontSize.value*0.8;
-    const lineHeightValue = fontSize.value*0.8;
-    const ratioX =imageWidth/(fontSize.value+charWidthValue)*2; //2* fontSize.value/5*13.5;// 
-    const ratioY = imageHeight/(fontSize.value+lineHeightValue)*2;//2*fontSize.value/5*13.5 ;//
-    //const asciiDimensions = calculateAsciiDimensionsForImageSize(imageWidth, imageHeight, (fontSize.value+charWidthValue) /ratioX , (fontSize.value+lineHeightValue)/ratioY);
-    const asciiDimensions = calculateAsciiDimensionsForImageSize(imageWidth, imageHeight, fontSize.value , fontSize.value);
+ 
+    const charWidthValue = fontSize.value*charWidthOffsetRatio;//*0.8;
+    const lineHeightValue = fontSize.value*lineHeightOffsetRatio;//0.8;
+    const ratioX =imageWidth/(fontSize.value+charWidthValue)*ratioValue; //2* fontSize.value/5*13.5;// 
+    const ratioY = imageHeight/(fontSize.value+lineHeightValue)*ratioValue;//2*fontSize.value/5*13.5 ;//
+    const asciiDimensions = calculateAsciiDimensionsForImageSize(imageWidth, imageHeight, fontSize.value , fontSize.value/charWidthOffsetRatio*lineHeightOffsetRatio);
     const aaReq = { width:asciiDimensions.width  , height: asciiDimensions.height, colored: false};
     console.log("image size is ", imageWidth, imageHeight);
     console.log("ratio is ", ratioX, ratioY);
     console.log('Required ASCII Dimensions:', asciiDimensions);
+
     // Example gradient stops
     gradient = gradientCanvasCTX.createLinearGradient(0, 0, imageWidth, 0);
     gradient.addColorStop(colorPosition1.value/100, color1.value);
     gradient.addColorStop(colorPosition2.value/100, color2.value);
     gradient.addColorStop(colorPosition3.value/100, color3.value);
-  
     // console.log("gradient is ",gradient);
     const canvasOptions = {
         fontSize: fontSize.value,
@@ -226,14 +223,8 @@ function loadImageFromURL(img, isCanvas){
         height: imageHeight , // Use original image height for canvas
         background: "rgba(0,0,0,0)",
         color: gradient
-
     };
-
-    // canvas.width =  canvasOptions.width;// Set this based on your content's needs
-    // canvas.height = canvasOptions.height;//asciiDimensions.height * canvasRatio; // Set this based on your content's needs
-    // console.log("canvas size is ", canvas.width, canvas.height);
-
-
+    
     let imageProcessingPipeline = aalib.read.image.fromURL(img.src);
        
     if (inverseEle.checked) {
