@@ -18,31 +18,57 @@ const charset_ascii = ASCII_CHARSET;
 const charset_sia = "SIA/- ";
 const resource = filename => `../resources/${ filename }`;
 
-// loading default presetInfo in resources location on start 
-document.addEventListener('DOMContentLoaded', () => {
-    fetch(resource("presetInfo.json"))
-        .then(response => response.json())
-        .then(data => {
-            console.log("data is ",data);
-            presetInfo = new PresetInfo(
-                data.inverseEle, 
-                // data.desaturate, 
-                data.brightnessEle, 
-                data.contrastEle, 
-                // data.desaturation, 
-                data.gradientInfo, 
-                data.fontSize, 
-                // data.fontFamily, 
-                // data.lineHeight,
-                // data.charWidth,
-                data.charset
-            );
 
-            loadPreset();
-        })
-        .catch(error => console.error('Error loading preset:', error));
+
+
+// slider.noUiSlider.on('input', function(values, handle) {
+
+//     console.log("updating the slider ", values, handle);
+// });
+
+const presetSelection = document.getElementById("preset-selection");
+const presetFolderName = "Presets/";
+presetSelection.addEventListener('change',function(){
+    var selectedPreset = this.value;
+    switch(selectedPreset){
+        case 'preset-1':
+            fetchPresetFromJson(presetFolderName+"presetsInfo.json");
+        break;
+        case 'preset-2':
+            fetchPresetFromJson(presetFolderName+"preset-2.json");
+        break;
+        case 'preset-3':
+            fetchPresetFromJson(presetFolderName+"preset-3.json");
+        break;
+    }
 });
 
+document.addEventListener('DOMContentLoaded', () => fetchPresetFromJson("Presets/presetInfo.json"));
+
+function fetchPresetFromJson(filePath){
+    fetch(resource(filePath))
+    .then(response => response.json())
+    .then(data => {
+        console.log(`data from ${filePath} is ${data}`);
+        presetInfo = new PresetInfo(
+            data.inverseEle, 
+            // data.desaturate, 
+            data.brightnessEle, 
+            data.contrastEle, 
+            // data.desaturation, 
+            data.gradientInfo, 
+            data.fontSize, 
+            // data.fontFamily, 
+            // data.lineHeight,
+            // data.charWidth,
+            data.charset
+        );
+
+        loadPreset();
+    })
+    .catch(error => console.error('Error loading preset:', error));
+
+}
 
 const FONTS = {
     Sora: resource("sora-ttf/Sora-Regular-mono.ttf"),
@@ -189,32 +215,29 @@ function downloadImageWithRatio(){
     // Clean up: remove the temporary canvas
     tempCanvas.remove();
 }
-// image input 
-// image size is the same, but the ascii squished the size 
-// set original size of the image itself 
-// add a border on the original image 
-// the image is not resized proprtionally but it is closer {"inverseEle":true,"brightnessEle":"1.3","contrastEle":"1.2","gradientInfo":{"color1":"#b0d4fc","color2":"#ffccdb","color3":"#ffe2cc","colorPosition1":"20","colorPosition2":"80","colorPosition3":"100"},"fontSize":"5","fontFamily":"Sora","lineHeight":"4","charWidth":"4","charset":"ASCII"}
+const charWidthOffsetRatio = 0.8;
+const lineHeightOffsetRatio = 1.8;
+const ratioValue = 2;
+
 function loadImageFromURL(img, isCanvas){
     const imageWidth = img.width; //imageExportRatio.value * img.width; 
     const imageHeight = img.height;//imageExportRatio.value * img.height;
-    let canvas = document.getElementById('processed-image');
-    // figure out the ratio of cutting off 
-    const charWidthValue = fontSize.value*0.8;
-    const lineHeightValue = fontSize.value*0.8;
-    const ratioX =imageWidth/(fontSize.value+charWidthValue)*2; //2* fontSize.value/5*13.5;// 
-    const ratioY = imageHeight/(fontSize.value+lineHeightValue)*2;//2*fontSize.value/5*13.5 ;//
-    //const asciiDimensions = calculateAsciiDimensionsForImageSize(imageWidth, imageHeight, (fontSize.value+charWidthValue) /ratioX , (fontSize.value+lineHeightValue)/ratioY);
-    const asciiDimensions = calculateAsciiDimensionsForImageSize(imageWidth, imageHeight, fontSize.value , fontSize.value);
+ 
+    const charWidthValue = fontSize.value*charWidthOffsetRatio;//*0.8;
+    const lineHeightValue = fontSize.value*lineHeightOffsetRatio;//0.8;
+    const ratioX =imageWidth/(fontSize.value+charWidthValue)*ratioValue; //2* fontSize.value/5*13.5;// 
+    const ratioY = imageHeight/(fontSize.value+lineHeightValue)*ratioValue;//2*fontSize.value/5*13.5 ;//
+    const asciiDimensions = calculateAsciiDimensionsForImageSize(imageWidth, imageHeight, fontSize.value , fontSize.value/charWidthOffsetRatio*lineHeightOffsetRatio);
     const aaReq = { width:asciiDimensions.width  , height: asciiDimensions.height, colored: false};
     console.log("image size is ", imageWidth, imageHeight);
     console.log("ratio is ", ratioX, ratioY);
     console.log('Required ASCII Dimensions:', asciiDimensions);
+
     // Example gradient stops
     gradient = gradientCanvasCTX.createLinearGradient(0, 0, imageWidth, 0);
     gradient.addColorStop(colorPosition1.value/100, color1.value);
     gradient.addColorStop(colorPosition2.value/100, color2.value);
     gradient.addColorStop(colorPosition3.value/100, color3.value);
-  
     // console.log("gradient is ",gradient);
     const canvasOptions = {
         fontSize: fontSize.value,
@@ -226,13 +249,7 @@ function loadImageFromURL(img, isCanvas){
         height: imageHeight , // Use original image height for canvas
         background: "rgba(0,0,0,0)",
         color: gradient
-
     };
-
-    // canvas.width =  canvasOptions.width;// Set this based on your content's needs
-    // canvas.height = canvasOptions.height;//asciiDimensions.height * canvasRatio; // Set this based on your content's needs
-    // console.log("canvas size is ", canvas.width, canvas.height);
-
 
     let imageProcessingPipeline = aalib.read.image.fromURL(img.src);
        
@@ -378,7 +395,6 @@ let color3 = document.getElementById('color3');
 let colorPosition1 = document.getElementById('position1');
 let colorPosition2 = document.getElementById('position2');
 let colorPosition3 = document.getElementById('position3');
-let saveGradientButton = document.getElementById("save-gradient");
 let gradientInfo = new GradientInfo();
 let presetInfo = new PresetInfo();
 color1.onchange = updateGradient;
@@ -407,6 +423,45 @@ let saveImageButton = document.getElementById("save-image");
 saveImageButton.onclick = downloadImageWithRatio;
 
 let currentimageExportRatio = 1;
+let percentage1 = document.getElementById('percentage1');
+let percentage2 = document.getElementById('percentage2');
+let percentage3 = document.getElementById('percentage3');
+
+percentage1.addEventListener('change', function() {
+    slider.noUiSlider.set([this.textContent, null, null]);
+});
+
+percentage2.addEventListener('change', function() {
+    slider.noUiSlider.set([null, this.textContent, null]);
+});
+
+percentage3.addEventListener('change', function() {
+    slider.noUiSlider.set([null, null, this.textContent]);
+});
+
+var slider = document.getElementById('color-slider');
+
+noUiSlider.create(slider, {
+    start: [0, 50, 100],
+    connect: true,
+    range: {
+        'min': 0,
+        'max': 100
+    }
+});
+
+slider.noUiSlider.on('update', function(values, handle) {
+    var percentage = document.getElementById('percentage' + (handle + 1));
+    percentage.textContent = Math.floor(values[handle]);
+       // Update colorPosition values based on slider values
+       colorPosition1.value = values[0];
+       colorPosition2.value = values[1];
+       colorPosition3.value = values[2];
+       // Update the gradient
+       updateGradient();
+
+});
+
 
 imageExportRatio.oninput=(e)=>{
     imageExportRatio.value = e.target.value;
