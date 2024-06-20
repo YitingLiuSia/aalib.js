@@ -235,9 +235,9 @@ function loadImageFromURL(img, isCanvas){
 
     // Example gradient stops
     gradient = gradientCanvasCTX.createLinearGradient(0, 0, imageWidth, 0);
-    gradient.addColorStop(colorPosition1.value/100, color1.value);
-    gradient.addColorStop(colorPosition2.value/100, color2.value);
-    gradient.addColorStop(colorPosition3.value/100, color3.value);
+    gradient.addColorStop(colorPosition1.textContent/100, gradientInfo.color1);
+    gradient.addColorStop(colorPosition2.textContent/100, gradientInfo.color2);
+    gradient.addColorStop(colorPosition3.textContent/100, gradientInfo.color3);
     // console.log("gradient is ",gradient);
     const canvasOptions = {
         fontSize: fontSize.value,
@@ -392,17 +392,17 @@ let gcHeight = gradientCanvas.height;
 let color1 = document.getElementById('color1');
 let color2 = document.getElementById('color2');
 let color3 = document.getElementById('color3');
-let colorPosition1 = document.getElementById('position1');
-let colorPosition2 = document.getElementById('position2');
-let colorPosition3 = document.getElementById('position3');
+let colorPosition1 = document.getElementById('percentage1');
+let colorPosition2 = document.getElementById('percentage2');
+let colorPosition3 = document.getElementById('percentage3');
 let gradientInfo = new GradientInfo();
 let presetInfo = new PresetInfo();
-color1.onchange = updateGradient;
-color2.onchange = updateGradient;
-color3.onchange = updateGradient;
-colorPosition1.onchange = updateGradient;
-colorPosition2.onchange = updateGradient;
-colorPosition3.onchange = updateGradient;
+// color1.onchange = updateGradient;
+// color2.onchange = updateGradient;
+// color3.onchange = updateGradient;
+// colorPosition1.onchange = updateGradient;
+// colorPosition2.onchange = updateGradient;
+// colorPosition3.onchange = updateGradient;
 let gradient;
 let savePresetButton = document.getElementById("save-preset");
 // let desaturate = document.getElementById("desaturate");
@@ -440,7 +440,6 @@ percentage3.addEventListener('change', function() {
 });
 
 var slider = document.getElementById('color-slider');
-
 noUiSlider.create(slider, {
     start: [0, 50, 100],
     connect: true,
@@ -453,11 +452,9 @@ noUiSlider.create(slider, {
 slider.noUiSlider.on('update', function(values, handle) {
     var percentage = document.getElementById('percentage' + (handle + 1));
     percentage.textContent = Math.floor(values[handle]);
-       // Update colorPosition values based on slider values
-       colorPosition1.value = values[0];
-       colorPosition2.value = values[1];
-       colorPosition3.value = values[2];
-       // Update the gradient
+    //    colorPosition1.textContent = values[0];
+    //    colorPosition2.textContent = values[1];
+    //    colorPosition3.textContent = values[2];
        updateGradient();
 
 });
@@ -472,7 +469,6 @@ imageExportRatio.oninput=(e)=>{
 
 window.onload = function() {
     console.log("imageExportRatio ",imageExportRatio.value);
-
     currentimageExportRatio = imageExportRatio.value;
     charsetSelector.value = presetInfo.charset;
     presetInfo.fontFamily = "Sora";//fontDropdown.value;     
@@ -532,7 +528,6 @@ charsetSelector.onchange=(e)=>{
     updateImage("charset");
 }
 
-
 // desaturation.oninput=(e)=>{
 //    desaturationValue.value=e.target.value;
 //     updateImage("desaturation");
@@ -553,9 +548,11 @@ function updateImage(funcName){
 }
 function updateGradient(){
     gradient = gradientCanvasCTX.createLinearGradient(0, 0, gcWidth, 0);
-    gradient.addColorStop(colorPosition1.value/100, color1.value);
-    gradient.addColorStop(colorPosition2.value/100, color2.value);
-    gradient.addColorStop(colorPosition3.value/100, color3.value);
+    console.log("color position 1 is ",colorPosition1);
+    console.log("color position 1 is ",colorPosition1.textContent);
+    gradient.addColorStop(colorPosition1.textContent/100, gradientInfo.color1);
+    gradient.addColorStop(colorPosition2.textContent/100, gradientInfo.color2);
+    gradient.addColorStop(colorPosition3.textContent/100, gradientInfo.color3);
     gradientCanvasCTX.fillStyle = gradient;
     gradientCanvasCTX.fillRect(0, 0, gcWidth, gcHeight);
     updateImage("gradient");
@@ -609,9 +606,9 @@ function updatePreset(){
 
 function loadGradient(){
     console.log("load gradient");
-    colorPosition1.value = gradientInfo.colorPosition1;
-    colorPosition2.value = gradientInfo.colorPosition2;
-    colorPosition3.value = gradientInfo.colorPosition3;
+    colorPosition1.textContent = gradientInfo.colorPosition1;
+    colorPosition2.textContent = gradientInfo.colorPosition2;
+    colorPosition3.textContent = gradientInfo.colorPosition3;
     color1.value = gradientInfo.color1;
     color2.value = gradientInfo.color2;
     color3.value = gradientInfo.color3;
@@ -621,9 +618,9 @@ function saveGradient() {
     gradientInfo.color1 = color1.value;
     gradientInfo.color2 = color2.value;
     gradientInfo.color3 = color3.value;
-    gradientInfo.colorPosition1 = colorPosition1.value;
-    gradientInfo.colorPosition2 = colorPosition2.value;
-    gradientInfo.colorPosition3 = colorPosition3.value;
+    gradientInfo.colorPosition1 = colorPosition1.textContent;
+    gradientInfo.colorPosition2 = colorPosition2.textContent;
+    gradientInfo.colorPosition3 = colorPosition3.textContent;
 }
 
 function loadPreset(){
