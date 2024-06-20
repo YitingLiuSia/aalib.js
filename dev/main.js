@@ -24,7 +24,7 @@ presetSelection.addEventListener('change',function(){
     var selectedPreset = this.value;
     switch(selectedPreset){
         case 'preset-1':
-            fetchPresetFromJson(presetFolderName+"presetsInfo.json");
+            fetchPresetFromJson(presetFolderName+"presetInfo.json");
         break;
         case 'preset-2':
             fetchPresetFromJson(presetFolderName+"preset-2.json");
@@ -190,10 +190,9 @@ function loadImageFromURL(img, isCanvas){
     // console.log('Required ASCII Dimensions:', asciiDimensions);
 
     let angle = currentGradientAngle * Math.PI / 180;
-    let x2 = imageWidth * Math.cos(angle);  // angle in radians
-    let y2 = imageWidth * Math.sin(angle);  // angle in radians
+    let x2 = imageWidth * Math.cos(angle);  
+    let y2 = imageWidth * Math.sin(angle);  
     updateGradientFromCanvas(gradientCanvasCTX,x2,y2);
-
     const canvasOptions = {
         fontSize: fontSize.value,
         fontFamily: "Sora",
@@ -229,9 +228,8 @@ function loadImageFromURL(img, isCanvas){
         replaceImageToDiv(el);
        
     })
-    .subscribe(); 
-    
-        } else {
+    .subscribe(); } 
+    else {
         imageProcessingPipeline.map(aalib.render.html(canvasOptions))
         .do(function (el) {
             replaceImageToDiv(el);
@@ -473,7 +471,7 @@ function updateGradient(){
     let angle = currentGradientAngle * Math.PI / 180;
     let x2 = gcWidth * Math.cos(angle);
     let y2 = gcWidth * Math.sin(angle); 
-    updateSaturation();
+    // updateSaturation();
     updateGradientFromCanvas(gradientCanvasCTX,x2,y2);
     gradientCanvasCTX.fillStyle = gradient;
     gradientCanvasCTX.fillRect(0, 0, gcWidth, gcHeight);
