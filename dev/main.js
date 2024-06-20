@@ -44,15 +44,10 @@ function fetchPresetFromJson(filePath){
         console.log(`data from ${filePath} is ${data}`);
         presetInfo = new PresetInfo(
             data.inverseEle, 
-            // data.desaturate, 
             data.brightnessEle, 
             data.contrastEle, 
-            // data.desaturation, 
             data.gradientInfo, 
             data.fontSize, 
-            // data.fontFamily, 
-            // data.lineHeight,
-            // data.charWidth,
             data.charset
         );
 
@@ -61,28 +56,7 @@ function fetchPresetFromJson(filePath){
     .catch(error => console.error('Error loading preset:', error));
 
 }
-
-const FONTS = {
-    Sora: resource("sora-ttf/Sora-Regular-mono.ttf"),
-    Kode: resource("kode-mono/KodeMono-Regular.ttf"),
-    OpenSans: resource("open-sans/OpenSans-Regular.ttf")
-}
-
-const RES = {
-    MONA: resource("mona.png"),
-    LENNA: resource("lenna.png"),
-    MARYLIN: resource("marylin.jpg"),
-    BBB: resource("bbb_720x480_30mb.mp4")
-};
-
-function pipeline(...args) {
-    const src = args.shift();
-    args
-        .reduce((acc, it) => acc.map(it), src)
-        .subscribe();
-}
 // media recorder and video exporter 
-
 const imageDropdown = document.getElementById('image-dropdown');
 let isCanvas = true; 
 
@@ -180,31 +154,21 @@ imageDropdown.onchange = function(){
 function downloadImageWithRatio(){
     console.log("downloadImageWithRatio is ", currentimageExportRatio);
     let canvas = document.getElementById('processed-image');
-    // Create a temporary canvas to draw the scaled image
     let tempCanvas = document.createElement('canvas');
     let tempCtx = tempCanvas.getContext('2d');
 
-    // Calculate new dimensions based on the current image export ratio
     let newWidth = canvas.width * currentimageExportRatio;
     let newHeight = canvas.height * currentimageExportRatio;
 
-    // Set the temporary canvas size
     tempCanvas.width = newWidth;
     tempCanvas.height = newHeight;
-
-    // Draw the scaled image on the temporary canvas
     tempCtx.drawImage(canvas, 0, 0, newWidth, newHeight);
-
-    // Generate the data URL from the temporary canvas
     let dataUrl = tempCanvas.toDataURL('image/png');
 
-    // Create the download link and trigger the download
     let link = document.createElement('a');
     link.href = dataUrl;
     link.download = 'image.png';
     link.click();
-
-    // Clean up: remove the temporary canvas
     tempCanvas.remove();
 }
 const charWidthOffsetRatio = 0.8;
@@ -212,8 +176,8 @@ const lineHeightOffsetRatio = 1.8;
 const ratioValue = 2;
 
 function loadImageFromURL(img, isCanvas){
-    const imageWidth = img.width; //imageExportRatio.value * img.width; 
-    const imageHeight = img.height;//imageExportRatio.value * img.height;
+    const imageWidth = img.width;  
+    const imageHeight = img.height;
  
     const charWidthValue = fontSize.value*charWidthOffsetRatio;//*0.8;
     const lineHeightValue = fontSize.value*lineHeightOffsetRatio;//0.8;
@@ -225,20 +189,22 @@ function loadImageFromURL(img, isCanvas){
     console.log("ratio is ", ratioX, ratioY);
     console.log('Required ASCII Dimensions:', asciiDimensions);
 
-    // Example gradient stops
-    gradient = gradientCanvasCTX.createLinearGradient(0, 0, imageWidth, 0);
+    let angle = currentGradientAngle * Math.PI / 180;
+    let x2 = imageWidth * Math.cos(angle);  // angle in radians
+    let y2 = imageWidth * Math.sin(angle);  // angle in radians
+    gradient = gradientCanvasCTX.createLinearGradient(0, 0, x2, y2);
     gradient.addColorStop(colorPosition1.textContent/100, gradientInfo.color1);
     gradient.addColorStop(colorPosition2.textContent/100, gradientInfo.color2);
     gradient.addColorStop(colorPosition3.textContent/100, gradientInfo.color3);
-    // console.log("gradient is ",gradient);
+    
     const canvasOptions = {
         fontSize: fontSize.value,
         fontFamily: "Sora",
-        lineHeight: lineHeightValue,//lineHeight.value,
-        charWidth: charWidthValue,//charWidth.value,
+        lineHeight: lineHeightValue,
+        charWidth: charWidthValue,
         charset: presetInfo.charset,
-        width:  imageWidth ,  //* imageExportRatio.value// Use original image width for canvas
-        height: imageHeight , // Use original image height for canvas
+        width:  imageWidth ,  
+        height: imageHeight , 
         background: "rgba(0,0,0,0)",
         color: gradient
     };
@@ -249,12 +215,6 @@ function loadImageFromURL(img, isCanvas){
             console.log("inverse elemenet is checked ", inverseEle.checked)
             imageProcessingPipeline = imageProcessingPipeline.map(aalib.filter.inverse());
         }
-       // imageProcessingPipeline = imageProcessingPipeline.map(aalib.filter.desaturate());
-
-        // if (desaturate.checked) {
-        //     imageProcessingPipeline = imageProcessingPipeline.map(aalib.filter.desaturate());
-        // }
-   
         if (brightnessValue.value !== undefined) {
             console.log("brightnessValue value ", brightnessValue.value);
             imageProcessingPipeline = imageProcessingPipeline.map(aalib.filter.brightness(brightnessValue.value));
@@ -263,11 +223,6 @@ function loadImageFromURL(img, isCanvas){
             console.log("contrastValue value ", contrastValue.value);
             imageProcessingPipeline = imageProcessingPipeline.map(aalib.filter.contrast(contrastValue.value));
         }
-        // if (desaturationValue.value !== undefined) {
-        //     imageProcessingPipeline = imageProcessingPipeline.map(aalib.filter.desaturate(desaturationValue.value));
-        // }]
-
-         // imageProcessingPipeline = imageProcessingPipeline.map(aalib.filter.desaturate(1));
         imageProcessingPipeline = imageProcessingPipeline.map(aalib.aa(aaReq));
 
         if (isCanvas) {
@@ -296,7 +251,7 @@ function replaceImageToDiv(el){
         existingElement.parentNode.replaceChild(el, existingElement);
     } else {
         console.log("replaceImageToDiv - append child image");
-        el.id = 'processed-image'; // Ensure the image has an ID
+        el.id = 'processed-image'; 
         document.body.appendChild(el);
     }
 }
@@ -305,36 +260,31 @@ function processImage(img) {
 }
 function loadImageAndProcess(url) {
     const img = new Image();
-    img.src = url; // Set the source of the image
+    img.src = url; 
     img.onload = function () {
         let existingElement = document.getElementById('imported-image');
         if (existingElement) {
             console.log("loadImageAndProcess - replace child image");
-            existingElement.src = img.src; // Update the source instead of replacing the node
+            existingElement.src = img.src; 
             currentImage = img;
         } else {
             console.log("loadImageAndProcess - append child image");
-            img.id = 'imported-image'; // Ensure the image has an ID
-            document.body.appendChild(img); // Append the new image element to the body
+            img.id = 'imported-image'; 
+            document.body.appendChild(img); 
         }
-        processImage(currentImage); // Call the function to process the image
+        processImage(currentImage); 
     };
     img.onerror = function () {
         console.error('Error loading the image');
     };
 }
-// this should update when the url is the same but when the changes of preset is applied 
 function handleImageInputChange(event) {
     const file = event.target.files[0];
    
     if (file && file.type.startsWith('image/')) {
         const reader = new FileReader();
         reader.onload = function (e) {
-            // const uniqueSuffix = '#nocache=' + new Date().getTime();// this does not work 
-            // console.log("uniqueSuffix ",uniqueSuffix);
-           // const safeUrl = encodeURI(e.target.result);// + uniqueSuffix;
            loadImageAndProcess(e.target.result);
-
         };
 
         reader.onerror = function () {
@@ -363,20 +313,14 @@ class GradientInfo {
 class PresetInfo {
     constructor(inverseEle, brightnessEle, contrastEle, gradientInfo, fontSize,  charset) {
         this.inverseEle = inverseEle;
-        // this.desaturate = desaturate;
         this.brightnessEle = brightnessEle;
         this.contrastEle = contrastEle;
-        // this.desaturation = desaturation;
         this.gradientInfo = gradientInfo;
         this.fontSize = fontSize;
-        // this.fontFamily = fontFamily;
-        // this.lineHeight = lineHeight;
-        // this.charWidth = charWidth;
         this.charset = charset;
     }
 }
-
-let currentImage; // To hold the current image element
+let currentImage; 
 let gradientCanvas = document.getElementById("gradient-canvas");
 let gradientCanvasCTX = gradientCanvas.getContext('2d');
 let gcWidth = gradientCanvas.width;
@@ -388,13 +332,8 @@ let gradientInfo = new GradientInfo();
 let presetInfo = new PresetInfo();
 let gradient;
 let savePresetButton = document.getElementById("save-preset");
-// let desaturate = document.getElementById("desaturate");
 let inverseEle = document.getElementById("inverse");
-// let desaturation = document.getElementById("desaturation");
-// let fontDropdown = document.getElementById("font-dropdown");
 let fontSize = document.getElementById("fontSize");
-// let charWidth = document.getElementById("charWidth");
-// let lineHeight = document.getElementById("lineHeight");
 let charsetSelector = document.getElementById("charset-selector");
 
 let brightnessEle = document.getElementById("brightness");
@@ -409,6 +348,18 @@ let currentimageExportRatio = 1;
 let percentage1 = document.getElementById('percentage1');
 let percentage2 = document.getElementById('percentage2');
 let percentage3 = document.getElementById('percentage3');
+
+let gradientAngle = document.getElementById('gradient-angle');
+let gradientAngleValue = gradientAngle.nextElementSibling.querySelector('.sliderValue');
+
+let currentGradientAngle = 90; // Initialize with a default value, e.g., 90 degrees
+gradientAngle.addEventListener('change', (e) => {
+    gradientAngle.value = e.target.value;
+    gradientAngleValue.textContent = e.target.value;
+    currentGradientAngle = parseInt(e.target.value, 10);
+    console.log("current gradient angle is ", currentGradientAngle); 
+    updateGradient(); 
+});
 
 percentage1.addEventListener('change', function() {
     slider.noUiSlider.set([this.textContent, null, null]);
@@ -436,13 +387,10 @@ noUiSlider.create(slider, {
 slider.noUiSlider.on('update', function(values, handle) {
     var percentage = document.getElementById('percentage' + (handle + 1));
     percentage.textContent = Math.floor(values[handle]);
-       // Update colorPosition values based on slider values
        colorPosition1.textContent = values[0];
        colorPosition2.textContent = values[1];
        colorPosition3.textContent = values[2];
-       // Update the gradient
        updateGradient();
-
 });
 
 imageExportRatio.oninput=(e)=>{
@@ -457,29 +405,13 @@ window.onload = function() {
     currentimageExportRatio = imageExportRatio.value;
     charsetSelector.value = presetInfo.charset;
     presetInfo.fontFamily = "Sora";//fontDropdown.value;     
-    // console.log("Charset selector initialized ",fontDropdown.value);
     updateImage("chartset");
-
 }
-// fontDropdown.onchange=(e)=>{
-//     console.log("font dropdown ",e.target.value);
-//      presetInfo.fontFamily = e.target.value;
-// }
-// let desaturationValue = desaturation.parentElement.querySelector(".sliderValue");
+
 fontSize.oninput = (e) => {
     fontSize.value = e.target.value;
     updateImage("fontSize");
 }
-
-// charWidth.oninput=(e)=>{
-//     charWidth.value = e.target.value;
-//     updateImage("charWidth");
-// }
-
-// lineHeight.oninput=(e)=>{
-//     lineHeight.value = e.target.value;
-//     updateImage("lineHeight");
-// }
 
 brightnessEle.oninput = (e) => {
     brightnessValue.textContent =e.target.value;
@@ -498,11 +430,6 @@ inverseEle.onchange = (e) => {
     presetInfo.inverseEle = e.target.checked;
     updateImage("inverseEle");
 }
-// desaturate.onchange=(e)=>{
-//     presetInfo.desaturate = e.target.checked;
-//     updateImage("desaturate");
-// }
-
 
 charsetSelector.onchange=(e)=>{
     if(e.target.value==="SIA/"){
@@ -513,18 +440,7 @@ charsetSelector.onchange=(e)=>{
     updateImage("charset");
 }
 
-
-// desaturation.oninput=(e)=>{
-//    desaturationValue.value=e.target.value;
-//     updateImage("desaturation");
-// }
-
 savePresetButton.onclick= savePresetToFile;
-// desaturate.onchange=(e)=>{
-//     presetInfo.desaturate = e.target.value;
-//     updateImage("desaturate");
-//     console.log("preset info is ", presetInfo.desaturate);
-// }
 
 function updateImage(funcName){
     if(currentImage){
@@ -533,7 +449,24 @@ function updateImage(funcName){
     }
 }
 function updateGradient(){
-    gradient = gradientCanvasCTX.createLinearGradient(0, 0, gcWidth, 0);
+    // let colorstops = [
+    //     {
+    //         color: gradientInfo.color1,
+    //         pos: colorPosition1.textContent/100
+    //     },
+    //     {
+    //         color: gradientInfo.color2,
+    //         pos: colorPosition2.textContent/100
+    //     },
+    //     {
+    //         color: gradientInfo.color3,
+    //         pos: colorPosition3.textContent/100
+    //     }]
+   let angle = currentGradientAngle * Math.PI / 180;
+   let x2 = gcWidth * Math.cos(angle);  // angle in radians
+   let y2 = gcWidth * Math.sin(angle);  // angle in radians
+   console.log(`current angle is ${angle}, for end of x2: ${x2}, y2: ${y2}`);
+    gradient = gradientCanvasCTX.createLinearGradient(0, 0, x2,y2);// drawGradients(gradientCanvasCTX,gcWidth, 0, currentGradientAngle,colorstops);//
     gradient.addColorStop(colorPosition1.textContent/100, gradientInfo.color1);
     gradient.addColorStop(colorPosition2.textContent/100, gradientInfo.color2);
     gradient.addColorStop(colorPosition3.textContent/100, gradientInfo.color3);
@@ -542,97 +475,164 @@ function updateGradient(){
     updateImage("gradient");
 }
 
+//Draw Gradients
+function drawGradients(ctx,width, height, deg, colorstops) {
+    var points = linearGradient_a(width, height, deg);
+   
+    if (!isFinite(points.tx) || !isFinite(points.ty) || !isFinite(points.bx) || !isFinite(points.by)) {
+        console.error('One or more values are non-finite', {points});
+        return;
+    }
+
+    var grd = ctx.createLinearGradient(
+      points.tx,
+      points.ty,
+      points.bx,
+      points.by
+    );
+  
+    // Draw Box
+    ctx.clearRect(0, 0, width, height);
+    ctx.beginPath();
+    var comma = false,
+      csscol = "linear-gradient(" + deg + "deg, ";
+    for (var i in colorstops) {
+      grd.addColorStop(colorstops[i].pos / 100, colorstops[i].color);
+      csscol +=
+        (comma ? "," : "") + colorstops[i].color + " " + colorstops[i].pos + "%";
+      comma = true;
+    }
+    csscol += ")";
+    cssbox.style.background = csscol;
+    cssbox.innerHTML =
+      '<div id="label">Currently in: ' + sectorCount + '</div>';
+    ctx.fillStyle = grd;
+    ctx.fillRect(0, 0,width, height);
+    ctx.stroke();
+    
+    //Main Line
+    // ctx.beginPath();
+    // ctx.lineWidth = "1";
+    // ctx.strokeStyle = "#e6e6e6";
+    // ctx.moveTo(points.bx, points.by);
+    // ctx.lineTo(canvas.width/2, canvas.height/2);
+    // ctx.stroke();
+    
+    // //Secondary Line
+    // ctx.beginPath();
+    // ctx.lineWidth = "1";
+    // ctx.strokeStyle = "#000000";
+    // ctx.moveTo(points.tx, points.ty);
+    // ctx.lineTo(canvas.width/2, canvas.height/2);
+    // ctx.stroke();
+  }
+//Calculate Linear Gradient Angle and Cut Points
+function linearGradient_a(w, h, deg) {
+    var caseAngle1 = Math.round((Math.atan(w / h) * 180) / Math.PI),
+        caseAngle2 = Math.round(180 - caseAngle1),
+        caseAngle3 = Math.round(180 + caseAngle1),
+        caseAngle4 = Math.round(360 - caseAngle1);
+
+    // Correctly define `wh` as half of the width `w`
+    var wh = w / 2, // This is the corrected line
+        hh = h / 2,
+        tx, bx, ty = h, by = 0,
+        angInRad = (deg * Math.PI) / 180,
+        count1;
+
+  
+    if (deg == caseAngle1) { tx = 0; bx = w; } else 
+    if (deg == caseAngle2) { tx = 0; ty = 0; bx = w; by = h; } else
+    if (deg == caseAngle3) { tx = w; ty = 0; bx = 0; by = h; } else
+    if (deg == caseAngle4) { tx = w; ty = h; bx = 0; by = 0; } else {
+        var mtan = Math.tan(angInRad);
+
+        if (0 < deg && deg < caseAngle1) {
+            count1 = (mtan * h) / 2;
+            tx = wh - count1;
+            bx = wh + count1;
+            // sectorCount = "Sector 1"; // Ensure `sectorCount` is defined or used appropriately elsewhere
+        } else if (caseAngle1 < deg && deg < caseAngle2) {
+            count1 = wh / mtan;
+            tx = 0;
+            ty = hh + count1;
+            bx = w;
+            by = hh - count1;
+            // sectorCount = "Sector 2";
+        } else if (caseAngle2 < deg && deg < caseAngle3) {
+            count1 = (mtan * h) / 2;
+            tx = wh + count1;
+            ty = 0;
+            bx = wh - count1;
+            by = h;
+            // sectorCount = "Sector 3";
+        } else if (caseAngle3 < deg && deg < caseAngle4) {
+            count1 = wh / mtan;
+            tx = w;
+            ty = hh - count1;
+            bx = 0;
+            by = hh + count1;
+            // sectorCount = "Sector 4";
+        } else if (caseAngle4 < deg && deg < 361) {
+            count1 = (mtan * h) / 2;
+            tx = wh - count1;
+            ty = h;
+            bx = wh + count1;
+            by = 0;
+            // sectorCount = "Sector 5";
+        }
+    }
+    return { tx: tx, ty: ty, bx: bx, by: by };
+}
+
 function updatePreset(){
-    // if(desaturate.value!=presetInfo.desaturate){
-    //     desaturate.value = presetInfo.desaturate;
-    // }
     if(brightnessEle.value!=presetInfo.brightnessEle){
         brightnessEle.value = presetInfo.brightnessEle;
     }
     if(contrastEle.value!=presetInfo.contrastEle){
         contrastEle.value = presetInfo.contrastEle;
     }
-    // if(desaturation.value!=presetInfo.desaturation){
-    //     desaturation.value = presetInfo.desaturation;
-    // }
     if(inverseEle.value!=presetInfo.inverseEle){
         inverseEle.value = presetInfo.inverseEle;     
     }
     if(fontSize.value!=presetInfo.fontSize){
         fontSize.value = presetInfo.fontSize;
     }
-    // if( fontDropdown.value!=presetInfo.fontFamily){
-    //     fontDropdown.value = presetInfo.fontFamily;
-
-    // }
-    // if(lineHeight.value!=presetInfo.lineHeight){
-    //     lineHeight.value = presetInfo.lineHeight;
-    // }
-    // if(charWidth.value!=presetInfo.charWidth){
-    //     charWidth.value = presetInfo.charWidth;
-    // }
     if(charsetSelector.value!=presetInfo.charset){
-        // charsetSelector.value = presetInfo.charset;
         if(presetInfo.charset.contains("SIA/")){
             charsetSelector.target.value = "SIA/";
         }else{
             charsetSelector.target.value = "ASCII";
         }
-
     }
-    console.log("UPADTE Charset selector value is ",charsetSelector.value);
-    console.log("presetInfo gradient info is ", presetInfo.gradientInfo);
-
-    gradientInfo = presetInfo.gradientInfo;
-    console.log("gradient info is ", gradientInfo);
-
-    // if(gradientInfo!=presetInfo.gradientInfo){
-    //     gradientInfo = presetInfo.gradientInfo;
-    //     console.log("gradient info is ", gradientInfo);
-
-    // }
+    if(gradientInfo!=presetInfo.gradientInfo){
+        gradientInfo = presetInfo.gradientInfo;
+        console.log("gradient info is ", gradientInfo);
+    }
     console.log("preset info is ", presetInfo);
 }
 
 function loadGradient(){
-    console.log("load gradient");
     colorPosition1.textContent = gradientInfo.colorPosition1;
     colorPosition2.textContent = gradientInfo.colorPosition2;
     colorPosition3.textContent = gradientInfo.colorPosition3;
-    // color1.value = gradientInfo.color1;
-    // color2.value = gradientInfo.color2;
-    // color3.value = gradientInfo.color3;
 }
 
 function saveGradient() {
-
-    // gradientInfo.color1 = color1.value;
-    // gradientInfo.color2 = color2.value;
-    // gradientInfo.color3 = color3.value;
     gradientInfo.colorPosition1 = colorPosition1.textContent;
     gradientInfo.colorPosition2 = colorPosition2.textContent;
     gradientInfo.colorPosition3 = colorPosition3.textContent;
 }
 
 function loadPreset(){
-    console.log("load preset");
     inverseEle.checked = presetInfo.inverseEle;
-    // desaturate.checked = presetInfo.desaturate;
     brightnessEle.value = presetInfo.brightnessEle;
     contrastEle.value = presetInfo.contrastEle;
-    // desaturation.value = presetInfo.desaturation;
     gradientInfo = presetInfo.gradientInfo;
     brightnessValue.innerHTML = presetInfo.brightnessEle;
     contrastValue.innerHTML = presetInfo.contrastEle;
-    // desaturationValue.innerHTML = presetInfo.desaturation;
     fontSize.value = presetInfo.fontSize;
-    // fontDropdown.value = presetInfo.fontFamily;
-    // lineHeight.value = presetInfo.lineHeight;
-    // charWidth.value = presetInfo.charWidth;
-    console.log("charsetSelector value ", charsetSelector.value);
     charsetSelector.value = presetInfo.charset;
-  
-    console.log("presetInfo charset ", presetInfo.charset);
     loadGradient();
     updateGradient();
     updatePreset();
@@ -642,16 +642,12 @@ function loadPreset(){
 function savePreset(){
     console.log("save preset ", presetInfo);
     presetInfo.inverseEle = inverseEle.checked;
-    // presetInfo.desaturate = desaturate.checked;
     presetInfo.brightnessEle = brightnessEle.value;
     presetInfo.contrastEle = contrastEle.value;
-    // presetInfo.desaturation = desaturation.value;
     presetInfo.gradientInfo = gradientInfo;
     saveGradient();
     presetInfo.fontSize = fontSize.value;
-    presetInfo.fontFamily = "Sora";//fontDropdown.value;
-    // presetInfo.lineHeight = fontSize.value*0.8;
-    // presetInfo.charWidth =fontSize.value*0.8;
+    presetInfo.fontFamily = "Sora";  
     presetInfo.charset = charsetSelector.value;
 }
 
@@ -669,68 +665,22 @@ function savePresetToFile(){
     console.log("Preset saved to file.");
 }
 
-// function saveGradientToFile() {
-//     saveGradient();
-//     const gradientData = JSON.stringify(gradientInfo);
-//     const blob = new Blob([gradientData], { type: 'application/json'});
-//     const url = URL.createObjectURL(blob);
-//     const link = document.createElement('a');
-//     link.href = url;
-//     link.download = 'gradientInfo.json';
-//     document.body.appendChild(link);
-//     link.click();
-//     document.body.removeChild(link);
-//     console.log("Gradient saved to file.");
-// }
-
 // needs to update in the preset info values as well - UI 
 function loadPresetFromFile(file){
     const reader = new FileReader();
     reader.onload = function(event){
         const data = JSON.parse(event.target.result);
         presetInfo.brightnessEle = data.brightnessEle;
-        // presetInfo.desaturation = data.desaturation;
         presetInfo.contrastEle = data.contrastEle;
-        // presetInfo.desaturate = data.desaturate;
         presetInfo.inverseEle = data.inverseEle;
         presetInfo.gradientInfo = data.gradientInfo;
         presetInfo.fontSize = data.fontSize;
-        // presetInfo.fontFamily = data.fontFamily;
-        // presetInfo.lineHeight = data.lineHeight;
-        // presetInfo.charWidth = data.charWidth;
         presetInfo.charset = data.charset;
         console.log("preset loaded from file: ",presetInfo);
         loadPreset();
     }
     reader.readAsText(file);
 }
-
-// function loadGradientFromFile(file) {
-//     const reader = new FileReader();
-//     reader.onload = function(event) {
-//         const data = JSON.parse(event.target.result);
-//         gradientInfo.color1 = data.color1;
-//         gradientInfo.color2 = data.color2;
-//         gradientInfo.color3 = data.color3;
-//         gradientInfo.colorPosition1 = data.colorPosition1;
-//         gradientInfo.colorPosition2 = data.colorPosition2;
-//         gradientInfo.colorPosition3 = data.colorPosition3;
-//         loadGradient();
-//         updateGradient();
-//         console.log("Gradient loaded from file.");
-//     };
-//     reader.readAsText(file);
-// }
-
-// const fileInput = document.getElementById('gradient-file-input');
-// fileInput.type = 'file';
-// fileInput.addEventListener('change', function() {
-//     if (this.files && this.files[0]) {
-//         console.log("file", this.files[0]);
-//         loadGradientFromFile(this.files[0]);
-//     }
-// });
-
 const presetFileInput = document.getElementById('load-preset');
 presetFileInput.type = 'file';
 
