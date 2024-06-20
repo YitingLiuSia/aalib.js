@@ -185,18 +185,15 @@ function loadImageFromURL(img, isCanvas){
     const ratioY = imageHeight/(fontSize.value+lineHeightValue)*ratioValue;//2*fontSize.value/5*13.5 ;//
     const asciiDimensions = calculateAsciiDimensionsForImageSize(imageWidth, imageHeight, fontSize.value , fontSize.value/charWidthOffsetRatio*lineHeightOffsetRatio);
     const aaReq = { width:asciiDimensions.width  , height: asciiDimensions.height, colored: false};
-    console.log("image size is ", imageWidth, imageHeight);
-    console.log("ratio is ", ratioX, ratioY);
-    console.log('Required ASCII Dimensions:', asciiDimensions);
+    // console.log("image size is ", imageWidth, imageHeight);
+    // console.log("ratio is ", ratioX, ratioY);
+    // console.log('Required ASCII Dimensions:', asciiDimensions);
 
     let angle = currentGradientAngle * Math.PI / 180;
     let x2 = imageWidth * Math.cos(angle);  // angle in radians
     let y2 = imageWidth * Math.sin(angle);  // angle in radians
-    gradient = gradientCanvasCTX.createLinearGradient(0, 0, x2, y2);
-    gradient.addColorStop(colorPosition1.textContent/100, gradientInfo.color1);
-    gradient.addColorStop(colorPosition2.textContent/100, gradientInfo.color2);
-    gradient.addColorStop(colorPosition3.textContent/100, gradientInfo.color3);
-    
+    updateGradientFromCanvas(gradientCanvasCTX,x2,y2);
+
     const canvasOptions = {
         fontSize: fontSize.value,
         fontFamily: "Sora",
@@ -351,10 +348,20 @@ let percentage3 = document.getElementById('percentage3');
 
 let gradientAngle = document.getElementById('gradient-angle');
 let gradientAngleValue = gradientAngle.nextElementSibling.querySelector('.sliderValue');
-
 let currentGradientAngle = 90; // Initialize with a default value, e.g., 90 degrees
-gradientAngle.addEventListener('change', (e) => {
-    gradientAngle.value = e.target.value;
+
+let saturationForGradient = document.getElementById("saturation");
+let saturationForGradientValue = saturationForGradient.nextElementSibling.querySelector('.sliderValue');
+let currentSaturationForGradient=1; 
+
+saturationForGradient.addEventListener('input',(e)=>{
+    saturationForGradientValue.textContent = e.target.value;
+    currentSaturationForGradient = e.target.value;
+    console.log("current saturation for gradient is ", currentSaturationForGradient);
+    updateGradient();
+})
+
+gradientAngle.addEventListener('input', (e) => { // Changed from 'change' to 'input'
     gradientAngleValue.textContent = e.target.value;
     currentGradientAngle = parseInt(e.target.value, 10);
     console.log("current gradient angle is ", currentGradientAngle); 
@@ -448,142 +455,38 @@ function updateImage(funcName){
         processImage(currentImage);
     }
 }
+
+let currentColor1,currentColor2,currentColor3=null; 
+
+function updateSaturation(){
+    currentColor1 = gradientInfo.color1; 
+    currentColor2 = gradientInfo.color2;
+    currentColor3 = gradientInfo.color3;
+    currentColor1 = updateColorSaturation(currentColor1, currentSaturationForGradient);
+    currentColor2 = updateColorSaturation(currentColor2, currentSaturationForGradient);
+    currentColor3 = updateColorSaturation(currentColor3, currentSaturationForGradient);
+    console.log("update saturation ", currentColor1);
+
+}
+
 function updateGradient(){
-    // let colorstops = [
-    //     {
-    //         color: gradientInfo.color1,
-    //         pos: colorPosition1.textContent/100
-    //     },
-    //     {
-    //         color: gradientInfo.color2,
-    //         pos: colorPosition2.textContent/100
-    //     },
-    //     {
-    //         color: gradientInfo.color3,
-    //         pos: colorPosition3.textContent/100
-    //     }]
-   let angle = currentGradientAngle * Math.PI / 180;
-   let x2 = gcWidth * Math.cos(angle);  // angle in radians
-   let y2 = gcWidth * Math.sin(angle);  // angle in radians
-   console.log(`current angle is ${angle}, for end of x2: ${x2}, y2: ${y2}`);
-    gradient = gradientCanvasCTX.createLinearGradient(0, 0, x2,y2);// drawGradients(gradientCanvasCTX,gcWidth, 0, currentGradientAngle,colorstops);//
-    gradient.addColorStop(colorPosition1.textContent/100, gradientInfo.color1);
-    gradient.addColorStop(colorPosition2.textContent/100, gradientInfo.color2);
-    gradient.addColorStop(colorPosition3.textContent/100, gradientInfo.color3);
+    let angle = currentGradientAngle * Math.PI / 180;
+    let x2 = gcWidth * Math.cos(angle);
+    let y2 = gcWidth * Math.sin(angle); 
+    updateSaturation();
+    updateGradientFromCanvas(gradientCanvasCTX,x2,y2);
     gradientCanvasCTX.fillStyle = gradient;
     gradientCanvasCTX.fillRect(0, 0, gcWidth, gcHeight);
     updateImage("gradient");
 }
 
-//Draw Gradients
-function drawGradients(ctx,width, height, deg, colorstops) {
-    var points = linearGradient_a(width, height, deg);
-   
-    if (!isFinite(points.tx) || !isFinite(points.ty) || !isFinite(points.bx) || !isFinite(points.by)) {
-        console.error('One or more values are non-finite', {points});
-        return;
-    }
-
-    var grd = ctx.createLinearGradient(
-      points.tx,
-      points.ty,
-      points.bx,
-      points.by
-    );
-  
-    // Draw Box
-    ctx.clearRect(0, 0, width, height);
-    ctx.beginPath();
-    var comma = false,
-      csscol = "linear-gradient(" + deg + "deg, ";
-    for (var i in colorstops) {
-      grd.addColorStop(colorstops[i].pos / 100, colorstops[i].color);
-      csscol +=
-        (comma ? "," : "") + colorstops[i].color + " " + colorstops[i].pos + "%";
-      comma = true;
-    }
-    csscol += ")";
-    cssbox.style.background = csscol;
-    cssbox.innerHTML =
-      '<div id="label">Currently in: ' + sectorCount + '</div>';
-    ctx.fillStyle = grd;
-    ctx.fillRect(0, 0,width, height);
-    ctx.stroke();
-    
-    //Main Line
-    // ctx.beginPath();
-    // ctx.lineWidth = "1";
-    // ctx.strokeStyle = "#e6e6e6";
-    // ctx.moveTo(points.bx, points.by);
-    // ctx.lineTo(canvas.width/2, canvas.height/2);
-    // ctx.stroke();
-    
-    // //Secondary Line
-    // ctx.beginPath();
-    // ctx.lineWidth = "1";
-    // ctx.strokeStyle = "#000000";
-    // ctx.moveTo(points.tx, points.ty);
-    // ctx.lineTo(canvas.width/2, canvas.height/2);
-    // ctx.stroke();
-  }
-//Calculate Linear Gradient Angle and Cut Points
-function linearGradient_a(w, h, deg) {
-    var caseAngle1 = Math.round((Math.atan(w / h) * 180) / Math.PI),
-        caseAngle2 = Math.round(180 - caseAngle1),
-        caseAngle3 = Math.round(180 + caseAngle1),
-        caseAngle4 = Math.round(360 - caseAngle1);
-
-    // Correctly define `wh` as half of the width `w`
-    var wh = w / 2, // This is the corrected line
-        hh = h / 2,
-        tx, bx, ty = h, by = 0,
-        angInRad = (deg * Math.PI) / 180,
-        count1;
-
-  
-    if (deg == caseAngle1) { tx = 0; bx = w; } else 
-    if (deg == caseAngle2) { tx = 0; ty = 0; bx = w; by = h; } else
-    if (deg == caseAngle3) { tx = w; ty = 0; bx = 0; by = h; } else
-    if (deg == caseAngle4) { tx = w; ty = h; bx = 0; by = 0; } else {
-        var mtan = Math.tan(angInRad);
-
-        if (0 < deg && deg < caseAngle1) {
-            count1 = (mtan * h) / 2;
-            tx = wh - count1;
-            bx = wh + count1;
-            // sectorCount = "Sector 1"; // Ensure `sectorCount` is defined or used appropriately elsewhere
-        } else if (caseAngle1 < deg && deg < caseAngle2) {
-            count1 = wh / mtan;
-            tx = 0;
-            ty = hh + count1;
-            bx = w;
-            by = hh - count1;
-            // sectorCount = "Sector 2";
-        } else if (caseAngle2 < deg && deg < caseAngle3) {
-            count1 = (mtan * h) / 2;
-            tx = wh + count1;
-            ty = 0;
-            bx = wh - count1;
-            by = h;
-            // sectorCount = "Sector 3";
-        } else if (caseAngle3 < deg && deg < caseAngle4) {
-            count1 = wh / mtan;
-            tx = w;
-            ty = hh - count1;
-            bx = 0;
-            by = hh + count1;
-            // sectorCount = "Sector 4";
-        } else if (caseAngle4 < deg && deg < 361) {
-            count1 = (mtan * h) / 2;
-            tx = wh - count1;
-            ty = h;
-            bx = wh + count1;
-            by = 0;
-            // sectorCount = "Sector 5";
-        }
-    }
-    return { tx: tx, ty: ty, bx: bx, by: by };
+function updateGradientFromCanvas(canvas,x2,y2){
+    gradient = canvas.createLinearGradient(0, 0, x2,y2);
+    gradient.addColorStop(colorPosition1.textContent/100, gradientInfo.color1);
+   gradient.addColorStop(colorPosition2.textContent/100, gradientInfo.color2);
+   gradient.addColorStop(colorPosition3.textContent/100, gradientInfo.color3);
 }
+
 
 function updatePreset(){
     if(brightnessEle.value!=presetInfo.brightnessEle){
@@ -702,3 +605,101 @@ function calculateAsciiDimensionsForImageSize(pixelWidth, pixelHeight, charPixel
     };}
 }
 
+// Function to convert HSV back to RGB
+function hsvToRgb(h, s, v) {
+    let r, g, b, i, f, p, q, t;
+    s /= 100;
+    v /= 100;
+    h /= 60;
+    i = Math.floor(h);
+    f = h - i;
+    p = v * (1 - s);
+    q = v * (1 - s * f);
+    t = v * (1 - s * (1 - f));
+    switch (i % 6) {
+        case 0: r = v, g = t, b = p; break;
+        case 1: r = q, g = v, b = p; break;
+        case 2: r = p, g = v, b = t; break;
+        case 3: r = p, g = q, b = v; break;
+        case 4: r = t, g = p, b = v; break;
+        case 5: r = v, g = p, b = q; break;
+    }
+    return {
+        r: Math.round(r * 255),
+        g: Math.round(g * 255),
+        b: Math.round(b * 255)
+    };
+}
+
+// Function to convert RGB back to Hex
+function rgbToHex(r, g, b) {
+    return "#" + [r, g, b].map(x => {
+        const hex = x.toString(16);
+        return hex.length === 1 ? '0' + hex : hex;
+    }).join('');
+}
+
+// Update saturation and convert back to hex
+function updateColorSaturation(hexColor, saturationMultiplier) {
+    let hsv = hexToHsv(hexColor);
+    hsv.s *= saturationMultiplier; // Update the saturation
+    let rgb = hsvToRgb(hsv.h, hsv.s, hsv.v); // Convert updated HSV back to RGB
+    return rgbToHex(rgb.r, rgb.g, rgb.b); // Convert RGB back to Hex
+}
+
+function hexToHsv(hex) {
+    let rgb = hexToRgb(hex);
+    if (!rgb) return null; // Invalid hex code
+    return rgb2hsv(rgb.r, rgb.g, rgb.b);
+}
+
+function hexToRgb(hex) {
+    let shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+    hex = hex.replace(shorthandRegex, function(m, r, g, b) {
+        return r + r + g + g + b + b;
+    });
+
+    let result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16)
+    } : null;
+}
+
+function rgb2hsv (r, g, b) {
+    let rabs, gabs, babs, rr, gg, bb, h, s, v, diff, diffc, percentRoundFn;
+    rabs = r / 255;
+    gabs = g / 255;
+    babs = b / 255;
+    v = Math.max(rabs, gabs, babs),
+    diff = v - Math.min(rabs, gabs, babs);
+    diffc = c => (v - c) / 6 / diff + 1 / 2;
+    percentRoundFn = num => Math.round(num * 100) / 100;
+    if (diff == 0) {
+        h = s = 0;
+    } else {
+        s = diff / v;
+        rr = diffc(rabs);
+        gg = diffc(gabs);
+        bb = diffc(babs);
+
+        if (rabs === v) {
+            h = bb - gg;
+        } else if (gabs === v) {
+            h = (1 / 3) + rr - bb;
+        } else if (babs === v) {
+            h = (2 / 3) + gg - rr;
+        }
+        if (h < 0) {
+            h += 1;
+        }else if (h > 1) {
+            h -= 1;
+        }
+    }
+    return {
+        h: Math.round(h * 360),
+        s: percentRoundFn(s * 100),
+        v: percentRoundFn(v * 100)
+    };
+}
