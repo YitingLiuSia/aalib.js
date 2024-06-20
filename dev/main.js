@@ -18,14 +18,6 @@ const charset_ascii = ASCII_CHARSET;
 const charset_sia = "SIA/- ";
 const resource = filename => `../resources/${ filename }`;
 
-
-
-
-// slider.noUiSlider.on('input', function(values, handle) {
-
-//     console.log("updating the slider ", values, handle);
-// });
-
 const presetSelection = document.getElementById("preset-selection");
 const presetFolderName = "Presets/";
 presetSelection.addEventListener('change',function(){
@@ -389,20 +381,11 @@ let gradientCanvas = document.getElementById("gradient-canvas");
 let gradientCanvasCTX = gradientCanvas.getContext('2d');
 let gcWidth = gradientCanvas.width;
 let gcHeight = gradientCanvas.height;
-// let color1 = document.getElementById('color1');
-// let color2 = document.getElementById('color2');
-// let color3 = document.getElementById('color3');
 let colorPosition1 = document.getElementById('percentage1');
 let colorPosition2 = document.getElementById('percentage2');
 let colorPosition3 = document.getElementById('percentage3');
 let gradientInfo = new GradientInfo();
 let presetInfo = new PresetInfo();
-// color1.onchange = updateGradient;
-// color2.onchange = updateGradient;
-// color3.onchange = updateGradient;
-// colorPosition1.onchange = updateGradient;
-// colorPosition2.onchange = updateGradient;
-// colorPosition3.onchange = updateGradient;
 let gradient;
 let savePresetButton = document.getElementById("save-preset");
 // let desaturate = document.getElementById("desaturate");
@@ -454,14 +437,13 @@ slider.noUiSlider.on('update', function(values, handle) {
     var percentage = document.getElementById('percentage' + (handle + 1));
     percentage.textContent = Math.floor(values[handle]);
        // Update colorPosition values based on slider values
-       colorPosition1.value = values[0];
-       colorPosition2.value = values[1];
-       colorPosition3.value = values[2];
+       colorPosition1.textContent = values[0];
+       colorPosition2.textContent = values[1];
+       colorPosition3.textContent = values[2];
        // Update the gradient
        updateGradient();
 
 });
-
 
 imageExportRatio.oninput=(e)=>{
     imageExportRatio.value = e.target.value;
@@ -551,7 +533,6 @@ function updateImage(funcName){
     }
 }
 function updateGradient(){
-    console.log('update gradient');
     gradient = gradientCanvasCTX.createLinearGradient(0, 0, gcWidth, 0);
     gradient.addColorStop(colorPosition1.textContent/100, gradientInfo.color1);
     gradient.addColorStop(colorPosition2.textContent/100, gradientInfo.color2);
@@ -600,18 +581,24 @@ function updatePreset(){
 
     }
     console.log("UPADTE Charset selector value is ",charsetSelector.value);
+    console.log("presetInfo gradient info is ", presetInfo.gradientInfo);
 
-    if(gradientInfo!=presetInfo.gradientInfo){
-        gradientInfo = presetInfo.gradientInfo;
-    }
+    gradientInfo = presetInfo.gradientInfo;
+    console.log("gradient info is ", gradientInfo);
+
+    // if(gradientInfo!=presetInfo.gradientInfo){
+    //     gradientInfo = presetInfo.gradientInfo;
+    //     console.log("gradient info is ", gradientInfo);
+
+    // }
     console.log("preset info is ", presetInfo);
 }
 
 function loadGradient(){
     console.log("load gradient");
-    colorPosition1.value = gradientInfo.colorPosition1;
-    colorPosition2.value = gradientInfo.colorPosition2;
-    colorPosition3.value = gradientInfo.colorPosition3;
+    colorPosition1.textContent = gradientInfo.colorPosition1;
+    colorPosition2.textContent = gradientInfo.colorPosition2;
+    colorPosition3.textContent = gradientInfo.colorPosition3;
     // color1.value = gradientInfo.color1;
     // color2.value = gradientInfo.color2;
     // color3.value = gradientInfo.color3;
@@ -622,9 +609,9 @@ function saveGradient() {
     // gradientInfo.color1 = color1.value;
     // gradientInfo.color2 = color2.value;
     // gradientInfo.color3 = color3.value;
-    gradientInfo.colorPosition1 = colorPosition1.value;
-    gradientInfo.colorPosition2 = colorPosition2.value;
-    gradientInfo.colorPosition3 = colorPosition3.value;
+    gradientInfo.colorPosition1 = colorPosition1.textContent;
+    gradientInfo.colorPosition2 = colorPosition2.textContent;
+    gradientInfo.colorPosition3 = colorPosition3.textContent;
 }
 
 function loadPreset(){
