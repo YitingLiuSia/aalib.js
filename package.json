@@ -18,7 +18,7 @@
     "test:perf": "node ./test/perf/bin/run-perf.js",
     "lint": "eslint src/** test/**",
     "build:dev": "webpack --config dev/webpack.config.js",
-    "dev:sequence": "npm run build:dev --watch && npm run dev", // watch didnt work for the update   
+    "dev:sequence": "npm run build:dev --watch && npm run dev", 
     "push-dev-to-lw": "npm run build:dev && ./push-dev-to-lw.sh"
   },
   "devDependencies": {
