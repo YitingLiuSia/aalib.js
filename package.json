@@ -17,7 +17,8 @@
     "test": "karma start",
     "test:perf": "node ./test/perf/bin/run-perf.js",
     "lint": "eslint src/** test/**",
-    "build:dev": "webpack --config dev/webpack.config.js",
+    "build:dev": "webpack --config dev/webpack.config.js --watch",
+    "dev:sequence": "npm run build:dev & npm run dev",    
     "push-dev-to-lw": "npm run build:dev && ./push-dev-to-lw.sh"
   },
   "devDependencies": {
