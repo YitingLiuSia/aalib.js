@@ -404,6 +404,8 @@ imageExportRatio.oninput=(e)=>{
 }
 
 window.onload = function() {
+    console.log("PHASE 2");
+
     console.log("imageExportRatio ",imageExportRatio.value);
     currentimageExportRatio = imageExportRatio.value;
     charsetSelector.value = presetInfo.charset;
@@ -452,7 +454,6 @@ function updateImage(funcName){
     }
 }
 
-
 function updateSaturation(){
     currentColor1 = gradientInfo.color1; 
     currentColor2 = gradientInfo.color2;
@@ -481,7 +482,6 @@ function updateGradientFromCanvas(canvas,x2,y2){
     gradient.addColorStop(colorPosition2.textContent/100, currentColor2);
     gradient.addColorStop(colorPosition3.textContent/100, currentColor3);
 }
-
 
 function updatePreset(){
     if(brightnessEle.value!=presetInfo.brightnessEle){

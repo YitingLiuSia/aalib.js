@@ -6,7 +6,7 @@ module.exports = {
     output: {
         path: __dirname,
         // publicPath: path.basename(__dirname) + "/",
-        filename: "bundle.js",
+        filename: "bundle.js"
     },
     resolve: {
         fallback: {
@@ -21,6 +21,13 @@ module.exports = {
             "fs": false
         }
     }
+    ,
+    watchOptions: {
+        poll: true,
+        ignored: /node_modules/
+      }
+      // watchOptions also didnt work for the watch 
+    
     // module: {
     //     rules: [
     //         { test: /\.js$/, exclude: /node_modules/, loader: "babel-loader" }
