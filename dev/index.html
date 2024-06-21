@@ -5,11 +5,8 @@
     <meta charset="UTF-8">
     <title>Sia ASCII tool</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.3.2/html2canvas.min.js"></script>
+    <script type="text/javascript" defer src="./bundle.js"></script>
     <link rel="stylesheet" href="style.css">
-    <link href="https://cdn.jsdelivr.net/npm/nouislider@14.6.3/distribute/nouislider.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/nouislider@14.6.3/distribute/nouislider.min.js"></script>
-    <script type="text/javascript" defer src="bundle.js"></script>
-
 </head>
 
 <body>
@@ -48,13 +45,13 @@
     </div>
 
     <div class="sliderContainer" >
-            <p >Contrast</p>        
+            <p >Contrast</p>
             <input type="range" id="contrast" min="0" max="1" step="0.1" value="0.5" class="myRange" >
             <div class="slider-values">
                 <!-- <span class="min">0</span> -->
             <span class="sliderValue">0.5</span>
             <!-- <span class="max">1</span> -->
-    </div>        
+    </div>
     </div>
 
 
@@ -67,54 +64,28 @@
     <hr>
 
     <div class="gradient-container">
-        <h3>Colors</h3>
-
-        <select name="" id="color-selection">
-            <option value="Sia Gradient">Sia Gradient</option>
-            <option value="Cool Black">Cool Black</option>
-            <option value="white"> White</option>
-            <option value="">Medium Gray</option>
-        </select>
-
-        <div class="sliderContainer">
-            <p >Saturation</p>
-            <input type="range" id="saturation" min="0" max="1" step="0.1" value="0.5" class="myRange">
-            <div class="slider-values" >
-                <!-- <span class="min">0</span> -->
-                <span class="sliderValue">0.5</span>
-                <!-- <span class="max">1</span> -->
-        </div>
-    </div>
+        <h3>Gradient</h3>
         <!-- <input type="file" id="gradient-file-input" accept="application/json"> -->
         <div id="gradient-picker">
             <canvas id="gradient-canvas" ></canvas>
-        
-            <div class="gradient-selection-container">
-                <div> <div id="color1" > </div>
-                <div id="position1" > </div>
-                <div id="color2" > </div>
-                <div id="position2" > </div>
-                <div id="color3" > </div>
-                <div id="position3" > </div>
-            </div>  
-            
+
+        <div style="margin-top: 10px;" class="gradient-selection-container">
             <div class="gradient-group">
-                <span id="percentage1">20</span>
-                <span id="percentage2">50</span>
-                <span id="percentage3">100</span>
+                <input type="color" id="color1" value="">
+                <input type="number" id="position1" min="0" max="100" value="20">
             </div>
-        </div>
-
-            <div id="color-slider"></div>
-
-            <div class="sliderContainer">
-                <p>Angle</p>
-                <input type="range" id="gradient-angle" value="" min="0" max="180">
-                <span id="angleValue">90</span>
+            <div class="gradient-group">
+                <input type="color" id="color2" value="">
+                <input type="number" id="position2" value="80">
             </div>
+            <div class="gradient-group">
+                <input type="color" id="color3" value="">
+                <input type="number" id="position3" value="100">
+            </div>
+        </div></div>
     </div>
 <!-- intentional spacer -->
-    <h3></h3> 
+    <h3></h3>
     <hr>
         <h3>Character Setting</h3>
         <!-- <div style="margin-top: -5px;"> -->
@@ -132,7 +103,7 @@
             <p style="margin: 0;">Font size</p>
             <input id="fontSize" type="number"  value="">
         </div>
-       
+
         <!-- <div class="sliderContainer">
             <p>Line height</p>
             <input id="lineHeight" type="number"  value="">
@@ -190,17 +161,17 @@
             </div>
         </div>
     </div>
-    
+
     <div id="imported-image-frame">
         <img id="imported-image"> </img>
     </div>
 </div>
-   
+
 <div id="canvas-container">
     <canvas id="processed-image"></canvas>
-</div> 
 </div>
-    
+</div>
+
 </body>
 
 </html>
