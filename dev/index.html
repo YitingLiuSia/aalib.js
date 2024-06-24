@@ -16,11 +16,11 @@
     <div class = "container" id="preset-container">
         <h1>Sia ASCII Generator</h1>
         <h2>Preset</h2>
-        <select name="preset-selection" id="preset-selection">
+        <!-- <select name="preset-selection" id="preset-selection">
             <option value="preset-1">Gradient</option>
             <option value="preset-2">Big Letters</option>
             <option value="preset-3">Gray</option>
-        </select>
+        </select> -->
 
         <div style="justify-content: start;" class="sliderContainer" style="margin-top: -10px;">
             <input type="file" id="load-preset" accept="application/json">
@@ -57,14 +57,14 @@
 
         <select name="" id="color-selection">
             <option value="Sia Gradient">Sia Gradient</option>
-            <option value="Cool Black">Cool Black</option>
+            <option value="black" >Cool Black</option>
             <option value="white"> White</option>
-            <option value="">Medium Gray</option>
+            <option value="gray" >Medium Gray</option>
         </select>
 
-        <div class="sliderContainer">
+        <div  id="saturation" class="sliderContainer">
             <p >Saturation</p>
-            <input type="range" id="saturation" min="1" max="5" step="1" value="1" class="myRange">
+            <input type="range" min="1" max="5" step="1" value="1" class="myRange">
             <div class="slider-values" >
                 <span class="sliderValue">1</span>
         </div>
@@ -90,7 +90,7 @@
 
             <div style="display: block;" id="color-slider"></div>
 
-            <div class="sliderContainer">
+            <div id="gradient-angle" class="sliderContainer">
                 <p>Angle</p>
                 <input type="range" id="gradient-angle" value="" min="0" max="180">
                 <div class="slider-values" >
