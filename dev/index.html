@@ -4,9 +4,9 @@
 <head lang="en">
     <meta charset="UTF-8">
     <title>Sia ASCII tool</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.3.2/html2canvas.min.js"></script>
-    <link rel="stylesheet" href="style.css">
     <link href="https://cdn.jsdelivr.net/npm/nouislider@14.6.3/distribute/nouislider.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.3.2/html2canvas.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/nouislider@14.6.3/distribute/nouislider.min.js"></script>
     <script type="text/javascript" defer src="./dist/bundle.js"></script>
 
@@ -72,7 +72,7 @@
 
         <div id="gradient-picker">
             <canvas id="gradient-canvas" ></canvas>
-
+            <br>
             <div class="gradient-selection-container">
                 <div> <div id="color1" > </div>
                 <!-- <div id="position1" > </div> -->
@@ -82,14 +82,16 @@
             </div>
 
             <div class="gradient-group">
-                <span id="percentage1">0</span>
-                <span id="percentage2">50</span>
-                <span id="percentage3">100</span>
+                <span id="percentage1" hidden>0</span>
+                <span id="percentage2"hidden>50</span>
+                <span id="percentage3"hidden>100</span>
             </div>
         </div>
 
             <div style="display: block;" id="color-slider"></div>
 
+            <br>
+            <br>
             <div id="gradient-angle" class="sliderContainer">
                 <p>Angle</p>
                 <input type="range" value="" min="0" max="180">

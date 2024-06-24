@@ -144,8 +144,8 @@ function downloadImageWithRatio(){
     link.click();
     tempCanvas.remove();
 }
-const charWidthOffsetRatio = 1.8;
-const lineHeightOffsetRatio = 1.8;
+const charWidthOffsetRatio = 0.8;
+const lineHeightOffsetRatio = 1.6;
 const ratioValue = 2;
 
 function loadImageFromURL(img, isCanvas){
@@ -155,7 +155,8 @@ function loadImageFromURL(img, isCanvas){
     const lineHeightValue = fontSize.value*lineHeightOffsetRatio;//0.8;
     const ratioX =imageWidth/(fontSize.value+charWidthValue)*ratioValue; //2* fontSize.value/5*13.5;// 
     const ratioY = imageHeight/(fontSize.value+lineHeightValue)*ratioValue;//2*fontSize.value/5*13.5 ;//
-    const asciiDimensions = calculateAsciiDimensionsForImageSize(imageWidth, imageHeight, fontSize.value , fontSize.value/charWidthOffsetRatio*lineHeightOffsetRatio);
+    //const asciiDimensions = calculateAsciiDimensionsForImageSize(imageWidth, imageHeight, fontSize.value , fontSize.value/charWidthOffsetRatio*lineHeightOffsetRatio);
+    const asciiDimensions = calculateAsciiDimensionsForImageSize(imageWidth, imageHeight, ratioX , ratioY);
     const aaReq = { width:asciiDimensions.width  , height: asciiDimensions.height, colored: false};
     // console.log("image size is ", imageWidth, imageHeight);
     // console.log("ratio is ", ratioX, ratioY);
@@ -395,7 +396,8 @@ var slider = document.getElementById('color-slider');
 
 noUiSlider.create(slider, {
     start: [0, 50, 100],
-    connect: true,
+    behaviour: 'tap-drag',
+    tooltips: true,
     range: {
         'min': 0,
         'max': 100
@@ -405,10 +407,12 @@ noUiSlider.create(slider, {
 slider.noUiSlider.on('update', function(values, handle) {
     var percentage = document.getElementById('percentage' + (handle + 1));
     percentage.textContent = Math.floor(values[handle]);
-       colorPosition1.textContent = values[0];
-       colorPosition2.textContent = values[1];
-       colorPosition3.textContent = values[2];
-       updateGradient();
+    colorPosition1.textContent = values[0];
+    colorPosition2.textContent = values[1];
+    colorPosition3.textContent = values[2];
+    updateGradient();
+    
+   
 });
 
 imageExportRatio.oninput=(e)=>{
@@ -487,7 +491,12 @@ function updateGradient(){
     updateGradientFromCanvas(gradientCanvasCTX,x2,y2);
     gradientCanvasCTX.fillStyle = gradient;
     gradientCanvasCTX.fillRect(0, 0, gcWidth, gcHeight);
-    noUiSlider.background = gradient;
+
+    // let noUIconnects= slider.querySelector('.noUi-target');
+    console.log("slider ",slider);
+    console.log("gradient is  ",gradient);    
+    console.log("linear gradient css is  ",`linear-gradient(${angle}, ${currentColor1}, ${currentColor2}, ${currentColor3})}`); // Set the background of the slider
+    slider.style.background = `linear-gradient(${angle}, ${currentColor1}, ${currentColor2}, ${currentColor3})}`; // Set the background of the slider
     updateImage("gradient");
 }
 
@@ -511,6 +520,9 @@ function updateGradientFromCanvas(canvas,x2,y2){
     gradient.addColorStop(colorPosition1.textContent/100, currentColor1);
     gradient.addColorStop(colorPosition2.textContent/100, currentColor2);
     gradient.addColorStop(colorPosition3.textContent/100, currentColor3);
+
+   
+
 }
 
 function updatePreset(){
@@ -554,7 +566,6 @@ function saveGradient() {
     gradientInfo.colorPosition1 = colorPosition1.textContent;
     gradientInfo.colorPosition2 = colorPosition2.textContent;
     gradientInfo.colorPosition3 = colorPosition3.textContent;
-
     gradientInfo.color1 = currentColor1;
     gradientInfo.color2= currentColor2;
     gradientInfo.color3 = currentColor3;
@@ -584,7 +595,6 @@ function savePreset(){
     presetInfo.fontSize = fontSize.value;
     presetInfo.fontFamily = "Sora";  
     presetInfo.charset = charsetSelector.value;
-
 }
 
 function savePresetToFile(){
@@ -619,7 +629,6 @@ function loadPresetFromFile(file){
 }
 const presetFileInput = document.getElementById('load-preset');
 presetFileInput.type = 'file';
-
 presetFileInput.addEventListener('change', function() {
     if (this.files && this.files[0]) {
         console.log("file", this.files[0]);

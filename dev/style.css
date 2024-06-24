@@ -41,6 +41,11 @@
     height: 8px;              /* height of horizontal scrollbar ← You're missing this */
 }
 
+#color-slider{
+
+
+}
+
 body{
     font-family: 'SoraFont';
     display: flex;
@@ -176,12 +181,8 @@ p{
    justify-content: flex-start;
    align-content: center;
    margin-left: -4.5px;
+}
 
-}
-.gradient-group{
-    display: flex;
-    flex-direction: column;
-}
 .slider-values{
     display: flex; 
     justify-content: space-between;
@@ -191,20 +192,59 @@ hr{
 }
 
 .noUi-handle {
-    width: 20px; /* Size of the circle */
-    height: 20px; /* Size of the circle */
-    border-radius: 50%; /* Makes it a circle */
-    background: transparent; /* Optional: Makes the inside of the circle transparent */
-    border: 1px solid white; /* 1px solid white border */
-    box-shadow: none; /* Removes any default shadow if present */
-    cursor: pointer; /* Changes the cursor to a pointer to indicate it's draggable */
+    background: transparent;
+    border: 1px solid white;
+    cursor: default;
+    box-shadow: none;
+    border: none;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+}
+.noUi-horizontal .noUi-tooltip{
+    transform: translate(-50%, 0);
+    left: 50%;
+    top: 100%;
+    background-color: transparent;
+    border: none;
+    color: white;
+}
+
+#color-selection{
+    width: 100%;
+}
+
+.noUi-horizontal .noUi-handle{
+    width: 20px;
+    height: 20px;
+    margin: 0 auto;
+    top: 50%;
+    left: 25%;
+}
+
+.noUi-handle .noUi-handle-upper{
+    margin: 0 auto;
+}
+
+.noUi-tooltip{
     outline: none; /* Removes the outline to clean up the appearance */
+    background-color: transparent;
+    border: none;
 }
 
 .noUi-touch-area {
-    background-color: none;
-    border: 1px solid white;
+    width: 15px;
+    height: 15px;
+    border: 2px solid white;
+    border-radius: 50%; /* Makes it a circle */
+    margin: 0 auto;
+
 }
+.noUi-handle:after, .noUi-handle:before 
+{
+    background: transparent;
+}
+
 .sliderValue{
     font-weight: regular;
     font-size: smaller;
@@ -222,7 +262,6 @@ input, select, button {
 }
 select option:active, select option:hover{
     background-color: #00DECC;
-
 }
 
 input[type="checkbox"]{
