@@ -18,23 +18,6 @@ const charset_ascii = ASCII_CHARSET;
 const charset_sia = "SIA/-.><?!^*()   ";
 const resource = filename => `../resources/${ filename }`;
 
-const presetSelection = document.getElementById("preset-selection");
-const presetFolderName = "Presets/";
-presetSelection.addEventListener('change',function(){
-    var selectedPreset = this.value;
-    switch(selectedPreset){
-        case 'preset-1':
-            fetchPresetFromJson(presetFolderName+"presetInfo.json");
-        break;
-        case 'preset-2':
-            fetchPresetFromJson(presetFolderName+"preset-2.json");
-        break;
-        case 'preset-3':
-            fetchPresetFromJson(presetFolderName+"preset-3.json");
-        break;
-    }
-});
-
 document.addEventListener('DOMContentLoaded', () => fetchPresetFromJson("Presets/presetInfo.json"));
 
 function fetchPresetFromJson(filePath){
@@ -49,7 +32,6 @@ function fetchPresetFromJson(filePath){
             data.fontSize,
             data.charset
         );
-
         loadPreset();
     })
     .catch(error => console.error('Error loading preset:', error));
@@ -342,15 +324,45 @@ let percentage1 = document.getElementById('percentage1');
 let percentage2 = document.getElementById('percentage2');
 let percentage3 = document.getElementById('percentage3');
 
-let gradientAngle = document.getElementById('gradient-angle');
-let gradientAngleValue = gradientAngle.nextElementSibling.querySelector('.sliderValue');
+let gradientAngle = document.getElementById('gradient-angle').getElementsByTagName('input')[0];
+let gradientAngleValue = gradientAngle.nextElementSibling.querySelector('#gradient-angle .sliderValue');
 let currentGradientAngle = 90; // Initialize with a default value, e.g., 90 degrees
-
-let saturationForGradient = document.getElementById("saturation");
-let saturationForGradientValue = saturationForGradient.nextElementSibling.querySelector('.sliderValue');
-let currentSaturationForGradient=1;
+let saturationForGradient = document.getElementById("saturation").getElementsByTagName("input")[0];
+let saturationForGradientValue = document.querySelector('#saturation .sliderValue');
 let currentColor1,currentColor2,currentColor3='#000000';
+let gradientSelectionContainer = document.getElementById("gradient-selection-container");
+let gradientGroup = document.getElementById("gradient-group");
+let colorSelectionDropdown = document.getElementById("color-selection");
+let colorBlack = "#0A151E";
+let colorWhite = "#ffffff";
+let colorGray = "#8796A9";
 
+colorSelectionDropdown.onchange = (e) => {
+    switch (e.target.value) {
+        case 'Sia Gradient':
+            displayForGradientOrColor(true);
+            break;
+        case 'black':
+            currentColor1 = colorBlack;
+            currentColor2 = colorBlack;
+            currentColor3 = colorBlack;
+            displayForGradientOrColor(false);
+            break;
+        case 'white':
+            currentColor1 = colorWhite;
+            currentColor2 = colorWhite;
+            currentColor3 = colorWhite;
+            displayForGradientOrColor(false);
+            break;
+        case 'gray':
+            currentColor1 = colorGray;
+            currentColor2 = colorGray;
+            currentColor3 = colorGray;
+            displayForGradientOrColor(false);
+            break;
+    }
+    updateGradient(); // Assuming you have a function to update the gradient display
+}
 saturationForGradient.addEventListener('input',(e)=>{
     saturationForGradientValue.textContent = e.target.value;
     currentSaturationForGradient = e.target.value;
@@ -462,7 +474,6 @@ function updateSaturation(){
     currentColor2 = updateColorSaturation(currentColor2, currentSaturationForGradient);
     currentColor3 = updateColorSaturation(currentColor3, currentSaturationForGradient);
     console.log("update saturation ", currentColor1);
-
 }
 
 function updateGradient(){
@@ -473,9 +484,25 @@ function updateGradient(){
     updateGradientFromCanvas(gradientCanvasCTX,x2,y2);
     gradientCanvasCTX.fillStyle = gradient;
     gradientCanvasCTX.fillRect(0, 0, gcWidth, gcHeight);
+    noUiSlider.background = gradient;
     updateImage("gradient");
 }
 
+function displayForGradientOrColor(displayGradient){
+    if(displayGradient){
+        saturation.style.display = 'block';
+        gradientGroup.style.display="block";
+        gradientSelectionContainer.style.display="block";
+        gradientAngle.style.display='block';
+
+    }else{
+        saturation.style.display = 'none';
+        gradientGroup.style.display="none";
+        gradientSelectionContainer.style.display="none";
+        gradientAngle.style.display='none';
+
+    }
+}
 function updateGradientFromCanvas(canvas,x2,y2){
     gradient = canvas.createLinearGradient(0, 0, x2,y2);
     gradient.addColorStop(colorPosition1.textContent/100, currentColor1);
@@ -514,9 +541,9 @@ function loadGradient(){
     colorPosition1.textContent = gradientInfo.colorPosition1;
     colorPosition2.textContent = gradientInfo.colorPosition2;
     colorPosition3.textContent = gradientInfo.colorPosition3;
-    currentColor1 = gradient.color1;
-    currentColor2 = gradient.color2;
-    currentColor3 = gradient.color3;
+    currentColor1 = gradientInfo.color1;
+    currentColor2 = gradientInfo.color2;
+    currentColor3 = gradientInfo.color3;
     console.log("currentColor1",currentColor1);
 }
 
