@@ -18,23 +18,6 @@ const charset_ascii = ASCII_CHARSET;
 const charset_sia = "SIA/-.><?!^*()   ";
 const resource = filename => `../resources/${ filename }`;
 
-const presetSelection = document.getElementById("preset-selection");
-const presetFolderName = "Presets/";
-presetSelection.addEventListener('change',function(){
-    var selectedPreset = this.value;
-    switch(selectedPreset){
-        case 'preset-1':
-            fetchPresetFromJson(presetFolderName+"presetInfo.json");
-        break;
-        case 'preset-2':
-            fetchPresetFromJson(presetFolderName+"preset-2.json");
-        break;
-        case 'preset-3':
-            fetchPresetFromJson(presetFolderName+"preset-3.json");
-        break;
-    }
-});
-
 document.addEventListener('DOMContentLoaded', () => fetchPresetFromJson("Presets/presetInfo.json"));
 
 function fetchPresetFromJson(filePath){
@@ -341,13 +324,11 @@ let percentage1 = document.getElementById('percentage1');
 let percentage2 = document.getElementById('percentage2');
 let percentage3 = document.getElementById('percentage3');
 
-let gradientAngle = document.getElementById('gradient-angle').getElementsByTagName('input');
-let gradientAngleValue = gradientAngle.nextElementSibling.querySelector('.sliderValue');
+let gradientAngle = document.getElementById('gradient-angle').getElementsByTagName('input')[0];
+let gradientAngleValue = gradientAngle.nextElementSibling.querySelector('#gradient-angle .sliderValue');
 let currentGradientAngle = 90; // Initialize with a default value, e.g., 90 degrees
-
-let saturationForGradient = document.getElementById("saturation").getElementsByTagName("input");
-let saturationForGradientValue = saturationForGradient.nextElementSibling.querySelector('.sliderValue');
-let currentSaturationForGradient=1; 
+let saturationForGradient = document.getElementById("saturation").getElementsByTagName("input")[0]; 
+let saturationForGradientValue = document.querySelector('#saturation .sliderValue'); 
 let currentColor1,currentColor2,currentColor3='#000000'; 
 let gradientSelectionContainer = document.getElementById("gradient-selection-container");
 let gradientGroup = document.getElementById("gradient-group");
@@ -560,9 +541,9 @@ function loadGradient(){
     colorPosition1.textContent = gradientInfo.colorPosition1;
     colorPosition2.textContent = gradientInfo.colorPosition2;
     colorPosition3.textContent = gradientInfo.colorPosition3;
-    currentColor1 = gradient.color1;
-    currentColor2 = gradient.color2;
-    currentColor3 = gradient.color3;
+    currentColor1 = gradientInfo.color1;
+    currentColor2 = gradientInfo.color2;
+    currentColor3 = gradientInfo.color3;
     console.log("currentColor1",currentColor1);
 }
 
