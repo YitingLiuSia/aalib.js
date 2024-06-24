@@ -49,7 +49,6 @@ function fetchPresetFromJson(filePath){
             data.fontSize, 
             data.charset
         );
-
         loadPreset();
     })
     .catch(error => console.error('Error loading preset:', error));
@@ -342,15 +341,47 @@ let percentage1 = document.getElementById('percentage1');
 let percentage2 = document.getElementById('percentage2');
 let percentage3 = document.getElementById('percentage3');
 
-let gradientAngle = document.getElementById('gradient-angle');
+let gradientAngle = document.getElementById('gradient-angle').getElementsByTagName('input');
 let gradientAngleValue = gradientAngle.nextElementSibling.querySelector('.sliderValue');
 let currentGradientAngle = 90; // Initialize with a default value, e.g., 90 degrees
 
-let saturationForGradient = document.getElementById("saturation");
+let saturationForGradient = document.getElementById("saturation").getElementsByTagName("input");
 let saturationForGradientValue = saturationForGradient.nextElementSibling.querySelector('.sliderValue');
 let currentSaturationForGradient=1; 
 let currentColor1,currentColor2,currentColor3='#000000'; 
+let gradientSelectionContainer = document.getElementById("gradient-selection-container");
+let gradientGroup = document.getElementById("gradient-group");
+let colorSelectionDropdown = document.getElementById("color-selection");
+let colorBlack = "#0A151E";
+let colorWhite = "#ffffff"; 
+let colorGray = "#8796A9";
 
+colorSelectionDropdown.onchange = (e) => {
+    switch (e.target.value) {
+        case 'Sia Gradient':
+            displayForGradientOrColor(true);
+            break;
+        case 'black':
+            currentColor1 = colorBlack;
+            currentColor2 = colorBlack;
+            currentColor3 = colorBlack;
+            displayForGradientOrColor(false);
+            break;
+        case 'white':
+            currentColor1 = colorWhite;
+            currentColor2 = colorWhite;
+            currentColor3 = colorWhite;
+            displayForGradientOrColor(false);
+            break;
+        case 'gray':
+            currentColor1 = colorGray;
+            currentColor2 = colorGray;
+            currentColor3 = colorGray;
+            displayForGradientOrColor(false);
+            break;
+    }
+    updateGradient(); // Assuming you have a function to update the gradient display
+}
 saturationForGradient.addEventListener('input',(e)=>{
     saturationForGradientValue.textContent = e.target.value;
     currentSaturationForGradient = e.target.value;
@@ -462,7 +493,6 @@ function updateSaturation(){
     currentColor2 = updateColorSaturation(currentColor2, currentSaturationForGradient);
     currentColor3 = updateColorSaturation(currentColor3, currentSaturationForGradient);
     console.log("update saturation ", currentColor1);
-
 }
 
 function updateGradient(){
@@ -473,9 +503,25 @@ function updateGradient(){
     updateGradientFromCanvas(gradientCanvasCTX,x2,y2);
     gradientCanvasCTX.fillStyle = gradient;
     gradientCanvasCTX.fillRect(0, 0, gcWidth, gcHeight);
+    noUiSlider.background = gradient;
     updateImage("gradient");
 }
 
+function displayForGradientOrColor(displayGradient){
+    if(displayGradient){
+        saturation.style.display = 'block';
+        gradientGroup.style.display="block";
+        gradientSelectionContainer.style.display="block";
+        gradientAngle.style.display='block';
+
+    }else{
+        saturation.style.display = 'none';
+        gradientGroup.style.display="none";
+        gradientSelectionContainer.style.display="none";
+        gradientAngle.style.display='none';
+
+    }
+}
 function updateGradientFromCanvas(canvas,x2,y2){
     gradient = canvas.createLinearGradient(0, 0, x2,y2);
     gradient.addColorStop(colorPosition1.textContent/100, currentColor1);
