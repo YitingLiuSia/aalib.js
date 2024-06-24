@@ -323,12 +323,12 @@ let currentimageExportRatio = 1;
 let percentage1 = document.getElementById('percentage1');
 let percentage2 = document.getElementById('percentage2');
 let percentage3 = document.getElementById('percentage3');
-
 let gradientAngle = document.getElementById('gradient-angle').getElementsByTagName('input')[0];
 let gradientAngleValue = gradientAngle.nextElementSibling.querySelector('#gradient-angle .sliderValue');
 let currentGradientAngle = 90; // Initialize with a default value, e.g., 90 degrees
 let saturationForGradient = document.getElementById("saturation").getElementsByTagName("input")[0]; 
 let saturationForGradientValue = document.querySelector('#saturation .sliderValue'); 
+let currentSaturationForGradient = 1; 
 let currentColor1,currentColor2,currentColor3='#000000'; 
 let gradientSelectionContainer = document.getElementById("gradient-selection-container");
 let gradientGroup = document.getElementById("gradient-group");
