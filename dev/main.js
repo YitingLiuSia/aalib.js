@@ -42,11 +42,11 @@ function fetchPresetFromJson(filePath){
     .then(response => response.json())
     .then(data => {
         presetInfo = new PresetInfo(
-            data.inverseEle, 
-            data.brightnessEle, 
-            data.contrastEle, 
-            data.gradientInfo, 
-            data.fontSize, 
+            data.inverseEle,
+            data.brightnessEle,
+            data.contrastEle,
+            data.gradientInfo,
+            data.fontSize,
             data.charset
         );
 
@@ -55,9 +55,9 @@ function fetchPresetFromJson(filePath){
     .catch(error => console.error('Error loading preset:', error));
 
 }
-// media recorder and video exporter 
+// media recorder and video exporter
 const imageDropdown = document.getElementById('image-dropdown');
-let isCanvas = true; 
+let isCanvas = true;
 
 imageDropdown.onchange = function(){
     isCanvas = this.value === "canvas";
@@ -71,7 +71,7 @@ imageDropdown.onchange = function(){
 // setupMediaRecorder(videoCanvasElement);
 // document.getElementById('startRecording').addEventListener('click', startRecording);
 // document.getElementById('stopAndDownload').addEventListener('click', stopRecording);
-// video input 
+// video input
 // function setupMediaRecorder(canvas) {
 //     const stream = canvas.captureStream(25); // Capture at 25 fps
 //     mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm; codecs=vp9' });
@@ -97,7 +97,7 @@ imageDropdown.onchange = function(){
 //         document.body.removeChild(a);
 //         recordedChunks = []; // Clear the recorded chunks
 //     };
-// } 
+// }
 
 // function startRecording() {
 //     mediaRecorder.start();
@@ -128,7 +128,7 @@ imageDropdown.onchange = function(){
 //     });
 // }
 
-// // video input 
+// // video input
 // document.getElementById('videoInput').addEventListener('change', function (event) {
 //     const file = event.target.files[0];
 //     if (file) {
@@ -175,11 +175,11 @@ const lineHeightOffsetRatio = 1.8;
 const ratioValue = 2;
 
 function loadImageFromURL(img, isCanvas){
-    const imageWidth = img.width;  
+    const imageWidth = img.width;
     const imageHeight = img.height;
     const charWidthValue = fontSize.value*charWidthOffsetRatio;//*0.8;
     const lineHeightValue = fontSize.value*lineHeightOffsetRatio;//0.8;
-    const ratioX =imageWidth/(fontSize.value+charWidthValue)*ratioValue; //2* fontSize.value/5*13.5;// 
+    const ratioX =imageWidth/(fontSize.value+charWidthValue)*ratioValue; //2* fontSize.value/5*13.5;//
     const ratioY = imageHeight/(fontSize.value+lineHeightValue)*ratioValue;//2*fontSize.value/5*13.5 ;//
     const asciiDimensions = calculateAsciiDimensionsForImageSize(imageWidth, imageHeight, fontSize.value , fontSize.value/charWidthOffsetRatio*lineHeightOffsetRatio);
     const aaReq = { width:asciiDimensions.width  , height: asciiDimensions.height, colored: false};
@@ -188,8 +188,8 @@ function loadImageFromURL(img, isCanvas){
     // console.log('Required ASCII Dimensions:', asciiDimensions);
 
     let angle = currentGradientAngle * Math.PI / 180;
-    let x2 = imageWidth * Math.cos(angle);  
-    let y2 = imageWidth * Math.sin(angle);  
+    let x2 = imageWidth * Math.cos(angle);
+    let y2 = imageWidth * Math.sin(angle);
     updateGradientFromCanvas(gradientCanvasCTX,x2,y2);
     const canvasOptions = {
         fontSize: fontSize.value,
@@ -197,14 +197,14 @@ function loadImageFromURL(img, isCanvas){
         lineHeight: lineHeightValue,
         charWidth: charWidthValue,
         charset: presetInfo.charset,
-        width:  imageWidth ,  
-        height: imageHeight , 
+        width:  imageWidth ,
+        height: imageHeight ,
         background: "rgba(0,0,0,0)",
         color: gradient
     };
 
     let imageProcessingPipeline = aalib.read.image.fromURL(img.src);
-       
+
     if (inverseEle.checked) {
             console.log("inverse elemenet is checked ", inverseEle.checked)
             imageProcessingPipeline = imageProcessingPipeline.map(aalib.filter.inverse());
@@ -222,17 +222,17 @@ function loadImageFromURL(img, isCanvas){
         if (isCanvas) {
             imageProcessingPipeline.map(aalib.render.canvas(canvasOptions))
     .do(function (el) {
-       
+
         replaceImageToDiv(el);
-       
+
     })
-    .subscribe(); } 
+    .subscribe(); }
     else {
         imageProcessingPipeline.map(aalib.render.html(canvasOptions))
         .do(function (el) {
             replaceImageToDiv(el);
         })
-        .subscribe(); 
+        .subscribe();
     }
 }
 
@@ -244,7 +244,7 @@ function replaceImageToDiv(el){
         existingElement.parentNode.replaceChild(el, existingElement);
     } else {
         console.log("replaceImageToDiv - append child image");
-        el.id = 'processed-image'; 
+        el.id = 'processed-image';
         document.body.appendChild(el);
     }
 }
@@ -253,19 +253,19 @@ function processImage(img) {
 }
 function loadImageAndProcess(url) {
     const img = new Image();
-    img.src = url; 
+    img.src = url;
     img.onload = function () {
         let existingElement = document.getElementById('imported-image');
         if (existingElement) {
             console.log("loadImageAndProcess - replace child image");
-            existingElement.src = img.src; 
+            existingElement.src = img.src;
             currentImage = img;
         } else {
             console.log("loadImageAndProcess - append child image");
-            img.id = 'imported-image'; 
-            document.body.appendChild(img); 
+            img.id = 'imported-image';
+            document.body.appendChild(img);
         }
-        processImage(currentImage); 
+        processImage(currentImage);
     };
     img.onerror = function () {
         console.error('Error loading the image');
@@ -273,7 +273,7 @@ function loadImageAndProcess(url) {
 }
 function handleImageInputChange(event) {
     const file = event.target.files[0];
-   
+
     if (file && file.type.startsWith('image/')) {
         const reader = new FileReader();
         reader.onload = function (e) {
@@ -313,7 +313,7 @@ class PresetInfo {
         this.charset = charset;
     }
 }
-let currentImage; 
+let currentImage;
 let gradientCanvas = document.getElementById("gradient-canvas");
 let gradientCanvasCTX = gradientCanvas.getContext('2d');
 let gcWidth = gradientCanvas.width;
@@ -348,8 +348,8 @@ let currentGradientAngle = 90; // Initialize with a default value, e.g., 90 degr
 
 let saturationForGradient = document.getElementById("saturation");
 let saturationForGradientValue = saturationForGradient.nextElementSibling.querySelector('.sliderValue');
-let currentSaturationForGradient=1; 
-let currentColor1,currentColor2,currentColor3='#000000'; 
+let currentSaturationForGradient=1;
+let currentColor1,currentColor2,currentColor3='#000000';
 
 saturationForGradient.addEventListener('input',(e)=>{
     saturationForGradientValue.textContent = e.target.value;
@@ -361,7 +361,7 @@ saturationForGradient.addEventListener('input',(e)=>{
 gradientAngle.addEventListener('input', (e) => { // Changed from 'change' to 'input'
     gradientAngleValue.textContent = e.target.value;
     currentGradientAngle = parseInt(e.target.value, 10);
-    updateGradient(); 
+    updateGradient();
 });
 
 percentage1.addEventListener('change', function() {
@@ -409,7 +409,7 @@ window.onload = function() {
     console.log("imageExportRatio ",imageExportRatio.value);
     currentimageExportRatio = imageExportRatio.value;
     charsetSelector.value = presetInfo.charset;
-    presetInfo.fontFamily = "Sora";//fontDropdown.value;     
+    presetInfo.fontFamily = "Sora";//fontDropdown.value;
     updateImage("chartset");
 }
 
@@ -455,7 +455,7 @@ function updateImage(funcName){
 }
 
 function updateSaturation(){
-    currentColor1 = gradientInfo.color1; 
+    currentColor1 = gradientInfo.color1;
     currentColor2 = gradientInfo.color2;
     currentColor3 = gradientInfo.color3;
     currentColor1 = updateColorSaturation(currentColor1, currentSaturationForGradient);
@@ -468,7 +468,7 @@ function updateSaturation(){
 function updateGradient(){
     let angle = currentGradientAngle * Math.PI / 180;
     let x2 = gcWidth * Math.cos(angle);
-    let y2 = gcWidth * Math.sin(angle); 
+    let y2 = gcWidth * Math.sin(angle);
     updateSaturation();
     updateGradientFromCanvas(gradientCanvasCTX,x2,y2);
     gradientCanvasCTX.fillStyle = gradient;
@@ -491,7 +491,7 @@ function updatePreset(){
         contrastEle.value = presetInfo.contrastEle;
     }
     if(inverseEle.value!=presetInfo.inverseEle){
-        inverseEle.value = presetInfo.inverseEle;     
+        inverseEle.value = presetInfo.inverseEle;
     }
     if(fontSize.value!=presetInfo.fontSize){
         fontSize.value = presetInfo.fontSize;
@@ -552,7 +552,7 @@ function savePreset(){
     presetInfo.gradientInfo = gradientInfo;
     saveGradient();
     presetInfo.fontSize = fontSize.value;
-    presetInfo.fontFamily = "Sora";  
+    presetInfo.fontFamily = "Sora";
     presetInfo.charset = charsetSelector.value;
 
 }
@@ -571,7 +571,7 @@ function savePresetToFile(){
     console.log("Preset saved to file.");
 }
 
-// needs to update in the preset info values as well - UI 
+// needs to update in the preset info values as well - UI
 function loadPresetFromFile(file){
     const reader = new FileReader();
     reader.onload = function(event){

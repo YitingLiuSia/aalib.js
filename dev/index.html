@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="style.css">
     <link href="https://cdn.jsdelivr.net/npm/nouislider@14.6.3/distribute/nouislider.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/nouislider@14.6.3/distribute/nouislider.min.js"></script>
-    <script type="text/javascript" defer src="bundle.js"></script>
+    <script type="text/javascript" defer src="./dist/bundle.js"></script>
 
 </head>
 
@@ -44,11 +44,11 @@
     </div>
 
     <div class="sliderContainer" >
-            <p >Contrast</p>        
+            <p >Contrast</p>
             <input type="range" id="contrast" min="0" max="1" step="0.1" value="0.5" class="myRange" >
             <div class="slider-values">
             <span class="sliderValue">0.5</span>
-    </div>        
+    </div>
     </div>
     <hr>
 
@@ -69,18 +69,18 @@
                 <span class="sliderValue">1</span>
         </div>
     </div>
-    
+
         <div id="gradient-picker">
             <canvas id="gradient-canvas" ></canvas>
-        
+
             <div class="gradient-selection-container">
                 <div> <div id="color1" > </div>
                 <!-- <div id="position1" > </div> -->
                 <div id="color2" > </div>
                 <!-- <div id="position2" > </div> -->
                 <div id="color3" > </div>
-            </div>  
-            
+            </div>
+
             <div class="gradient-group">
                 <span id="percentage1">0</span>
                 <span id="percentage2">50</span>
@@ -98,14 +98,14 @@
             </div>            </div>
     </div>
 <!-- intentional spacer -->
-    <h3></h3> 
+    <h3></h3>
     <hr>
         <h3>Character Setting</h3>
         <div class="sliderContainer">
             <p style="margin: 0;">Font size</p>
             <input id="fontSize" type="number"  value="">
         </div>
-       
+
         <div class="sliderContainer">
             <p>Charset</p>
             <select id="charset-selector">
@@ -153,17 +153,17 @@
             </div>
         </div>
     </div>
-    
+
     <div id="imported-image-frame">
         <img id="imported-image"> </img>
     </div>
 </div>
-   
+
 <div id="canvas-container">
     <canvas id="processed-image"></canvas>
-</div> 
 </div>
-    
+</div>
+
 </body>
 
 </html>

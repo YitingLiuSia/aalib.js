@@ -1,10 +1,10 @@
 const path = require("path");
 
 module.exports = {
-    mode: "production",
+    mode: process.env.NODE_ENV,
     entry: path.resolve(__dirname, "main.js"),
     output: {
-        path: __dirname,
+        path: path.join(__dirname, 'dist'),
         // publicPath: path.basename(__dirname) + "/",
         filename: "bundle.js"
     },
@@ -20,14 +20,24 @@ module.exports = {
             "async_hooks": false,
             "fs": false
         }
-    }
-    ,
+    },
+    devServer: {
+        hot: true,
+        liveReload: true,
+        compress: false,
+        devMiddleware: {
+            writeToDisk: true,
+        },
+        static: {
+            directory: path.join(__dirname, '../'),
+        }
+    },
     watchOptions: {
         poll: true,
         ignored: /node_modules/
-      }
-      // watchOptions also didnt work for the watch 
-    
+    }
+      // watchOptions also didnt work for the watch
+
     // module: {
     //     rules: [
     //         { test: /\.js$/, exclude: /node_modules/, loader: "babel-loader" }

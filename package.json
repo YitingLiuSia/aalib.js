@@ -8,7 +8,7 @@
   "license": "MIT",
   "repository": "https://github.com/mir3z/aalib.js",
   "scripts": {
-    "dev": "npx webpack serve --static . -c ./dev/webpack.config.js --open-target ./dev",
+    "dev": "NODE_ENV=development npx webpack serve -c ./dev/webpack.config.js",
     "dev:playground": "npx webpack serve --static . -c playground/webpack.config.js",
     "build": "npm run build:dist && npm run build:lib",
     "build:dist": "webpack --progress --colors",
@@ -18,7 +18,7 @@
     "test:perf": "node ./test/perf/bin/run-perf.js",
     "lint": "eslint src/** test/**",
     "build:dev": "webpack --config dev/webpack.config.js",
-    "dev:sequence": "npm run build:dev --watch && npm run dev", 
+    "dev:sequence": "npm run build:dev --watch && npm run dev",
     "push-dev-to-lw": "npm run build:dev && ./push-dev-to-lw.sh"
   },
   "devDependencies": {
