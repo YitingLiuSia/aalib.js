@@ -517,6 +517,11 @@ function updatePreset(){
         gradientInfo = presetInfo.gradientInfo;
         console.log("gradient info is ", gradientInfo);
     }
+
+    if(colorSelectionDropdown.value!=presetInfo.colorSelection){
+        colorSelectionDropdown.value = presetInfo.colorSelection;
+        console.log("colorSelectionDropdownis ", colorSelectionDropdown.value);
+    }
     console.log("preset info is ", presetInfo);
 }
 
