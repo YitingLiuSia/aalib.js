@@ -19,7 +19,6 @@ function fetchPresetFromJson(filePath){
         loadPreset();
     })
     .catch(error => console.error('Error loading preset:', error));
-
 }
 // media recorder and video exporter 
 const imageDropdown = document.getElementById('image-dropdown');
@@ -255,21 +254,24 @@ function handleImageInputChange(event) {
 document.getElementById('imageInput').addEventListener('change', handleImageInputChange);
 // gradient
 class GradientInfo {
-    constructor(color1, color2, color3, colorPosition1, colorPosition2, colorPosition3) {
+    constructor(color1, color2, color3, colorPosition1, colorPosition2, colorPosition3, saturation, angle) {
         this.color1 = color1;
         this.color2 = color2;
         this.color3 = color3;
         this.colorPosition1 = colorPosition1;
         this.colorPosition2 = colorPosition2;
         this.colorPosition3 = colorPosition3;
+        this.saturation = saturation;
+        this.angle = angle; 
     }
 }
 
 class PresetInfo {
-    constructor(inverseEle, brightnessEle, contrastEle, gradientInfo, fontSize,  charset) {
+    constructor(inverseEle, brightnessEle, contrastEle, colorSelection, gradientInfo, fontSize, charset) {
         this.inverseEle = inverseEle;
         this.brightnessEle = brightnessEle;
         this.contrastEle = contrastEle;
+        this.colorSelection = colorSelection;
         this.gradientInfo = gradientInfo;
         this.fontSize = fontSize;
         this.charset = charset;
@@ -280,9 +282,6 @@ let gradientCanvas = document.getElementById("gradient-canvas");
 let gradientCanvasCTX = gradientCanvas.getContext('2d');
 let gcWidth = gradientCanvas.width;
 let gcHeight = gradientCanvas.height;
-// let colorPosition1 = document.getElementById('percentage1');
-// let colorPosition2 = document.getElementById('percentage2');
-// let colorPosition3 = document.getElementById('percentage3');
 let gradientInfo = new GradientInfo();
 let presetInfo = new PresetInfo();
 let gradient;
@@ -399,6 +398,7 @@ window.onload = function() {
     currentimageExportRatio = imageExportRatio.value;
     charsetSelector.value = presetInfo.charset;
     presetInfo.fontFamily = "Sora";//fontDropdown.value;     
+    colorSelectionDropdown.value = "Sia Gradient";
     updateImage("chartset");
 }
 
@@ -487,12 +487,12 @@ function displayForGradientOrColor(displayGradient){
 }
 function updateGradientFromCanvas(canvas,x2,y2){
     gradient = canvas.createLinearGradient(0, 0, x2,y2);
-    gradient.addColorStop(currentPos1/100, currentColor1);
-    gradient.addColorStop(currentPos2/100, currentColor2);
-    gradient.addColorStop(currentPos3/100, currentColor3);
-    console.log(`${currentPos1}, ${currentPos2}, ${currentPos3}`);
+    if(currentPos1&&currentPos2&&currentPos3){
+        gradient.addColorStop(currentPos1/100.0, currentColor1);
+        gradient.addColorStop(currentPos2/100.0, currentColor2);
+        gradient.addColorStop(currentPos3/100.0, currentColor3);
+    }
 }
-
 function updatePreset(){
     if(brightnessEle.value!=presetInfo.brightnessEle){
         brightnessEle.value = presetInfo.brightnessEle;
@@ -527,7 +527,8 @@ function loadGradient(){
     currentColor1 = gradientInfo.color1;
     currentColor2 = gradientInfo.color2;
     currentColor3 = gradientInfo.color3;
-    console.log("currentColor1",currentColor1);
+    saturationForGradient =  gradientInfo.saturation;
+    gradientAngle = gradientInfo.angle;
 }
 
 function saveGradient() {
@@ -537,6 +538,8 @@ function saveGradient() {
     gradientInfo.color1 = currentColor1;
     gradientInfo.color2= currentColor2;
     gradientInfo.color3 = currentColor3;
+    gradientInfo.saturation = saturationForGradient;
+    gradientInfo.angle = gradientAngle;
 }
 
 function loadPreset(){
@@ -548,6 +551,7 @@ function loadPreset(){
     contrastValue.innerHTML = presetInfo.contrastEle;
     fontSize.value = presetInfo.fontSize;
     charsetSelector.value = presetInfo.charset;
+    colorSelectionDropdown.value = presetInfo.colorSelection;
     loadGradient();
     updateGradient();
     updatePreset();
@@ -559,6 +563,8 @@ function savePreset(){
     presetInfo.brightnessEle = brightnessEle.value;
     presetInfo.contrastEle = contrastEle.value;
     presetInfo.gradientInfo = gradientInfo;
+    console.log("gradient info is ",gradientInfo);
+    presetInfo.colorSelection = colorSelectionDropdown.value;
     saveGradient();
     presetInfo.fontSize = fontSize.value;
     presetInfo.fontFamily = "Sora";  
@@ -590,6 +596,7 @@ function loadPresetFromFile(file){
         presetInfo.gradientInfo = data.gradientInfo;
         presetInfo.fontSize = data.fontSize;
         presetInfo.charset = data.charset;
+        presetInfo.colorSelection = data.colorSelection;
         console.log("preset loaded from file: ",presetInfo);
         loadPreset();
     }
