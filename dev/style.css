@@ -41,10 +41,6 @@
     height: 8px;              /* height of horizontal scrollbar ← You're missing this */
 }
 
-#color-slider{
-
-
-}
 
 body{
     font-family: 'SoraFont';
@@ -71,6 +67,7 @@ h2,h3{
     height: 80px;
     border-radius: 8px;
     margin-top: 5px;
+    position: relative;
 }
 
 p{
@@ -180,6 +177,14 @@ p{
 }
 hr{
     border-color: #8796A9;
+}
+
+#color-slider{
+    border: none;
+    box-shadow: none;
+    background:transparent;
+    width: 85%;
+    margin: -20px auto 0 auto; /* Center the element horizontally */
 }
 
 .noUi-handle {
