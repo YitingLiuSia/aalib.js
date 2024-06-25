@@ -1,17 +1,9 @@
-// import ImageReader from "../src/readers/ImageReader";
-// import VideoReader from "../src/readers/VideoReader";
-// import inverse from "../src/filters/inverse";
-// import contrast from "../src/filters/contrast";
-// import brightness from "../src/filters/brightness";
 import aalib from "../dist/aalib.js";
 import { ASCII_CHARSET } from "../src/renderers/HTMLRenderer";
-// import videoCanvas from "../src/renderers/CanvasRenderer";
 const charset_ascii = ASCII_CHARSET;
 const charset_sia = "SIA/-.><?!^*()   ";
 const resource = filename => `../resources/${ filename }`;
-
 document.addEventListener('DOMContentLoaded', () => fetchPresetFromJson("Presets/presetInfo.json"));
-
 function fetchPresetFromJson(filePath){
     fetch(resource(filePath))
     .then(response => response.json())
@@ -158,14 +150,9 @@ function loadImageFromURL(img, isCanvas){
     //const asciiDimensions = calculateAsciiDimensionsForImageSize(imageWidth, imageHeight, fontSize.value , fontSize.value/charWidthOffsetRatio*lineHeightOffsetRatio);
     const asciiDimensions = calculateAsciiDimensionsForImageSize(imageWidth, imageHeight, ratioX , ratioY);
     const aaReq = { width:asciiDimensions.width  , height: asciiDimensions.height, colored: false};
-    // console.log("image size is ", imageWidth, imageHeight);
-    // console.log("ratio is ", ratioX, ratioY);
-    // console.log('Required ASCII Dimensions:', asciiDimensions);
+    
+    console.log("colordropdown value is ",colorSelectionDropdown.value);
 
-    let angle = currentGradientAngle * Math.PI / 180;
-    let x2 = imageWidth * Math.cos(angle);  
-    let y2 = imageWidth * Math.sin(angle);  
-    updateGradientFromCanvas(gradientCanvasCTX,x2,y2);
     const canvasOptions = {
         fontSize: fontSize.value,
         fontFamily: "Sora",
@@ -343,27 +330,21 @@ colorSelectionDropdown.onchange = (e) => {
     switch (e.target.value) {
         case 'Sia Gradient':
             displayForGradientOrColor(true);
+            updateGradient(); // Assuming you have a function to update the gradient display
             break;
         case 'black':
-            currentColor1 = colorBlack;
-            currentColor2 = colorBlack;
-            currentColor3 = colorBlack;
+            updateColor(colorBlack);
             displayForGradientOrColor(false);
             break;
         case 'white':
-            currentColor1 = colorWhite;
-            currentColor2 = colorWhite;
-            currentColor3 = colorWhite;
+            updateColor(colorWhite);
             displayForGradientOrColor(false);
             break;
         case 'gray':
-            currentColor1 = colorGray;
-            currentColor2 = colorGray;
-            currentColor3 = colorGray;
+            updateColor(colorGray);
             displayForGradientOrColor(false);
             break;
     }
-    updateGradient(); // Assuming you have a function to update the gradient display
 }
 saturationForGradient.addEventListener('input',(e)=>{
     saturationForGradientValue.textContent = e.target.value;
@@ -484,12 +465,19 @@ function updateGradient(){
     updateImage("gradient");
 }
 
-function displayForGradientOrColor(displayGradient){
-        if(displayGradient){
-        saturationContainer.style.display="flex";
-        gradientAngleContainer.style.display="flex";
-        slider.style.display="flex";
+function updateColor(color){
+    gradient=color;
+    gradientCanvasCTX.fillStyle = gradient;
+    gradientCanvasCTX.fillRect(0, 0, gcWidth, gcHeight);
+    updateImage("color");
 
+}
+
+function displayForGradientOrColor(displayGradient){
+    if(displayGradient){
+    saturationContainer.style.display="flex";
+    gradientAngleContainer.style.display="flex";
+    slider.style.display="flex";
     }else{
         saturationContainer.style.display="none";
         gradientAngleContainer.style.display="none";
