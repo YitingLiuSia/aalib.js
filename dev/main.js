@@ -293,9 +293,9 @@ let gradientCanvas = document.getElementById("gradient-canvas");
 let gradientCanvasCTX = gradientCanvas.getContext('2d');
 let gcWidth = gradientCanvas.width;
 let gcHeight = gradientCanvas.height;
-let colorPosition1 = document.getElementById('percentage1');
-let colorPosition2 = document.getElementById('percentage2');
-let colorPosition3 = document.getElementById('percentage3');
+// let colorPosition1 = document.getElementById('percentage1');
+// let colorPosition2 = document.getElementById('percentage2');
+// let colorPosition3 = document.getElementById('percentage3');
 let gradientInfo = new GradientInfo();
 let presetInfo = new PresetInfo();
 let gradient;
@@ -313,9 +313,9 @@ let saveImageButton = document.getElementById("save-image");
 saveImageButton.onclick = downloadImageWithRatio;
 
 let currentimageExportRatio = 1;
-let percentage1 = document.getElementById('percentage1');
-let percentage2 = document.getElementById('percentage2');
-let percentage3 = document.getElementById('percentage3');
+// let percentage1 = document.getElementById('percentage1');
+// let percentage2 = document.getElementById('percentage2');
+// let percentage3 = document.getElementById('percentage3');
 let gradientAngle = document.getElementById('gradient-angle').getElementsByTagName('input')[0];
 let gradientAngleValue = gradientAngle.nextElementSibling.querySelector('#gradient-angle .sliderValue');
 let currentGradientAngle = 90; // Initialize with a default value, e.g., 90 degrees
@@ -380,18 +380,6 @@ gradientAngle.addEventListener('input', (e) => { // Changed from 'change' to 'in
     updateGradient(); 
 });
 
-percentage1.addEventListener('change', function() {
-    slider.noUiSlider.set([this.textContent, null, null]);
-});
-
-percentage2.addEventListener('change', function() {
-    slider.noUiSlider.set([null, this.textContent, null]);
-});
-
-percentage3.addEventListener('change', function() {
-    slider.noUiSlider.set([null, null, this.textContent]);
-});
-
 var slider = document.getElementById('color-slider');
 
 noUiSlider.create(slider, {
@@ -404,15 +392,22 @@ noUiSlider.create(slider, {
     }
 });
 
+let currentPos1,currentPos2,currentPos3=0;
+
 slider.noUiSlider.on('update', function(values, handle) {
-    var percentage = document.getElementById('percentage' + (handle + 1));
-    percentage.textContent = Math.floor(values[handle]);
-    colorPosition1.textContent = values[0];
-    colorPosition2.textContent = values[1];
-    colorPosition3.textContent = values[2];
+    // var percentage = document.getElementById('percentage' + (handle + 1));
+    // percentage.textContent = Math.floor(values[handle]);
+    currentPos1 = values[0];
+    currentPos2= values[1];
+    currentPos3= values[2];
+    // console.log("percentgae text content is ",percentage.textContent);
+    // // currentPos1= values[0];
+    // currentPos2= values[1];
+    // currentPos3= values[2];
+    // colorPosition1.textContent = values[0];
+    // colorPosition2.textContent = values[1];
+    // colorPosition3.textContent = values[2];
     updateGradient();
-    
-   
 });
 
 imageExportRatio.oninput=(e)=>{
@@ -424,7 +419,6 @@ imageExportRatio.oninput=(e)=>{
 
 window.onload = function() {
     console.log("PHASE 2");
-
     console.log("imageExportRatio ",imageExportRatio.value);
     currentimageExportRatio = imageExportRatio.value;
     charsetSelector.value = presetInfo.charset;
@@ -480,7 +474,6 @@ function updateSaturation(){
     currentColor1 = getColorFromSaturation( currentSaturationForGradient)[0];
     currentColor2 = getColorFromSaturation( currentSaturationForGradient)[1];
     currentColor3 = getColorFromSaturation( currentSaturationForGradient)[2];
-    console.log("update saturation ", currentColor1);
 }
 
 function updateGradient(){
@@ -491,12 +484,12 @@ function updateGradient(){
     updateGradientFromCanvas(gradientCanvasCTX,x2,y2);
     gradientCanvasCTX.fillStyle = gradient;
     gradientCanvasCTX.fillRect(0, 0, gcWidth, gcHeight);
-
     // let noUIconnects= slider.querySelector('.noUi-target');
-    console.log("slider ",slider);
-    console.log("gradient is  ",gradient);    
+    // console.log("slider ",slider);
+    // console.log("gradient is  ",gradient);    
     console.log("linear gradient css is  ",`linear-gradient(${angle}, ${currentColor1}, ${currentColor2}, ${currentColor3})}`); // Set the background of the slider
     slider.style.background = `linear-gradient(${angle}, ${currentColor1}, ${currentColor2}, ${currentColor3})}`; // Set the background of the slider
+    slider.style.backgroundColor = `linear-gradient(${angle}, ${currentColor1}, ${currentColor2}, ${currentColor3})}`; // Set the background of the slider
     updateImage("gradient");
 }
 
@@ -517,12 +510,10 @@ function displayForGradientOrColor(displayGradient){
 }
 function updateGradientFromCanvas(canvas,x2,y2){
     gradient = canvas.createLinearGradient(0, 0, x2,y2);
-    gradient.addColorStop(colorPosition1.textContent/100, currentColor1);
-    gradient.addColorStop(colorPosition2.textContent/100, currentColor2);
-    gradient.addColorStop(colorPosition3.textContent/100, currentColor3);
-
-   
-
+    gradient.addColorStop(currentPos1/100.0, currentColor1);
+    gradient.addColorStop(currentPos2/100.0, currentColor2);
+    gradient.addColorStop(currentPos3/100.0, currentColor3);
+    console.log(`${currentPos1}, ${currentPos2}, ${currentPos3}`);
 }
 
 function updatePreset(){
@@ -553,9 +544,9 @@ function updatePreset(){
 }
 
 function loadGradient(){
-    colorPosition1.textContent = gradientInfo.colorPosition1;
-    colorPosition2.textContent = gradientInfo.colorPosition2;
-    colorPosition3.textContent = gradientInfo.colorPosition3;
+    currentPos1 = gradientInfo.colorPosition1;
+    currentPos2 = gradientInfo.colorPosition2;
+    currentPos3 = gradientInfo.colorPosition3;
     currentColor1 = gradientInfo.color1;
     currentColor2 = gradientInfo.color2;
     currentColor3 = gradientInfo.color3;
@@ -563,9 +554,9 @@ function loadGradient(){
 }
 
 function saveGradient() {
-    gradientInfo.colorPosition1 = colorPosition1.textContent;
-    gradientInfo.colorPosition2 = colorPosition2.textContent;
-    gradientInfo.colorPosition3 = colorPosition3.textContent;
+    gradientInfo.colorPosition1 = currentPos1;
+    gradientInfo.colorPosition2 = currentPos2;
+    gradientInfo.colorPosition3 = currentPos3;
     gradientInfo.color1 = currentColor1;
     gradientInfo.color2= currentColor2;
     gradientInfo.color3 = currentColor3;
