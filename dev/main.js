@@ -313,18 +313,15 @@ let saveImageButton = document.getElementById("save-image");
 saveImageButton.onclick = downloadImageWithRatio;
 
 let currentimageExportRatio = 1;
-// let percentage1 = document.getElementById('percentage1');
-// let percentage2 = document.getElementById('percentage2');
-// let percentage3 = document.getElementById('percentage3');
-let gradientAngle = document.getElementById('gradient-angle').getElementsByTagName('input')[0];
+let gradientAngleContainer = document.getElementById('gradient-angle');
+let gradientAngle = gradientAngleContainer.getElementsByTagName('input')[0];
 let gradientAngleValue = gradientAngle.nextElementSibling.querySelector('#gradient-angle .sliderValue');
 let currentGradientAngle = 90; // Initialize with a default value, e.g., 90 degrees
-let saturationForGradient = document.getElementById("saturation").getElementsByTagName("input")[0]; 
+let saturationContainer = document.getElementById("saturation");
+let saturationForGradient =saturationContainer.getElementsByTagName("input")[0]; 
 let saturationForGradientValue = document.querySelector('#saturation .sliderValue'); 
 let currentSaturationForGradient = 1; 
 let currentColor1,currentColor2,currentColor3='#000000'; 
-let gradientSelectionContainer = document.getElementById("gradient-selection-container");
-let gradientGroup = document.getElementById("gradient-group");
 let colorSelectionDropdown = document.getElementById("color-selection");
 let colorBlack = "#0A151E";
 let colorWhite = "#ffffff"; 
@@ -402,18 +399,9 @@ noUiSlider.create(slider, {
 let currentPos1,currentPos2,currentPos3=0;
 
 slider.noUiSlider.on('update', function(values, handle) {
-    // var percentage = document.getElementById('percentage' + (handle + 1));
-    // percentage.textContent = Math.floor(values[handle]);
     currentPos1 = values[0];
     currentPos2= values[1];
     currentPos3= values[2];
-    // console.log("percentgae text content is ",percentage.textContent);
-    // // currentPos1= values[0];
-    // currentPos2= values[1];
-    // currentPos3= values[2];
-    // colorPosition1.textContent = values[0];
-    // colorPosition2.textContent = values[1];
-    // colorPosition3.textContent = values[2];
     updateGradient();
 });
 
@@ -497,18 +485,17 @@ function updateGradient(){
 }
 
 function displayForGradientOrColor(displayGradient){
-    if(displayGradient){
-        saturationForGradient.style.visibility = 'visible';
-        gradientGroup.style.visibility = 'visible';
-        gradientSelectionContainer.style.visibility = 'visible';
-        gradientAngle.style.visibility = 'visible';
+        if(displayGradient){
+        saturationContainer.style.display="flex";
+        gradientAngleContainer.style.display="flex";
+        slider.style.display="flex";
 
     }else{
-        saturationForGradient.style.visibility = 'none';
-        gradientGroup.style.visibility = 'none';
-        gradientSelectionContainer.style.visibility = 'none';
-        gradientAngle.style.visibility = 'none';
+        saturationContainer.style.display="none";
+        gradientAngleContainer.style.display="none";
+        slider.style.display="none";
     }
+
 }
 function updateGradientFromCanvas(canvas,x2,y2){
     gradient = canvas.createLinearGradient(0, 0, x2,y2);
