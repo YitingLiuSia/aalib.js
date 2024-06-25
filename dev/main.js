@@ -384,8 +384,15 @@ var slider = document.getElementById('color-slider');
 
 noUiSlider.create(slider, {
     start: [0, 50, 100],
-    behaviour: 'tap-drag',
     tooltips: true,
+    format: {
+        from: function(value) {
+                return parseInt(value);
+            },
+        to: function(value) {
+                return parseInt(value);
+            }
+        },
     range: {
         'min': 0,
         'max': 100
@@ -484,35 +491,30 @@ function updateGradient(){
     updateGradientFromCanvas(gradientCanvasCTX,x2,y2);
     gradientCanvasCTX.fillStyle = gradient;
     gradientCanvasCTX.fillRect(0, 0, gcWidth, gcHeight);
-    // let noUIconnects= slider.querySelector('.noUi-target');
-    // console.log("slider ",slider);
-    // console.log("gradient is  ",gradient);    
-    console.log("linear gradient css is  ",`linear-gradient(${angle}, ${currentColor1}, ${currentColor2}, ${currentColor3})}`); // Set the background of the slider
+    console.log("linear gradient css is  ",`linear-gradient(${angle}, ${currentColor1} 0 ${currentPos1}, ${currentColor2} ${currentPos2} ${currentPos3}, ${currentColor3} ${currentPos3} 100)}`); // Set the background of the slider
     slider.style.background = `linear-gradient(${angle}, ${currentColor1}, ${currentColor2}, ${currentColor3})}`; // Set the background of the slider
-    slider.style.backgroundColor = `linear-gradient(${angle}, ${currentColor1}, ${currentColor2}, ${currentColor3})}`; // Set the background of the slider
     updateImage("gradient");
 }
 
 function displayForGradientOrColor(displayGradient){
     if(displayGradient){
-        saturationForGradient.style.display = 'block';
-        gradientGroup.style.display="block";
-        gradientSelectionContainer.style.display="block";
-        gradientAngle.style.display='block';
+        saturationForGradient.style.visibility = 'visible';
+        gradientGroup.style.visibility = 'visible';
+        gradientSelectionContainer.style.visibility = 'visible';
+        gradientAngle.style.visibility = 'visible';
 
     }else{
-        saturationForGradient.style.display = 'none';
-        gradientGroup.style.display="none";
-        gradientSelectionContainer.style.display="none";
-        gradientAngle.style.display='none';
-
+        saturationForGradient.style.visibility = 'none';
+        gradientGroup.style.visibility = 'none';
+        gradientSelectionContainer.style.visibility = 'none';
+        gradientAngle.style.visibility = 'none';
     }
 }
 function updateGradientFromCanvas(canvas,x2,y2){
     gradient = canvas.createLinearGradient(0, 0, x2,y2);
-    gradient.addColorStop(currentPos1/100.0, currentColor1);
-    gradient.addColorStop(currentPos2/100.0, currentColor2);
-    gradient.addColorStop(currentPos3/100.0, currentColor3);
+    gradient.addColorStop(currentPos1/100, currentColor1);
+    gradient.addColorStop(currentPos2/100, currentColor2);
+    gradient.addColorStop(currentPos3/100, currentColor3);
     console.log(`${currentPos1}, ${currentPos2}, ${currentPos3}`);
 }
 
