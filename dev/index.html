@@ -108,33 +108,43 @@
 </div>
         <!-- <button id="save-gradient">Save Gradient</button> -->
 
-
-    <!-- <div class="import-container" id="video-import">
-        <h1> Import Video</h1>
-        <p>Video Settings</p>
-        <div id="generated-video"></div>
-        <input type="file" id="videoInput" accept="video/*">
-        <div id="video-container"></div>
-
-        <button id="startRecording">Start Recording</button>
-        <button id="stopAndDownload">Stop and Download</button>
-        <canvas id="video-scene"></canvas>
-    </div> -->
+   
 </div>
 <div style="overflow-y: scroll;"class="container">
 
 <div class="image-section import-container " id="image-import">
     <div>
-        <h2 style="margin-top: 0;">Import image</h2>
-        <p>Image settings</p>
+        <h2 style="margin-top: 0;">Import assets</h2>
+        <select id="asset-selector" style="width: 100%;">
+            <option value="image">Image</option>
+            <option value="video">Video</option>
+        </select>
         <div id="generated-image"></div>
         <div style="display: flex; justify-content: flex-start; width: 400px; "class="sliderContainer">
             <input type="file" id="imageInput" accept="image/*">
+            <input hidden type="file" id="videoInput" accept="video/*">
             <select  id="image-dropdown">
                 <option value="canvas">Canvas</option>
                 <option value="html">HTML</option>
             </select>
         </div>
+
+        <div id="video-import">
+            <p>Video export</p>
+            <select id="video-type-selector">
+                <option value="mov">MOV</option>
+                <option value="mp4">MP4</option>
+            </select>
+
+            <div id="generated-video"></div>
+            <!-- <div id="video-container"></div> -->
+    
+            <button id="startRecording">Start Recording</button>
+            <button id="stopAndDownload">Stop and Download</button>
+            <!-- <canvas id="video-scene"></canvas> -->
+        </div>
+
+
         <div id="image-container">
             <p>Image export</p>
             <div id="slidercontainer">
@@ -147,11 +157,12 @@
 
     <div id="imported-image-frame">
         <img id="imported-image"> </img>
+        <video id="imported-video"></video>
     </div>
 </div>
 
 <div id="canvas-container">
-    <canvas id="processed-image"></canvas>
+    <canvas id="processed-asset"></canvas>
 </div>
 </div>
 

@@ -30,94 +30,102 @@ imageDropdown.onchange = function(){
     console.log("iscanvas", isCanvas);
 }
 
-//let videoCanvasElement = document.getElementById('video-scene');
-// let mediaRecorder;
-// let recordedChunks = [];
-// setupMediaRecorder(videoCanvasElement);
-// document.getElementById('startRecording').addEventListener('click', startRecording);
-// document.getElementById('stopAndDownload').addEventListener('click', stopRecording);
+let assetSelector = document.getElementById("asset-selector");
+let videoInput = document.getElementById('videoInput');
+let imageInput = document.getElementById("imageInput");
+assetSelector.onchange=((e)=>{
+    if(e.target.value==="video"){
+        console.log("selected video");
+        videoInput.style.display="block";
+        imageInput.style.display="none";
+    }else{
+        videoInput.style.display="none";
+        imageInput.style.display="block";
+    }
+});
+
+
+// let videoCanvasElement = document.getElementById('video-scene');
+let videoCanvasElement = document.getElementById('imported-video');
+let mediaRecorder;
+let recordedChunks = [];
+setupMediaRecorder(videoCanvasElement);
+let startRecordingButton=document.getElementById('startRecording');
+let stopAndDownloadButton = document.getElementById('stopAndDownload');
+startRecordingButton.addEventListener('click', startRecording);
+stopAndDownloadButton.addEventListener('click', stopRecording);
+function setupMediaRecorder(canvas) {
+    const stream = canvas.captureStream(25); // Capture at 25 fps
+    mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm; codecs=vp9' });
+    mediaRecorder.ondataavailable = function (event) {
+        if (event.data.size > 0) {
+            recordedChunks.push(event.data);
+        }
+    };
+
+    mediaRecorder.onstop = function () {
+        const blob = new Blob(recordedChunks, {
+            type: 'video/mp4'
+        });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.style.display = 'none';
+        a.href = url;
+        a.download = 'downloaded_video.mp4';
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+        recordedChunks = []; // Clear the recorded chunks
+    };
+} 
+
+function startRecording() {
+    mediaRecorder.start();
+    console.log("Recording started");
+}
+
+function stopRecording() {
+    mediaRecorder.stop();
+    console.log("Recording stopped");
+}
+
+function fromVideoFile(file) {
+    return new Promise((resolve, reject) => {
+        const video = document.createElement('video');
+        console.log("url ", URL.createObjectURL(file));
+        video.src = URL.createObjectURL(file);
+        video.controls = true;  // Add controls so users can play/pause
+        video.autoplay = true;  // Set autoplay to true to start playing automatically
+        video.muted = true;     // Mute the video to allow autoplay in most browsers
+        video.loop = true;      // Optional: Loop the video
+        video.onloadedmetadata = () => {
+            document.getElementById('processed-asset').appendChild(video);  // Append to a specific container
+            resolve(video);
+        };
+        video.onerror = () => {
+            reject(new Error("Failed to load video"));
+        };
+    });
+}
+
 // video input 
-// function setupMediaRecorder(canvas) {
-//     const stream = canvas.captureStream(25); // Capture at 25 fps
-//     mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm; codecs=vp9' });
-
-//     mediaRecorder.ondataavailable = function (event) {
-//         if (event.data.size > 0) {
-//             recordedChunks.push(event.data);
-//         }
-//     };
-
-//     mediaRecorder.onstop = function () {
-//         const blob = new Blob(recordedChunks, {
-//             type: 'video/mp4'
-//         });
-//         const url = URL.createObjectURL(blob);
-//         const a = document.createElement('a');
-//         a.style.display = 'none';
-//         a.href = url;
-//         a.download = 'downloaded_video.mp4';
-//         document.body.appendChild(a);
-//         a.click();
-//         window.URL.revokeObjectURL(url);
-//         document.body.removeChild(a);
-//         recordedChunks = []; // Clear the recorded chunks
-//     };
-// } 
-
-// function startRecording() {
-//     mediaRecorder.start();
-//     console.log("Recording started");
-// }
-
-// function stopRecording() {
-//     mediaRecorder.stop();
-//     console.log("Recording stopped");
-// }
-
-// function fromVideoFile(file) {
-//     return new Promise((resolve, reject) => {
-//         const video = document.createElement('video');
-//         console.log("url ", URL.createObjectURL(file));
-//         video.src = URL.createObjectURL(file);
-//         video.controls = true;  // Add controls so users can play/pause
-//         video.autoplay = true;  // Set autoplay to true to start playing automatically
-//         video.muted = true;     // Mute the video to allow autoplay in most browsers
-//         video.loop = true;      // Optional: Loop the video
-//         video.onloadedmetadata = () => {
-//             document.getElementById('video-container').appendChild(video);  // Append to a specific container
-//             resolve(video);
-//         };
-//         video.onerror = () => {
-//             reject(new Error("Failed to load video"));
-//         };
-//     });
-// }
-
-// // video input 
-// document.getElementById('videoInput').addEventListener('change', function (event) {
-//     const file = event.target.files[0];
-//     if (file) {
-//         fromVideoFile(file).then(video => {
-//             console.log("video", video);
-//             aalib.read.video.fromVideoElement(video)
-//                 .map(aalib.aa({ width: 165, height: 68 }))
-//                 .map(aalib.render.canvas({
-//                     width: video.width,//696,
-//                     height: video.height,//476,
-//                     fontFamily: `"${presetInfo.fontFamily}", sans-serif`,
-//                     el: document.querySelector("#video-scene")
-//                 }))
-//                 .subscribe();
-//         }).catch(error => {
-//             console.error("Error loading video:", error);
-//         });
-//     }
-// });
+videoInput.addEventListener('change', function (event) {
+    const file = event.target.files[0];
+    if (file) {
+        fromVideoFile(file).then(video => {
+            console.log("video", video);
+            processVideo(video);
+        }).catch(error => {
+            console.error("Error loading video:", error);
+        });
+    }
+});
 
 
 function downloadImageWithRatio(){
     console.log("downloadImageWithRatio is ", currentimageExportRatio);
-    let canvas = document.getElementById('processed-image');
+    let canvas = document.getElementById('processed-asset');
     let tempCanvas = document.createElement('canvas');
     let tempCtx = tempCanvas.getContext('2d');
 
@@ -139,6 +147,55 @@ const charWidthOffsetRatio = 0.8;
 const lineHeightOffsetRatio = 1.6;
 const ratioValue = 2;
 
+function processVideo(video){
+    if (!video) return; // Add this line to check if video is defined
+    const videoWidth = video.width;  
+    const videoHeight = video.height;
+    const charWidthValue = fontSize.value*charWidthOffsetRatio;//*0.8;
+    const lineHeightValue = fontSize.value*lineHeightOffsetRatio;//0.8;
+    const ratioX =videoWidth/(fontSize.value+charWidthValue)*ratioValue; //2* fontSize.value/5*13.5;// 
+    const ratioY = videoHeight/(fontSize.value+lineHeightValue)*ratioValue;//2*fontSize.value/5*13.5 ;//
+    const asciiDimensions = calculateAsciiDimensionsForImageSize(videoWidth, videoHeight, ratioX , ratioY);
+    const aaReq = { width:asciiDimensions.width  , height: asciiDimensions.height, colored: false};
+    
+    // console.log("colordropdown value is ",colorSelectionDropdown.value);
+    const canvasOptions = {
+        fontSize: fontSize.value,
+        fontFamily: "Sora",
+        lineHeight: lineHeightValue,
+        charWidth: charWidthValue,
+        charset: presetInfo.charset,
+        width:  videoWidth ,  
+        height: videoHeight , 
+        background: "rgba(0,0,0,0)",
+        color: gradient
+    };
+
+    let videoProcessingPipeline = aalib.read.video.fromURL(video.src);
+       
+    if (inverseEle.checked) {
+            console.log("inverse elemenet is checked ", inverseEle.checked)
+            videoProcessingPipeline = videoProcessingPipeline.map(aalib.filter.inverse());
+    }
+    if (brightnessValue.value !== undefined) {
+        console.log("brightnessValue value ", brightnessValue.value);
+        videoProcessingPipeline = videoProcessingPipeline.map(aalib.filter.brightness(brightnessValue.value));
+    }
+    if (contrastValue.value !== undefined) {
+        console.log("contrastValue value ", contrastValue.value);
+        videoProcessingPipeline = videoProcessingPipeline.map(aalib.filter.contrast(contrastValue.value));
+    }
+    videoProcessingPipeline = videoProcessingPipeline.map(aalib.aa(aaReq));
+    
+    videoProcessingPipeline.map(aalib.render.canvas(canvasOptions))
+    .do(function (el) {
+    
+        replaceAssetToDiv(el);
+    
+    }).subscribe(); 
+
+}
+
 function loadImageFromURL(img, isCanvas){
     const imageWidth = img.width;  
     const imageHeight = img.height;
@@ -150,8 +207,6 @@ function loadImageFromURL(img, isCanvas){
     const asciiDimensions = calculateAsciiDimensionsForImageSize(imageWidth, imageHeight, ratioX , ratioY);
     const aaReq = { width:asciiDimensions.width  , height: asciiDimensions.height, colored: false};
     
-    // console.log("colordropdown value is ",colorSelectionDropdown.value);
-
     const canvasOptions = {
         fontSize: fontSize.value,
         fontFamily: "Sora",
@@ -184,28 +239,28 @@ function loadImageFromURL(img, isCanvas){
             imageProcessingPipeline.map(aalib.render.canvas(canvasOptions))
     .do(function (el) {
        
-        replaceImageToDiv(el);
+        replaceAssetToDiv(el);
        
     })
     .subscribe(); } 
     else {
         imageProcessingPipeline.map(aalib.render.html(canvasOptions))
         .do(function (el) {
-            replaceImageToDiv(el);
+            replaceAssetToDiv(el);
         })
         .subscribe(); 
     }
 }
 
-function replaceImageToDiv(el){
-    el.id = 'processed-image';
-    const existingElement = document.getElementById('processed-image');
+function replaceAssetToDiv(el){
+    el.id = 'processed-asset';
+    const existingElement = document.getElementById('processed-asset');
     if (existingElement) {
-        console.log("replaceImageToDiv - replace child image");
+        console.log("replaceAssetToDiv - replace child image");
         existingElement.parentNode.replaceChild(el, existingElement);
     } else {
-        console.log("replaceImageToDiv - append child image");
-        el.id = 'processed-image'; 
+        console.log("replaceAssetToDiv - append child image");
+        el.id = 'processed-asset'; 
         document.body.appendChild(el);
     }
 }
@@ -313,6 +368,10 @@ let colorBlack = "#0A151E";
 let colorWhite = "#ffffff"; 
 let colorGray = "#8796A9";
 let currentPos1,currentPos2,currentPos3=0;
+
+
+
+
 
 // Define your saturation-color mapping
 const saturationColors = {
@@ -462,8 +521,9 @@ function updateGradient(){
     updateGradientFromCanvas(gradientCanvasCTX,x2,y2);
     gradientCanvasCTX.fillStyle = gradient;
     gradientCanvasCTX.fillRect(0, 0, gcWidth, gcHeight);
-    console.log("linear gradient css is  ",`linear-gradient(${angle}, ${currentColor1} 0 ${currentPos1}, ${currentColor2} ${currentPos2} ${currentPos3}, ${currentColor3} ${currentPos3} 100)}`); // Set the background of the slider
-     slider.style.background = `linear-gradient(${angle}, ${currentColor1}, ${currentColor2}, ${currentColor3})}`; // Set the background of the slider
+    
+    // this is not working 
+    slider.style.background = `linear-gradient(${angle}, ${currentColor1}, ${currentColor2}, ${currentColor3})}`; // Set the background of the slider
      updateImage("gradient");
 }
 
@@ -516,14 +576,14 @@ function updatePreset(){
     }
     if(gradientInfo!=presetInfo.gradientInfo){
         gradientInfo = presetInfo.gradientInfo;
-        console.log("gradient info is ", gradientInfo);
+        // console.log("gradient info is ", gradientInfo);
     }
 
     // if(colorSelectionDropdown.value!=presetInfo.colorSelection){
     //     colorSelectionDropdown.value = presetInfo.colorSelection;
     //     console.log("colorSelectionDropdownis ", colorSelectionDropdown.value);
     // }
-    console.log("preset info is ", presetInfo);
+    // console.log("preset info is ", presetInfo);
 }
 
 function loadGradient(){
