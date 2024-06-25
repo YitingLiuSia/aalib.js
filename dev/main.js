@@ -254,24 +254,24 @@ function handleImageInputChange(event) {
 document.getElementById('imageInput').addEventListener('change', handleImageInputChange);
 // gradient
 class GradientInfo {
-    constructor(color1, color2, color3, colorPosition1, colorPosition2, colorPosition3, saturation, angle) {
+    constructor(color1, color2, color3, colorPosition1, colorPosition2, colorPosition3) {
         this.color1 = color1;
         this.color2 = color2;
         this.color3 = color3;
         this.colorPosition1 = colorPosition1;
         this.colorPosition2 = colorPosition2;
         this.colorPosition3 = colorPosition3;
-        this.saturation = saturation;
-        this.angle = angle; 
+        // this.saturation = saturation;
+        // this.angle = angle; 
     }
 }
 
 class PresetInfo {
-    constructor(inverseEle, brightnessEle, contrastEle, colorSelection, gradientInfo, fontSize, charset) {
+    constructor(inverseEle, brightnessEle, contrastEle, gradientInfo, fontSize, charset) {
         this.inverseEle = inverseEle;
         this.brightnessEle = brightnessEle;
         this.contrastEle = contrastEle;
-        this.colorSelection = colorSelection;
+        // this.colorSelection = colorSelection;
         this.gradientInfo = gradientInfo;
         this.fontSize = fontSize;
         this.charset = charset;
@@ -386,15 +386,6 @@ slider.noUiSlider.on('update', function(values) {
     updateGradient();
 });
 
-// shoud load the slider value upon getting from preset - but it is not working rn 
-slider.noUiSlider.on('load',function(values){
-    values[0] = gradientInfo.colorPosition1;
-    values[1] = gradientInfo.colorPosition2;
-    values[2] = gradientInfo.colorPosition3;
-    currentPos1 = gradientInfo.colorPosition1;
-    currentPos2 = gradientInfo.colorPosition2;
-    currentPos3 = gradientInfo.colorPosition3;
-})
 
 imageExportRatio.oninput=(e)=>{
     imageExportRatio.value = e.target.value;
@@ -409,7 +400,7 @@ window.onload = function() {
     currentimageExportRatio = imageExportRatio.value;
     charsetSelector.value = presetInfo.charset;
     presetInfo.fontFamily = "Sora";//fontDropdown.value;     
-    colorSelectionDropdown.value = "Sia Gradient";
+    // colorSelectionDropdown.value = "Sia Gradient";
     updateImage("chartset");
 }
 
@@ -481,7 +472,6 @@ function updateColor(color){
     gradientCanvasCTX.fillStyle = gradient;
     gradientCanvasCTX.fillRect(0, 0, gcWidth, gcHeight);
     updateImage("color");
-
 }
 
 function displayForGradientOrColor(displayGradient){
@@ -612,7 +602,7 @@ function loadPresetFromFile(file){
         presetInfo.gradientInfo = data.gradientInfo;
         presetInfo.fontSize = data.fontSize;
         presetInfo.charset = data.charset;
-       presetInfo.colorSelection = data.colorSelection;
+    //    presetInfo.colorSelection = data.colorSelection;
         console.log("preset loaded from file: ",presetInfo);
         loadPreset();
     }
