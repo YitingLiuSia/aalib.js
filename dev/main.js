@@ -150,7 +150,7 @@ function loadImageFromURL(img, isCanvas){
     const asciiDimensions = calculateAsciiDimensionsForImageSize(imageWidth, imageHeight, ratioX , ratioY);
     const aaReq = { width:asciiDimensions.width  , height: asciiDimensions.height, colored: false};
     
-    console.log("colordropdown value is ",colorSelectionDropdown.value);
+    // console.log("colordropdown value is ",colorSelectionDropdown.value);
 
     const canvasOptions = {
         fontSize: fontSize.value,
@@ -312,6 +312,8 @@ let colorSelectionDropdown = document.getElementById("color-selection");
 let colorBlack = "#0A151E";
 let colorWhite = "#ffffff"; 
 let colorGray = "#8796A9";
+let currentPos1,currentPos2,currentPos3=0;
+
 // Define your saturation-color mapping
 const saturationColors = {
     1: ['#B0D4FC','#FFCCDB','#FFE2CC'],
@@ -376,14 +378,23 @@ noUiSlider.create(slider, {
     }
 });
 
-let currentPos1,currentPos2,currentPos3=0;
 
-slider.noUiSlider.on('update', function(values, handle) {
+slider.noUiSlider.on('update', function(values) {
     currentPos1 = values[0];
     currentPos2= values[1];
     currentPos3= values[2];
     updateGradient();
 });
+
+// shoud load the slider value upon getting from preset - but it is not working rn 
+slider.noUiSlider.on('load',function(values){
+    values[0] = gradientInfo.colorPosition1;
+    values[1] = gradientInfo.colorPosition2;
+    values[2] = gradientInfo.colorPosition3;
+    currentPos1 = gradientInfo.colorPosition1;
+    currentPos2 = gradientInfo.colorPosition2;
+    currentPos3 = gradientInfo.colorPosition3;
+})
 
 imageExportRatio.oninput=(e)=>{
     imageExportRatio.value = e.target.value;
@@ -460,9 +471,9 @@ function updateGradient(){
     updateGradientFromCanvas(gradientCanvasCTX,x2,y2);
     gradientCanvasCTX.fillStyle = gradient;
     gradientCanvasCTX.fillRect(0, 0, gcWidth, gcHeight);
-    console.log("linear gradient css is  ",`linear-gradient(${angle}, ${currentColor1} 0 ${currentPos1}, ${currentColor2} ${currentPos2} ${currentPos3}, ${currentColor3} ${currentPos3} 100)}`); // Set the background of the slider
-    slider.style.background = `linear-gradient(${angle}, ${currentColor1}, ${currentColor2}, ${currentColor3})}`; // Set the background of the slider
-    updateImage("gradient");
+    // console.log("linear gradient css is  ",`linear-gradient(${angle}, ${currentColor1} 0 ${currentPos1}, ${currentColor2} ${currentPos2} ${currentPos3}, ${currentColor3} ${currentPos3} 100)}`); // Set the background of the slider
+    // slider.style.background = `linear-gradient(${angle}, ${currentColor1}, ${currentColor2}, ${currentColor3})}`; // Set the background of the slider
+     updateImage("gradient");
 }
 
 function updateColor(color){
@@ -518,10 +529,10 @@ function updatePreset(){
         console.log("gradient info is ", gradientInfo);
     }
 
-    if(colorSelectionDropdown.value!=presetInfo.colorSelection){
-        colorSelectionDropdown.value = presetInfo.colorSelection;
-        console.log("colorSelectionDropdownis ", colorSelectionDropdown.value);
-    }
+    // if(colorSelectionDropdown.value!=presetInfo.colorSelection){
+    //     colorSelectionDropdown.value = presetInfo.colorSelection;
+    //     console.log("colorSelectionDropdownis ", colorSelectionDropdown.value);
+    // }
     console.log("preset info is ", presetInfo);
 }
 
@@ -556,7 +567,7 @@ function loadPreset(){
     contrastValue.innerHTML = presetInfo.contrastEle;
     fontSize.value = presetInfo.fontSize;
     charsetSelector.value = presetInfo.charset;
-    colorSelectionDropdown.value = presetInfo.colorSelection;
+    // colorSelectionDropdown.value = presetInfo.colorSelection;
     loadGradient();
     updateGradient();
     updatePreset();
@@ -569,7 +580,7 @@ function savePreset(){
     presetInfo.contrastEle = contrastEle.value;
     presetInfo.gradientInfo = gradientInfo;
     console.log("gradient info is ",gradientInfo);
-    presetInfo.colorSelection = colorSelectionDropdown.value;
+    // presetInfo.colorSelection = colorSelectionDropdown.value;
     saveGradient();
     presetInfo.fontSize = fontSize.value;
     presetInfo.fontFamily = "Sora";  
@@ -601,7 +612,7 @@ function loadPresetFromFile(file){
         presetInfo.gradientInfo = data.gradientInfo;
         presetInfo.fontSize = data.fontSize;
         presetInfo.charset = data.charset;
-        presetInfo.colorSelection = data.colorSelection;
+       presetInfo.colorSelection = data.colorSelection;
         console.log("preset loaded from file: ",presetInfo);
         loadPreset();
     }
