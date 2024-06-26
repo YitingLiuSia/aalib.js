@@ -108,20 +108,21 @@ function fromVideoFile(file) {
         video.muted = true;     // Mute the video to allow autoplay in most browsers
         video.loop = true;      // Optional: Loop the video
         video.onloadedmetadata = () => {
-            // document.getElementById('video-import').appendChild(video);  // Append to a specific container
-            // resolve(video);
-            let existingElement = document.getElementById('video-import');
-            if (existingElement) {
-                console.log("load fromVideoFile - replace child video");
-                existingElement.src = video.src; 
-                currentVideo = video;
+            document.getElementById('video-import').appendChild(video);  // Append to a specific container
+            resolve(video);
+            // THE BOTTOM IS NOT WORKING 
+            // let existingElement = document.getElementById('video-import');
+            // if (existingElement) {
+            //     console.log("load fromVideoFile - replace child video");
+            //     existingElement.src = video.src; 
+            //     currentVideo = video;
 
-            } else {
-                console.log("loadImageAndProcess - append child image");
-                video.id = 'video-import'; 
-                document.body.appendChild(video); 
-                resolve(video);
-            }
+            // } else {
+            //     console.log("loadImageAndProcess - append child image");
+            //     video.id = 'video-import'; 
+            //     document.body.appendChild(video); 
+            //     resolve(video);
+            // }
             // processVideo(currentVideo); 
             
         };
@@ -176,16 +177,13 @@ const lineHeightOffsetRatio = 1.6;
 const ratioValue = 2;
 
 function processVideo(video){
-    if (!video) return; // Add this line to check if video is defined
     const videoWidth = video.videoWidth;  
     const videoHeight = video.videoHeight;
     const charWidthValue = fontSize.value*charWidthOffsetRatio;//*0.8;
     const lineHeightValue = fontSize.value*lineHeightOffsetRatio;//0.8;
-    const ratioX =videoWidth/(fontSize.value+charWidthValue)*ratioValue; //2* fontSize.value/5*13.5;// 
-    const ratioY = videoHeight/(fontSize.value+lineHeightValue)*ratioValue;//2*fontSize.value/5*13.5 ;//
-    const asciiDimensions = calculateAsciiDimensionsForImageSize(imageWidth, imageHeight, fontSize.value , fontSize.value/charWidthOffsetRatio*lineHeightOffsetRatio);
+    const asciiDimensions = calculateAsciiDimensionsForImageSize(videoWidth, videoHeight, fontSize.value , fontSize.value/charWidthOffsetRatio*lineHeightOffsetRatio);
     // const asciiDimensions = calculateAsciiDimensionsForImageSize(videoWidth, videoHeight, ratioX , ratioY);
-    const aaReq = { width:asciiDimensions.width  , height: asciiDimensions.height, colored: false};
+    const aaReq = { width:asciiDimensions.width  , height: asciiDimensions.height};
     
     const canvasOptions = {
         fontSize: fontSize.value,
@@ -199,27 +197,52 @@ function processVideo(video){
         color: gradient
     };
 
-    let videoProcessingPipeline = aalib.read.video.fromVideoElement(video);
-    console.log("videoProcessingPipeline is ", videoProcessingPipeline);
-
-    if (inverseEle.checked) {
-        console.log("inverse elemenet is checked ", inverseEle.checked)
-        videoProcessingPipeline = videoProcessingPipeline.map(aalib.filter.inverse());
-    }
-    if (brightnessValue.value !== undefined) {
-        console.log("brightnessValue value ", brightnessValue.value);
-        videoProcessingPipeline = videoProcessingPipeline.map(aalib.filter.brightness(brightnessValue.value));
-    }
-    if (contrastValue.value !== undefined) {
-        console.log("contrastValue value ", contrastValue.value);
-        videoProcessingPipeline = videoProcessingPipeline.map(aalib.filter.contrast(contrastValue.value));
-    }
-    videoProcessingPipeline = videoProcessingPipeline.map(aalib.aa(aaReq));
-    
-    videoProcessingPipeline.map(aalib.render.canvas(canvasOptions))
+    aalib.read.video.fromVideoElement(video)
+    .map(aalib.aa(aaReq))
+    .map(aalib.render.canvas(canvasOptions))
     .do(function (el) {
-        replaceAssetToDiv(el, 'video-scene');
+         replaceAssetToDiv(el, 'video-scene');
     }).subscribe();
+
+    // const canvasOptions = {
+    //     width: 696,
+    //     height: 476,
+    //     el: document.querySelector("#video-scene")
+    // };
+
+ //     aalib.read.video.fromVideoElement(video)
+        // .map(aalib.aa({ width: 165, height: 68 }))
+        // .map(aalib.render.canvas({
+        //     width: 696,
+        //     height: 476,
+        //     el: document.querySelector("#video-scene")
+        // }))
+        // .subscribe();
+
+   
+
+    // ORIGINAL 
+    // let videoProcessingPipeline = aalib.read.video.fromVideoElement(video);
+    // console.log("videoProcessingPipeline is ", videoProcessingPipeline);
+
+    // if (inverseEle.checked) {
+    //     console.log("inverse elemenet is checked ", inverseEle.checked)
+    //     videoProcessingPipeline = videoProcessingPipeline.map(aalib.filter.inverse());
+    // }
+    // if (brightnessValue.value !== undefined) {
+    //     console.log("brightnessValue value ", brightnessValue.value);
+    //     videoProcessingPipeline = videoProcessingPipeline.map(aalib.filter.brightness(brightnessValue.value));
+    // }
+    // if (contrastValue.value !== undefined) {
+    //     console.log("contrastValue value ", contrastValue.value);
+    //     videoProcessingPipeline = videoProcessingPipeline.map(aalib.filter.contrast(contrastValue.value));
+    // }
+    // videoProcessingPipeline = videoProcessingPipeline.map(aalib.aa(aaReq));
+    
+    // videoProcessingPipeline.map(aalib.render.canvas(canvasOptions))
+    // .do(function (el) {
+    //      replaceAssetToDiv(el, 'video-scene');
+    // }).subscribe();
 
 }
 
@@ -264,11 +287,7 @@ function loadImageFromURL(img, isCanvas){
 
     if (isCanvas) {
         imageProcessingPipeline.map(aalib.render.canvas(canvasOptions))
-        .do(function (el) {
-            // const canvas = document.getElementById('processed-asset');
-            // canvas.width = 30;
-            // canvas.height = 30/asciiDimensions.width*asciiDimensions.height;
-           replaceAssetToDiv(el,'processed-asset');}).subscribe(); 
+        .do(function (el) {replaceAssetToDiv(el,'processed-asset');}).subscribe(); 
     } 
     else {
         imageProcessingPipeline.map(aalib.render.html(canvasOptions))
@@ -280,15 +299,12 @@ function replaceAssetToDiv(el, targetDivId ){
     el.id = targetDivId;
     const existingElement = document.getElementById(targetDivId);
     if (existingElement) {
-        // console.log("replaceAssetToDiv - replace child Asset");
         existingElement.parentNode.replaceChild(el, existingElement);
     } else {
-        // console.log("replaceAssetToDiv - append child Asset");
         el.id = targetDivId; 
         document.body.appendChild(el);
     }
 }
-
 
 function processImage(img) {
     loadImageFromURL(img, true);
@@ -516,22 +532,21 @@ charsetSelector.onchange=(e)=>{
     updateAsset("charset");
 }
 
-
 function updateAsset(funcName){
-    // console.log("assetSelector value is ", assetSelector.value);
-    // if(assetSelector.value=="image"){
+    console.log("assetSelector value is ", assetSelector.value);
+    if(assetSelector.value=="image"){
         console.log("update asset for IMAGE");
         if(currentImage){
             console.log(`${funcName} - update IMAGE`);
             processImage(currentImage);
         }
-    // }else{
-    //     console.log("update asset for video");
-    //     if(currentVideo){
-    //         console.log(`${funcName} - update VIDEO`);
-    //         processVideo(currentVideo);
-    //     }
-    // }
+    }else{
+        // console.log("update asset for video");
+        // if(currentVideo){
+        //     console.log(`${funcName} - update VIDEO`);
+        //     processVideo(currentVideo);
+        // }
+    }
 }
 
 function updateSaturation(){
