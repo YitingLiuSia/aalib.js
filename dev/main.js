@@ -23,7 +23,6 @@ function fetchPresetFromJson(filePath){
 // media recorder and video exporter 
 const imageDropdown = document.getElementById('image-dropdown');
 let isCanvas = true; 
-
 imageDropdown.onchange = function(){
     isCanvas = this.value === "canvas";
     updateAsset("canvasORHTML");
@@ -35,6 +34,9 @@ let videoImportContainer = document.getElementById("video-import");
 let videoInput = document.getElementById('videoInput');
 let imageInput = document.getElementById("imageInput");
 let imageImportContainer = document.getElementById("image-container");
+let imageImport = document.getElementById('imported-image');
+
+
 assetSelector.onchange=((e)=>{
     if(e.target.value==="video"){
         console.log("selected video");
@@ -42,17 +44,18 @@ assetSelector.onchange=((e)=>{
         imageInput.style.display="none";
         videoImportContainer.style.display="block";
         imageImportContainer.style.display="none";
+        imageImport.style.display="none";
     }else{
         videoInput.style.display="none";
         imageInput.style.display="block";
         videoImportContainer.style.display="none";
         imageImportContainer.style.display="inline-block";
-
+        imageImport.style.display="block";
     }
 });
 
 
- let videoCanvasElement = document.getElementById('video-scene');
+let videoCanvasElement = document.getElementById('video-scene');
 let mediaRecorder;
 let recordedChunks = [];
 setupMediaRecorder(videoCanvasElement);
@@ -98,36 +101,30 @@ function stopRecording() {
 
 function fromVideoFile(file) {
     return new Promise((resolve, reject) => {
-        const video =document.createElement('video');
+        const video = document.createElement('video');
         const videoURL = URL.createObjectURL(file); // Create URL once
         console.log("fromVideoFile url ", videoURL);
-        currentVideo = video;
         video.src = videoURL;
         video.controls = true;  // Add controls so users can play/pause
         video.autoplay = true;  // Set autoplay to true to start playing automatically
         video.muted = true;     // Mute the video to allow autoplay in most browsers
         video.loop = true;      // Optional: Loop the video
+
         video.onloadedmetadata = () => {
-            // document.getElementById('video-import').appendChild(video);  // Append to a specific container
-            // resolve(video);
-            // THE BOTTOM IS NOT WORKING 
             let existingElement = document.getElementById('video-import');
-            if (currentVideo != video) {
-                console.log("load fromVideoFile - replace child video");
-                existingElement.src = video.src; 
-                existingElement.width = video.videoWidth;
-                existingElement.height=video.videoHeight;
-                currentVideo = video;
-             //   resolve(video); // Add resolve here to ensure the promise is resolved
+            let childVideo = existingElement.querySelector('video');
+            if (childVideo) {
+                childVideo.src = video.src; 
+                childVideo.load(); // Ensure the new video is loaded
+                resolve(childVideo); 
             } else {
-                console.log("loadImageAndProcess - append child image");
+                console.log("no child video - loadImageAndProcess - append child video");
                 video.id = 'video-import'; 
-                document.body.appendChild(video); 
+                existingElement.appendChild(video); 
                 resolve(video);
             }
-           //processVideo(currentVideo); 
-            
         };
+
         video.onerror = () => {
             reject(new Error("Failed to load video"));
         };

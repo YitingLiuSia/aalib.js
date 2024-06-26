@@ -94,15 +94,20 @@ p{
     overflow-y: scroll;
     overflow-x: hidden; 
     max-height: 100vh;
-    width: 35vw;
+    width: 35vw; 
 }
 
-#image-import, #video-import{
+#image-import{
     padding-top: 30px;
     display: flex; 
     flex-direction: row; 
     justify-content: space-around; 
     align-items: space-around; 
+}
+
+#video-import{
+    width: 100%;
+    height: auto;
 }
 
 /* a container for the image, place the image in the middle */
