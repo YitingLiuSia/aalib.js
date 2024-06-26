@@ -97,7 +97,7 @@ p{
     width: 35vw;
 }
 
-#image-import{
+#image-import, #video-import{
     padding-top: 30px;
     display: flex; 
     flex-direction: row; 

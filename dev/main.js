@@ -108,22 +108,24 @@ function fromVideoFile(file) {
         video.muted = true;     // Mute the video to allow autoplay in most browsers
         video.loop = true;      // Optional: Loop the video
         video.onloadedmetadata = () => {
-            document.getElementById('video-import').appendChild(video);  // Append to a specific container
-            resolve(video);
+            // document.getElementById('video-import').appendChild(video);  // Append to a specific container
+            // resolve(video);
             // THE BOTTOM IS NOT WORKING 
-            // let existingElement = document.getElementById('video-import');
-            // if (existingElement) {
-            //     console.log("load fromVideoFile - replace child video");
-            //     existingElement.src = video.src; 
-            //     currentVideo = video;
-
-            // } else {
-            //     console.log("loadImageAndProcess - append child image");
-            //     video.id = 'video-import'; 
-            //     document.body.appendChild(video); 
-            //     resolve(video);
-            // }
-            // processVideo(currentVideo); 
+            let existingElement = document.getElementById('video-import');
+            if (currentVideo != video) {
+                console.log("load fromVideoFile - replace child video");
+                existingElement.src = video.src; 
+                existingElement.width = video.videoWidth;
+                existingElement.height=video.videoHeight;
+                currentVideo = video;
+             //   resolve(video); // Add resolve here to ensure the promise is resolved
+            } else {
+                console.log("loadImageAndProcess - append child image");
+                video.id = 'video-import'; 
+                document.body.appendChild(video); 
+                resolve(video);
+            }
+           //processVideo(currentVideo); 
             
         };
         video.onerror = () => {
@@ -137,15 +139,6 @@ videoInput.addEventListener('change', function (event) {
     const file = event.target.files[0];
     if (file) {
         fromVideoFile(file).then(video => {  
-        //     aalib.read.video.fromVideoElement(video)
-        // .map(aalib.aa({ width: 165, height: 68 }))
-        // .map(aalib.render.canvas({
-        //     width: 696,
-        //     height: 476,
-        //     el: document.querySelector("#video-scene")
-        // }))
-        // .subscribe();
-
             processVideo(video);
         }).catch(error => {
             console.error("Error loading video:", error);
@@ -157,10 +150,8 @@ function downloadImageWithRatio(){
     let canvas = document.getElementById('processed-asset');
     let tempCanvas = document.createElement('canvas');
     let tempCtx = tempCanvas.getContext('2d');
-
     let newWidth = canvas.width * currentimageExportRatio;
     let newHeight = canvas.height * currentimageExportRatio;
-
     tempCanvas.width = newWidth;
     tempCanvas.height = newHeight;
     tempCtx.drawImage(canvas, 0, 0, newWidth, newHeight);
@@ -541,11 +532,11 @@ function updateAsset(funcName){
             processImage(currentImage);
         }
     }else{
-        // console.log("update asset for video");
-        // if(currentVideo){
-        //     console.log(`${funcName} - update VIDEO`);
-        //     processVideo(currentVideo);
-        // }
+        console.log("update asset for video");
+        if(currentVideo){
+            console.log(`${funcName} - update VIDEO`);
+            processVideo(currentVideo);
+        }
     }
 }
 
