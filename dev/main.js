@@ -1,5 +1,6 @@
 import aalib from "../dist/aalib.js";
 import { ASCII_CHARSET } from "../src/renderers/HTMLRenderer";
+
 const charset_ascii = ASCII_CHARSET;
 const charset_sia = "SIA/-.><?!^*()   ";
 const resource = filename => `../resources/${ filename }`;
@@ -31,16 +32,23 @@ imageDropdown.onchange = function(){
 }
 
 let assetSelector = document.getElementById("asset-selector");
+let videoImportContainer = document.getElementById("video-import");
 let videoInput = document.getElementById('videoInput');
 let imageInput = document.getElementById("imageInput");
+let imageImportContainer = document.getElementById("image-container");
 assetSelector.onchange=((e)=>{
     if(e.target.value==="video"){
         console.log("selected video");
         videoInput.style.display="block";
         imageInput.style.display="none";
+        videoImportContainer.style.display="block";
+        imageImportContainer.style.display="none";
     }else{
         videoInput.style.display="none";
         imageInput.style.display="block";
+        videoImportContainer.style.display="none";
+        imageImportContainer.style.display="inline-block";
+
     }
 });
 
@@ -92,9 +100,10 @@ function stopRecording() {
 
 function fromVideoFile(file) {
     return new Promise((resolve, reject) => {
-        const video = document.createElement('video');
-        console.log("url ", URL.createObjectURL(file));
-        video.src = URL.createObjectURL(file);
+        const video =document.createElement('video');
+        const videoURL = URL.createObjectURL(file); // Create URL once
+        console.log("fromVideoFile url ", videoURL);
+        video.src = videoURL;
         video.controls = true;  // Add controls so users can play/pause
         video.autoplay = true;  // Set autoplay to true to start playing automatically
         video.muted = true;     // Mute the video to allow autoplay in most browsers
@@ -113,15 +122,14 @@ function fromVideoFile(file) {
 videoInput.addEventListener('change', function (event) {
     const file = event.target.files[0];
     if (file) {
+        console.log("video file address is ",file);
         fromVideoFile(file).then(video => {
-            console.log("video", video);
             processVideo(video);
         }).catch(error => {
             console.error("Error loading video:", error);
         });
     }
 });
-
 
 function downloadImageWithRatio(){
     console.log("downloadImageWithRatio is ", currentimageExportRatio);
@@ -149,8 +157,10 @@ const ratioValue = 2;
 
 function processVideo(video){
     if (!video) return; // Add this line to check if video is defined
-    const videoWidth = video.width;  
-    const videoHeight = video.height;
+    console.log("process video of ", video);
+    const videoWidth = video.videoWidth;  
+    const videoHeight = video.videoHeight;
+    console.log("video width is  ",videoWidth);
     const charWidthValue = fontSize.value*charWidthOffsetRatio;//*0.8;
     const lineHeightValue = fontSize.value*lineHeightOffsetRatio;//0.8;
     const ratioX =videoWidth/(fontSize.value+charWidthValue)*ratioValue; //2* fontSize.value/5*13.5;// 
@@ -171,8 +181,9 @@ function processVideo(video){
         color: gradient
     };
 
-    let videoProcessingPipeline = aalib.read.video.fromURL(video.src);
-       
+    let videoProcessingPipeline = aalib.read.video.fromVideoElement(video);
+    console.log("videoProcessingPipeline is ", videoProcessingPipeline);
+
     if (inverseEle.checked) {
             console.log("inverse elemenet is checked ", inverseEle.checked)
             videoProcessingPipeline = videoProcessingPipeline.map(aalib.filter.inverse());
