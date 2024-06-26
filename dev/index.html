@@ -130,15 +130,16 @@
         </div>
 
         <div id="video-import" hidden>
-            <p>Video export</p>
+            <!-- <p>Video export</p>
             <select id="video-type-selector">
                 <option value="mov">MOV</option>
                 <option value="mp4">MP4</option>
-            </select>
+            </select> -->
 
             <div id="generated-video"></div>  
             <button id="startRecording">Start Recording</button>
             <button id="stopAndDownload">Stop and Download</button>
+            <video id="imported-video"></video>
             <canvas id="video-scene"></canvas>
         </div>
 
@@ -154,12 +155,12 @@
 
     <div id="imported-image-frame">
         <img id="imported-image"> </img>
-        <video id="imported-video"></video>
     </div>
+
+
 </div>
 
 <div id="canvas-container">
-    <p>processed here</p>
     <canvas id="processed-asset"></canvas>
 </div>
 </div>

@@ -53,8 +53,8 @@ assetSelector.onchange=((e)=>{
 });
 
 
-// let videoCanvasElement = document.getElementById('video-scene');
-let videoCanvasElement = document.getElementById('imported-video');
+ let videoCanvasElement = document.getElementById('video-scene');
+// let videoCanvasElement = document.getElementById('imported-video');
 let mediaRecorder;
 let recordedChunks = [];
 setupMediaRecorder(videoCanvasElement);
@@ -109,8 +109,17 @@ function fromVideoFile(file) {
         video.muted = true;     // Mute the video to allow autoplay in most browsers
         video.loop = true;      // Optional: Loop the video
         video.onloadedmetadata = () => {
-            document.getElementById('processed-asset').appendChild(video);  // Append to a specific container
-            resolve(video);
+            document.getElementById('video-import').appendChild(video);  // Append to a specific container
+               resolve(video);
+
+            // if (videoCanvasElement) {
+            //     videoCanvasElement.width = video.videoWidth;
+            //     videoCanvasElement.height = video.videoHeight;
+            //     videoCanvasElement.getContext('2d').drawImage(video, 0, 0, video.videoWidth, video.videoHeight);
+            //     resolve(video);
+            // } else {
+            //     reject(new Error("video-scene canvas not found"));
+            // }
         };
         video.onerror = () => {
             reject(new Error("Failed to load video"));
@@ -122,9 +131,17 @@ function fromVideoFile(file) {
 videoInput.addEventListener('change', function (event) {
     const file = event.target.files[0];
     if (file) {
-        console.log("video file address is ",file);
-        fromVideoFile(file).then(video => {
-            processVideo(video);
+        fromVideoFile(file).then(video => {  
+            aalib.read.video.fromVideoElement(video)
+        .map(aalib.aa({ width: 165, height: 68 }))
+        .map(aalib.render.canvas({
+            width: 696,
+            height: 476,
+            el: document.querySelector("#video-scene")
+        }))
+        .subscribe();
+
+            // processVideo(video);
         }).catch(error => {
             console.error("Error loading video:", error);
         });
@@ -132,7 +149,6 @@ videoInput.addEventListener('change', function (event) {
 });
 
 function downloadImageWithRatio(){
-    console.log("downloadImageWithRatio is ", currentimageExportRatio);
     let canvas = document.getElementById('processed-asset');
     let tempCanvas = document.createElement('canvas');
     let tempCtx = tempCanvas.getContext('2d');
@@ -157,10 +173,8 @@ const ratioValue = 2;
 
 function processVideo(video){
     if (!video) return; // Add this line to check if video is defined
-    console.log("process video of ", video);
     const videoWidth = video.videoWidth;  
     const videoHeight = video.videoHeight;
-    console.log("video width is  ",videoWidth);
     const charWidthValue = fontSize.value*charWidthOffsetRatio;//*0.8;
     const lineHeightValue = fontSize.value*lineHeightOffsetRatio;//0.8;
     const ratioX =videoWidth/(fontSize.value+charWidthValue)*ratioValue; //2* fontSize.value/5*13.5;// 
@@ -168,7 +182,6 @@ function processVideo(video){
     const asciiDimensions = calculateAsciiDimensionsForImageSize(videoWidth, videoHeight, ratioX , ratioY);
     const aaReq = { width:asciiDimensions.width  , height: asciiDimensions.height, colored: false};
     
-    // console.log("colordropdown value is ",colorSelectionDropdown.value);
     const canvasOptions = {
         fontSize: fontSize.value,
         fontFamily: "Sora",
@@ -185,8 +198,8 @@ function processVideo(video){
     console.log("videoProcessingPipeline is ", videoProcessingPipeline);
 
     if (inverseEle.checked) {
-            console.log("inverse elemenet is checked ", inverseEle.checked)
-            videoProcessingPipeline = videoProcessingPipeline.map(aalib.filter.inverse());
+        console.log("inverse elemenet is checked ", inverseEle.checked)
+        videoProcessingPipeline = videoProcessingPipeline.map(aalib.filter.inverse());
     }
     if (brightnessValue.value !== undefined) {
         console.log("brightnessValue value ", brightnessValue.value);
@@ -200,10 +213,8 @@ function processVideo(video){
     
     videoProcessingPipeline.map(aalib.render.canvas(canvasOptions))
     .do(function (el) {
-    
-        replaceAssetToDiv(el);
-    
-    }).subscribe(); 
+        replaceAssetToDiv(el, 'video-scene');
+    }).subscribe();
 
 }
 
@@ -214,7 +225,6 @@ function loadImageFromURL(img, isCanvas){
     const lineHeightValue = fontSize.value*lineHeightOffsetRatio;//0.8;
     const ratioX =imageWidth/(fontSize.value+charWidthValue)*ratioValue; //2* fontSize.value/5*13.5;// 
     const ratioY = imageHeight/(fontSize.value+lineHeightValue)*ratioValue;//2*fontSize.value/5*13.5 ;//
-    //const asciiDimensions = calculateAsciiDimensionsForImageSize(imageWidth, imageHeight, fontSize.value , fontSize.value/charWidthOffsetRatio*lineHeightOffsetRatio);
     const asciiDimensions = calculateAsciiDimensionsForImageSize(imageWidth, imageHeight, ratioX , ratioY);
     const aaReq = { width:asciiDimensions.width  , height: asciiDimensions.height, colored: false};
     
@@ -250,31 +260,33 @@ function loadImageFromURL(img, isCanvas){
             imageProcessingPipeline.map(aalib.render.canvas(canvasOptions))
     .do(function (el) {
        
-        replaceAssetToDiv(el);
+        replaceAssetToDiv(el,'processed-asset');
        
     })
     .subscribe(); } 
     else {
         imageProcessingPipeline.map(aalib.render.html(canvasOptions))
         .do(function (el) {
-            replaceAssetToDiv(el);
+            replaceAssetToDiv(el,'processed-asset');
         })
         .subscribe(); 
     }
 }
 
-function replaceAssetToDiv(el){
-    el.id = 'processed-asset';
-    const existingElement = document.getElementById('processed-asset');
+function replaceAssetToDiv(el, targetDivId ){
+    el.id = targetDivId;
+    const existingElement = document.getElementById(targetDivId);
     if (existingElement) {
-        console.log("replaceAssetToDiv - replace child image");
+        console.log("replaceAssetToDiv - replace child Asset");
         existingElement.parentNode.replaceChild(el, existingElement);
     } else {
-        console.log("replaceAssetToDiv - append child image");
-        el.id = 'processed-asset'; 
+        console.log("replaceAssetToDiv - append child Asset");
+        el.id = targetDisvId; 
         document.body.appendChild(el);
     }
 }
+
+
 function processImage(img) {
     loadImageFromURL(img, isCanvas);
 }
