@@ -30,7 +30,8 @@ imageDropdown.onchange = function(){
 }
 
 let assetSelector = document.getElementById("asset-selector");
-let videoImportContainer = document.getElementById("video-import");
+let videoImport = document.getElementById("video-import");
+let videoImportContainer = document.getElementById("video-container");
 let videoInput = document.getElementById('videoInput');
 let imageInput = document.getElementById("imageInput");
 let imageImportContainer = document.getElementById("image-container");
@@ -45,12 +46,18 @@ assetSelector.onchange=((e)=>{
         videoImportContainer.style.display="block";
         imageImportContainer.style.display="none";
         imageImport.style.display="none";
+        videoImport.style.display="block";
+        currentVideo=null;
+
     }else{
         videoInput.style.display="none";
         imageInput.style.display="block";
         videoImportContainer.style.display="none";
         imageImportContainer.style.display="inline-block";
+        videoImport.style.display="none";
         imageImport.style.display="block";
+        currentImage=null;
+
     }
 });
 
@@ -109,12 +116,14 @@ function fromVideoFile(file) {
         video.autoplay = true;  // Set autoplay to true to start playing automatically
         video.muted = true;     // Mute the video to allow autoplay in most browsers
         video.loop = true;      // Optional: Loop the video
+            currentVideo=null;
 
         video.onloadedmetadata = () => {
             let existingElement = document.getElementById('video-import');
             let childVideo = existingElement.querySelector('video');
             if (childVideo) {
                 childVideo.src = video.src; 
+                currentVideo = video;
                 childVideo.load(); // Ensure the new video is loaded
                 resolve(childVideo); 
             } else {
