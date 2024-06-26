@@ -107,7 +107,7 @@ p{
 
 #video-import{
     width: 100%;
-    height: auto;
+    height: 100%;
 }
 
 /* a container for the image, place the image in the middle */

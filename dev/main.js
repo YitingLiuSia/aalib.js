@@ -110,20 +110,20 @@ function fromVideoFile(file) {
     return new Promise((resolve, reject) => {
         const video = document.createElement('video');
         const videoURL = URL.createObjectURL(file); // Create URL once
-        console.log("fromVideoFile url ", videoURL);
+        console.log("current video is ", currentVideo);
+        // console.log("fromVideoFile url ", videoURL);
         video.src = videoURL;
         video.controls = true;  // Add controls so users can play/pause
         video.autoplay = true;  // Set autoplay to true to start playing automatically
         video.muted = true;     // Mute the video to allow autoplay in most browsers
         video.loop = true;      // Optional: Loop the video
-            currentVideo=null;
+        currentVideo=video;
 
         video.onloadedmetadata = () => {
             let existingElement = document.getElementById('video-import');
             let childVideo = existingElement.querySelector('video');
             if (childVideo) {
                 childVideo.src = video.src; 
-                currentVideo = video;
                 childVideo.load(); // Ensure the new video is loaded
                 resolve(childVideo); 
             } else {
@@ -142,6 +142,7 @@ function fromVideoFile(file) {
 
 // video input 
 videoInput.addEventListener('change', function (event) {
+    currentVideo = null;
     const file = event.target.files[0];
     if (file) {
         fromVideoFile(file).then(video => {  
