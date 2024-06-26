@@ -135,7 +135,7 @@ p{
     padding-bottom: 30px;
 }
 
-#processed-image {
+#processed-asset {
     display: block; /* Ensures the canvas is treated as a block-level element */
     width: 100%; /* Make the image stretch to fill the container */
     height: auto; /* Ensure the height adjusts to maintain the aspect ratio */

@@ -1,6 +1,5 @@
 import aalib from "../dist/aalib.js";
 import { ASCII_CHARSET } from "../src/renderers/HTMLRenderer";
-
 const charset_ascii = ASCII_CHARSET;
 const charset_sia = "SIA/-.><?!^*()   ";
 const resource = filename => `../resources/${ filename }`;
@@ -27,7 +26,7 @@ let isCanvas = true;
 
 imageDropdown.onchange = function(){
     isCanvas = this.value === "canvas";
-    updateImage("canvasORHTML");
+    updateAsset("canvasORHTML");
     console.log("iscanvas", isCanvas);
 }
 
@@ -54,7 +53,6 @@ assetSelector.onchange=((e)=>{
 
 
  let videoCanvasElement = document.getElementById('video-scene');
-// let videoCanvasElement = document.getElementById('imported-video');
 let mediaRecorder;
 let recordedChunks = [];
 setupMediaRecorder(videoCanvasElement);
@@ -103,23 +101,29 @@ function fromVideoFile(file) {
         const video =document.createElement('video');
         const videoURL = URL.createObjectURL(file); // Create URL once
         console.log("fromVideoFile url ", videoURL);
+        currentVideo = video;
         video.src = videoURL;
         video.controls = true;  // Add controls so users can play/pause
         video.autoplay = true;  // Set autoplay to true to start playing automatically
         video.muted = true;     // Mute the video to allow autoplay in most browsers
         video.loop = true;      // Optional: Loop the video
         video.onloadedmetadata = () => {
-            document.getElementById('video-import').appendChild(video);  // Append to a specific container
-               resolve(video);
+            // document.getElementById('video-import').appendChild(video);  // Append to a specific container
+            // resolve(video);
+            let existingElement = document.getElementById('video-import');
+            if (existingElement) {
+                console.log("load fromVideoFile - replace child video");
+                existingElement.src = video.src; 
+                currentVideo = video;
 
-            // if (videoCanvasElement) {
-            //     videoCanvasElement.width = video.videoWidth;
-            //     videoCanvasElement.height = video.videoHeight;
-            //     videoCanvasElement.getContext('2d').drawImage(video, 0, 0, video.videoWidth, video.videoHeight);
-            //     resolve(video);
-            // } else {
-            //     reject(new Error("video-scene canvas not found"));
-            // }
+            } else {
+                console.log("loadImageAndProcess - append child image");
+                video.id = 'video-import'; 
+                document.body.appendChild(video); 
+                resolve(video);
+            }
+            // processVideo(currentVideo); 
+            
         };
         video.onerror = () => {
             reject(new Error("Failed to load video"));
@@ -132,16 +136,16 @@ videoInput.addEventListener('change', function (event) {
     const file = event.target.files[0];
     if (file) {
         fromVideoFile(file).then(video => {  
-            aalib.read.video.fromVideoElement(video)
-        .map(aalib.aa({ width: 165, height: 68 }))
-        .map(aalib.render.canvas({
-            width: 696,
-            height: 476,
-            el: document.querySelector("#video-scene")
-        }))
-        .subscribe();
+        //     aalib.read.video.fromVideoElement(video)
+        // .map(aalib.aa({ width: 165, height: 68 }))
+        // .map(aalib.render.canvas({
+        //     width: 696,
+        //     height: 476,
+        //     el: document.querySelector("#video-scene")
+        // }))
+        // .subscribe();
 
-            // processVideo(video);
+            processVideo(video);
         }).catch(error => {
             console.error("Error loading video:", error);
         });
@@ -179,7 +183,8 @@ function processVideo(video){
     const lineHeightValue = fontSize.value*lineHeightOffsetRatio;//0.8;
     const ratioX =videoWidth/(fontSize.value+charWidthValue)*ratioValue; //2* fontSize.value/5*13.5;// 
     const ratioY = videoHeight/(fontSize.value+lineHeightValue)*ratioValue;//2*fontSize.value/5*13.5 ;//
-    const asciiDimensions = calculateAsciiDimensionsForImageSize(videoWidth, videoHeight, ratioX , ratioY);
+    const asciiDimensions = calculateAsciiDimensionsForImageSize(imageWidth, imageHeight, fontSize.value , fontSize.value/charWidthOffsetRatio*lineHeightOffsetRatio);
+    // const asciiDimensions = calculateAsciiDimensionsForImageSize(videoWidth, videoHeight, ratioX , ratioY);
     const aaReq = { width:asciiDimensions.width  , height: asciiDimensions.height, colored: false};
     
     const canvasOptions = {
@@ -225,7 +230,8 @@ function loadImageFromURL(img, isCanvas){
     const lineHeightValue = fontSize.value*lineHeightOffsetRatio;//0.8;
     const ratioX =imageWidth/(fontSize.value+charWidthValue)*ratioValue; //2* fontSize.value/5*13.5;// 
     const ratioY = imageHeight/(fontSize.value+lineHeightValue)*ratioValue;//2*fontSize.value/5*13.5 ;//
-    const asciiDimensions = calculateAsciiDimensionsForImageSize(imageWidth, imageHeight, ratioX , ratioY);
+    const asciiDimensions = calculateAsciiDimensionsForImageSize(imageWidth, imageHeight, fontSize.value , fontSize.value/charWidthOffsetRatio*lineHeightOffsetRatio);
+    // const asciiDimensions = calculateAsciiDimensionsForImageSize(imageWidth, imageHeight, ratioX , ratioY); - this didnt work 
     const aaReq = { width:asciiDimensions.width  , height: asciiDimensions.height, colored: false};
     
     const canvasOptions = {
@@ -243,33 +249,30 @@ function loadImageFromURL(img, isCanvas){
     let imageProcessingPipeline = aalib.read.image.fromURL(img.src);
        
     if (inverseEle.checked) {
-            console.log("inverse elemenet is checked ", inverseEle.checked)
-            imageProcessingPipeline = imageProcessingPipeline.map(aalib.filter.inverse());
-        }
-        if (brightnessValue.value !== undefined) {
-            console.log("brightnessValue value ", brightnessValue.value);
-            imageProcessingPipeline = imageProcessingPipeline.map(aalib.filter.brightness(brightnessValue.value));
-        }
-        if (contrastValue.value !== undefined) {
-            console.log("contrastValue value ", contrastValue.value);
-            imageProcessingPipeline = imageProcessingPipeline.map(aalib.filter.contrast(contrastValue.value));
-        }
-        imageProcessingPipeline = imageProcessingPipeline.map(aalib.aa(aaReq));
+        console.log("inverse elemenet is checked ", inverseEle.checked)
+        imageProcessingPipeline = imageProcessingPipeline.map(aalib.filter.inverse());
+    }
+    if (brightnessValue.value !== undefined) {
+        console.log("brightnessValue value ", brightnessValue.value);
+        imageProcessingPipeline = imageProcessingPipeline.map(aalib.filter.brightness(brightnessValue.value));
+    }
+    if (contrastValue.value !== undefined) {
+        console.log("contrastValue value ", contrastValue.value);
+        imageProcessingPipeline = imageProcessingPipeline.map(aalib.filter.contrast(contrastValue.value));
+    }
+    imageProcessingPipeline = imageProcessingPipeline.map(aalib.aa(aaReq));
 
-        if (isCanvas) {
-            imageProcessingPipeline.map(aalib.render.canvas(canvasOptions))
-    .do(function (el) {
-       
-        replaceAssetToDiv(el,'processed-asset');
-       
-    })
-    .subscribe(); } 
+    if (isCanvas) {
+        imageProcessingPipeline.map(aalib.render.canvas(canvasOptions))
+        .do(function (el) {
+            // const canvas = document.getElementById('processed-asset');
+            // canvas.width = 30;
+            // canvas.height = 30/asciiDimensions.width*asciiDimensions.height;
+           replaceAssetToDiv(el,'processed-asset');}).subscribe(); 
+    } 
     else {
         imageProcessingPipeline.map(aalib.render.html(canvasOptions))
-        .do(function (el) {
-            replaceAssetToDiv(el,'processed-asset');
-        })
-        .subscribe(); 
+        .do(function (el) {replaceAssetToDiv(el,'processed-asset'); }).subscribe(); 
     }
 }
 
@@ -277,18 +280,18 @@ function replaceAssetToDiv(el, targetDivId ){
     el.id = targetDivId;
     const existingElement = document.getElementById(targetDivId);
     if (existingElement) {
-        console.log("replaceAssetToDiv - replace child Asset");
+        // console.log("replaceAssetToDiv - replace child Asset");
         existingElement.parentNode.replaceChild(el, existingElement);
     } else {
-        console.log("replaceAssetToDiv - append child Asset");
-        el.id = targetDisvId; 
+        // console.log("replaceAssetToDiv - append child Asset");
+        el.id = targetDivId; 
         document.body.appendChild(el);
     }
 }
 
 
 function processImage(img) {
-    loadImageFromURL(img, isCanvas);
+    loadImageFromURL(img, true);
 }
 function loadImageAndProcess(url) {
     const img = new Image();
@@ -355,7 +358,7 @@ class PresetInfo {
         this.charset = charset;
     }
 }
-let currentImage; 
+let currentImage, currentVideo;
 let gradientCanvas = document.getElementById("gradient-canvas");
 let gradientCanvasCTX = gradientCanvas.getContext('2d');
 let gcWidth = gradientCanvas.width;
@@ -367,15 +370,12 @@ let savePresetButton = document.getElementById("save-preset");
 let inverseEle = document.getElementById("inverse");
 let fontSize = document.getElementById("fontSize");
 let charsetSelector = document.getElementById("charset-selector");
-
 let brightnessEle = document.getElementById("brightness");
 let contrastEle = document.getElementById("contrast");
 let brightnessValue = brightnessEle.nextElementSibling.querySelector(".sliderValue");
 let contrastValue = contrastEle.nextElementSibling.querySelector(".sliderValue");
 let imageExportRatio = document.getElementById("imageExportRatio");
 let saveImageButton = document.getElementById("save-image");
-saveImageButton.onclick = downloadImageWithRatio;
-
 let currentimageExportRatio = 1;
 let gradientAngleContainer = document.getElementById('gradient-angle');
 let gradientAngle = gradientAngleContainer.getElementsByTagName('input')[0];
@@ -391,10 +391,8 @@ let colorBlack = "#0A151E";
 let colorWhite = "#ffffff"; 
 let colorGray = "#8796A9";
 let currentPos1,currentPos2,currentPos3=0;
-
-
-
-
+savePresetButton.onclick= savePresetToFile;
+saveImageButton.onclick = downloadImageWithRatio;
 
 // Define your saturation-color mapping
 const saturationColors = {
@@ -473,7 +471,7 @@ imageExportRatio.oninput=(e)=>{
     imageExportRatio.value = e.target.value;
     currentimageExportRatio = imageExportRatio.value;
     console.log("current image ratio is ", currentimageExportRatio);
-    updateImage("imageExportRatio");
+    updateAsset("imageExportRatio");
 }
 
 window.onload = function() {
@@ -483,30 +481,30 @@ window.onload = function() {
     charsetSelector.value = presetInfo.charset;
     presetInfo.fontFamily = "Sora";//fontDropdown.value;     
     // colorSelectionDropdown.value = "Sia Gradient";
-    updateImage("chartset");
+    updateAsset("chartset");
 }
 
 fontSize.oninput = (e) => {
     fontSize.value = e.target.value;
-    updateImage("fontSize");
+    updateAsset("fontSize");
 }
 
 brightnessEle.oninput = (e) => {
     brightnessValue.textContent =e.target.value;
     brightnessValue.value =e.target.value;
-    updateImage("brightness");
+    updateAsset("brightness");
 }
 
 contrastEle.oninput=(e)=>{
     contrastValue.textContent=e.target.value;
     contrastValue.value=e.target.value;
     console.log("contrast value ", contrastValue.value);
-    updateImage("contrast");
+    updateAsset("contrast");
 }
 
 inverseEle.onchange = (e) => {
     presetInfo.inverseEle = e.target.checked;
-    updateImage("inverseEle");
+    updateAsset("inverseEle");
 }
 
 charsetSelector.onchange=(e)=>{
@@ -515,16 +513,25 @@ charsetSelector.onchange=(e)=>{
     }else{
         presetInfo.charset =charset_ascii;
     }
-    updateImage("charset");
+    updateAsset("charset");
 }
 
-savePresetButton.onclick= savePresetToFile;
 
-function updateImage(funcName){
-    if(currentImage){
-        console.log(`${funcName} - update image`);
-        processImage(currentImage);
-    }
+function updateAsset(funcName){
+    // console.log("assetSelector value is ", assetSelector.value);
+    // if(assetSelector.value=="image"){
+        console.log("update asset for IMAGE");
+        if(currentImage){
+            console.log(`${funcName} - update IMAGE`);
+            processImage(currentImage);
+        }
+    // }else{
+    //     console.log("update asset for video");
+    //     if(currentVideo){
+    //         console.log(`${funcName} - update VIDEO`);
+    //         processVideo(currentVideo);
+    //     }
+    // }
 }
 
 function updateSaturation(){
@@ -547,21 +554,21 @@ function updateGradient(){
     
     // this is not working 
     slider.style.background = `linear-gradient(${angle}, ${currentColor1}, ${currentColor2}, ${currentColor3})}`; // Set the background of the slider
-     updateImage("gradient");
+     updateAsset("gradient");
 }
 
 function updateColor(color){
     gradient=color;
     gradientCanvasCTX.fillStyle = gradient;
     gradientCanvasCTX.fillRect(0, 0, gcWidth, gcHeight);
-    updateImage("color");
+    updateAsset("color");
 }
 
 function displayForGradientOrColor(displayGradient){
     if(displayGradient){
-    saturationContainer.style.display="flex";
-    gradientAngleContainer.style.display="flex";
-    slider.style.display="flex";
+        saturationContainer.style.display="flex";
+        gradientAngleContainer.style.display="flex";
+        slider.style.display="flex";
     }else{
         saturationContainer.style.display="none";
         gradientAngleContainer.style.display="none";
