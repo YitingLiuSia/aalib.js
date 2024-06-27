@@ -62,7 +62,6 @@ h2,h3{
 #gradient-canvas {
     border: 1px solid white;
     cursor: pointer;
-    display: flex;
     width: 100%;
     height: 80px;
     border-radius: 8px;
@@ -77,22 +76,13 @@ h2,h3{
     width: 100%;
     height: 20px;
     border-radius: 8px;
-    margin-top:10px;
+    margin-top:15px;
+    margin-bottom: 0;
     position: relative;
 }
 
 p{
     font-size: small;
-}
-
-
-.image-section{
-    /* display: flex;
-    flex-direction: row; */
-}
-.image-section .div{
-    /* background-color: white; */
-    /* justify-content: space-evenly; */
 }
 
 #preset-container{
@@ -196,6 +186,10 @@ hr{
     background:transparent;
     width: 85%;
     margin: -20px auto 0 auto; /* Center the element horizontally */
+}
+
+#gradient-angle{
+    margin-top: -15px;
 }
 
 .noUi-handle {
