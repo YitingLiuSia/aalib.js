@@ -151,51 +151,6 @@ function downloadRecordedVideo() {
     recordedChunks = []; // Clear the recorded chunks
 }
 
-// function setupMediaRecorder(canvas) {
-//     const stream = canvas.captureStream(25); // Capture at 25 fps
-//     mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm; codecs=vp9' });
-//     mediaRecorder.ondataavailable = function (event) {
-//         console.log("ondataavailable");
-//         if (event.data.size > 0) {
-//             recordedChunks.push(event.data);
-//         }
-//     };
-
-//     mediaRecorder.onstop = function () {
-//         console.log("Recording stopped");
-//         downloadRecordedVideo();
-//     };
-// }
-
-// function downloadRecordedVideo() {
-//     const blob = new Blob(recordedChunks, {
-//         type: 'video/mp4'
-//     });
-
-//     console.log("recorded chunks are ",recordedChunks.length);
-//     const url = URL.createObjectURL(blob);
-//     const a = document.createElement('a');
-//     a.style.display = 'none';
-//     a.href = url;
-//     a.download = 'downloaded_video.mp4';
-//     document.body.appendChild(a);
-//     a.click();
-//     window.URL.revokeObjectURL(url);
-//     document.body.removeChild(a);
-//     recordedChunks = []; // Clear the recorded chunks
-// }
-
-// function startRecording() {
-//     mediaRecorder.start();
-//     console.log("Recording started");
-// }
-
-// function stopRecording() {
-//     console.log("video is finished recording, able to download");
-//     mediaRecorder.stop();
-//     console.log("Recording stopped");
-// }
-
 function fromVideoFile(file) {
     return new Promise((resolve, reject) => {
         const video = document.createElement('video');
@@ -210,30 +165,10 @@ function fromVideoFile(file) {
             if(currentVideo!=video){
                 currentVideo = video;
             }
-            document.getElementById('video-import').appendChild(currentVideo);  // Append to a specific container
-            resolve(currentVideo);
+           videoImport.appendChild(currentVideo);  // Append to a specific container
+           console.log("current video is ",currentVideo);
+           resolve(currentVideo);
         };
-      
-        // video.onloadedmetadata = () => {
-        //     console.log("current video is ", currentVideo);
-        //     // console.log("fromVideoFile url ", videoURL);
-        //    
-        //     let existingElement = document.getElementById('video-import');
-        //     let childVideo = existingElement.querySelector('video');
-        //     if (childVideo) {
-        //         childVideo.src = video.src; 
-        //         // childVideo.load(); // Ensure the new video is loaded
-        //         currentVideo=childVideo;
-        //         resolve(childVideo); 
-        //     } else {
-        //         console.log("no child video - loadImageAndProcess - append child video");
-        //         video.id = 'video-import'; 
-        //         existingElement.appendChild(video); 
-        //         currentVideo=video;
-        //         resolve(video);
-        //     }
-
-        // };
 
         video.onerror = () => {
             reject(new Error("Failed to load video"));

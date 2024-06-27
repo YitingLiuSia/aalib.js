@@ -120,6 +120,10 @@ p{
     border-radius: 10px; /* Match the frame's border-radius to create a mask effect */
 }
 
+#asset-selector {
+    max-width: 100%;
+}
+
 #imported-image-frame {
     width: 224px; /* Set a fixed width */
     height: 168px; /* Set a fixed height */
