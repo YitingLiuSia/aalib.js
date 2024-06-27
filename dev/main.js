@@ -201,30 +201,39 @@ function fromVideoFile(file) {
         const video = document.createElement('video');
         const videoURL = URL.createObjectURL(file); // Create URL once
         video.src = videoURL;
-        
-        video.onloadedmetadata = () => {
-            console.log("current video is ", currentVideo);
-            // console.log("fromVideoFile url ", videoURL);
-            video.controls = true;  // Add controls so users can play/pause
+        video.controls = true;  // Add controls so users can play/pause
             video.autoplay = true;  // Set autoplay to true to start playing automatically
             video.muted = true;     // Mute the video to allow autoplay in most browsers
-            video.loop = true;   
-            let existingElement = document.getElementById('video-import');
-            let childVideo = existingElement.querySelector('video');
-            if (childVideo) {
-                childVideo.src = video.src; 
-                // childVideo.load(); // Ensure the new video is loaded
-                currentVideo=childVideo;
-                resolve(childVideo); 
-            } else {
-                console.log("no child video - loadImageAndProcess - append child video");
-                video.id = 'video-import'; 
-                existingElement.appendChild(video); 
-                currentVideo=video;
-                resolve(video);
+            video.loop = true;    
+            
+        video.onloadedmetadata = () => {
+            if(currentVideo!=video){
+                currentVideo = video;
             }
-
+            document.getElementById('video-import').appendChild(currentVideo);  // Append to a specific container
+            resolve(currentVideo);
         };
+      
+        // video.onloadedmetadata = () => {
+        //     console.log("current video is ", currentVideo);
+        //     // console.log("fromVideoFile url ", videoURL);
+        //    
+        //     let existingElement = document.getElementById('video-import');
+        //     let childVideo = existingElement.querySelector('video');
+        //     if (childVideo) {
+        //         childVideo.src = video.src; 
+        //         // childVideo.load(); // Ensure the new video is loaded
+        //         currentVideo=childVideo;
+        //         resolve(childVideo); 
+        //     } else {
+        //         console.log("no child video - loadImageAndProcess - append child video");
+        //         video.id = 'video-import'; 
+        //         existingElement.appendChild(video); 
+        //         currentVideo=video;
+        //         resolve(video);
+        //     }
+
+        // };
 
         video.onerror = () => {
             reject(new Error("Failed to load video"));
@@ -236,15 +245,6 @@ videoInput.addEventListener('change', function (event) {
     const file = event.target.files[0];
     if (file) {
         fromVideoFile(file).then(video => {  
-        //     aalib.read.video.fromVideoElement(video)
-        // .map(aalib.aa({ width: 165, height: 68 }))
-        // .map(aalib.render.canvas({
-        //     width: 696,
-        //     height: 476,
-        //     el: document.querySelector("#video-scene")
-        // }))
-        // .subscribe();
-
             processVideo(video);
         }).catch(error => {
             console.error("Error loading video:", error);
@@ -290,7 +290,7 @@ function processVideo(video){
         charset: presetInfo.charset,
         width:  videoWidth ,  
         height: videoHeight , 
-        background: "rgba(0,0,0,0)",
+        background: "rgba(255,255,255,1)",// make the background white 
         color: gradient,
         el: document.querySelector("#video-scene")
 
