@@ -451,8 +451,8 @@ saturationForGradient.addEventListener('input',(e)=>{
     updateGradient();
 })
 
-gradientAngle.addEventListener('input', (e) => { // Changed from 'change' to 'input'
-    gradientAngleValue.textContent = e.target.value;
+gradientAngle.addEventListener('input', (e) => { 
+    gradientAngleValue.textContent = e.target.value+`°`;
     currentGradientAngle = parseInt(e.target.value, 10);
     updateGradient(); 
 });
