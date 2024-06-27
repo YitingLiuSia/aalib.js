@@ -188,7 +188,9 @@ hr{
     margin: -20px auto 0 auto; /* Center the element horizontally */
 }
 
-
+#gradient-picker{
+    height: 100%;
+}
 #gradient-angle{
     margin-top: 35px;
 }

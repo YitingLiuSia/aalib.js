@@ -596,7 +596,6 @@ function displayForGradientOrColor(displayGradient){
         gradientAngleContainer.style.display="none";
         slider.style.display="none";
         gradientSliderCanvas.style.display = "none";
-        
     }
 
 }

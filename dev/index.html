@@ -46,45 +46,42 @@
     </div>
     <hr>
 
-    <div class="gradient-container">
-        <h3>Colors</h3>
+<div class="gradient-container">
+    <h3>Colors</h3>
 
-        <select name="" id="color-selection">
-            <option value="Sia Gradient">Sia Gradient</option>
-            <option value="black" >Cool Black</option>
-            <option value="white"> White</option>
-            <option value="gray" >Medium Gray</option>
-        </select>
+    <select name="" id="color-selection">
+        <option value="Sia Gradient">Sia Gradient</option>
+        <option value="black" >Cool Black</option>
+        <option value="white"> White</option>
+        <option value="gray" >Medium Gray</option>
+    </select>
 
-        <div id="saturation" class="sliderContainer" >
-            <p >Saturation</p>
-            <input type="range" min="1" max="5" step="1" value="1" class="myRange">
-            <div class="slider-values" >
-                <span class="sliderValue">1</span>
-        </div>
+    <div id="saturation" class="sliderContainer" >
+        <p >Saturation</p>
+        <input type="range" min="1" max="5" step="1" value="1" class="myRange">
+        <div class="slider-values" >
+            <span class="sliderValue">1</span>
     </div>
-
-        <div id="gradient-picker">
-            <canvas id="gradient-canvas"></canvas>
-            <div class="gradient-selection-container">
-                <div> <div id="color1" > </div>
-                <!-- <div id="position1" > </div> -->
-                <div id="color2" > </div>
-                <!-- <div id="position2" > </div> -->
-                <div id="color3" > </div>
-            </div>
-
-            <canvas id="gradient-slider-canvas"></canvas>
-            <div style="display: block; " id="color-slider"></div>
-
+</div>
+<div id="gradient-picker">
+    <canvas id="gradient-canvas"></canvas>
+    <div class="gradient-selection-container">
+        <div>
+            <div id="color1" > </div>
+            <div id="color2" > </div>
+            <div id="color3" > </div>
         </div>
-            <div id="gradient-angle" class="sliderContainer">
-                <p>Angle</p>
-                <input type="range" value="" min="0" max="180">
-                <div class="slider-values" >
-                    <span class="sliderValue">90°</span>
-            </div> </div>
-    </div>
+        <canvas id="gradient-slider-canvas"></canvas>
+        <div style="display: block; " id="color-slider"></div>
+    </div>  
+</div>
+<div id="gradient-angle" class="sliderContainer">
+    <p>Angle</p>
+    <input type="range" value="" min="0" max="180">
+    <div class="slider-values" >
+        <span class="sliderValue">90°</span>
+    </div> 
+</div>
 <!-- intentional spacer -->
     <h3></h3>
     <hr>
