@@ -590,10 +590,12 @@ function displayForGradientOrColor(displayGradient){
         saturationContainer.style.display="flex";
         gradientAngleContainer.style.display="flex";
         slider.style.display="flex";
+        gradientSliderCanvas.style.display = "block";
     }else{
         saturationContainer.style.display="none";
         gradientAngleContainer.style.display="none";
         slider.style.display="none";
+        gradientSliderCanvas.style.display = "none";
     }
 
 }
