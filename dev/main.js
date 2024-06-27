@@ -71,67 +71,159 @@ let stopAndDownloadButton = document.getElementById('stopAndDownload');
 startRecordingButton.addEventListener('click', startRecording);
 stopAndDownloadButton.addEventListener('click', stopRecording);
 function setupMediaRecorder(canvas) {
+    console.log("canvas is ", canvas);
     const stream = canvas.captureStream(25); // Capture at 25 fps
+    console.log("stream is ", stream);
+
     mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm; codecs=vp9' });
+
     mediaRecorder.ondataavailable = function (event) {
+        console.log("mediaRecorder ondataavailable", event.data.size);
         if (event.data.size > 0) {
             recordedChunks.push(event.data);
         }
     };
 
     mediaRecorder.onstop = function () {
-        const blob = new Blob(recordedChunks, {
-            type: 'video/mp4'
-        });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.style.display = 'none';
-        a.href = url;
-        a.download = 'downloaded_video.mp4';
-        document.body.appendChild(a);
-        a.click();
-        window.URL.revokeObjectURL(url);
-        document.body.removeChild(a);
-        recordedChunks = []; // Clear the recorded chunks
+        console.log("Recording stopped");
+        if (recordedChunks.length > 0) {
+            downloadRecordedVideo();
+        } else {
+            console.error("No recorded chunks available");
+        }
     };
-} 
+
+    mediaRecorder.onerror = function (event) {
+        console.error("MediaRecorder error:", event.error);
+    };
+
+    mediaRecorder.onstart = function () {
+        console.log("MediaRecorder started");
+    };
+
+    mediaRecorder.onpause = function () {
+        console.log("MediaRecorder paused");
+    };
+
+    mediaRecorder.onresume = function () {
+        console.log("MediaRecorder resumed");
+    };
+
+    mediaRecorder.onwarning = function (event) {
+        console.warn("MediaRecorder warning:", event.warning);
+    };
+}
 
 function startRecording() {
-    mediaRecorder.start();
-    console.log("Recording started");
+    if (mediaRecorder && mediaRecorder.state === "inactive") {
+        recordedChunks = []; // Clear previous chunks
+        mediaRecorder.start();
+        console.log("Recording started");
+    } else {
+        console.error("MediaRecorder is not ready or already recording");
+    }
 }
 
 function stopRecording() {
-    mediaRecorder.stop();
-    console.log("Recording stopped");
+    if (mediaRecorder && mediaRecorder.state === "recording") {
+        console.log("Stopping recording");
+        mediaRecorder.stop();
+    } else {
+        console.error("MediaRecorder is not recording");
+    }
 }
+
+function downloadRecordedVideo() {
+    const blob = new Blob(recordedChunks, {
+        type: 'video/webm'
+    });
+
+    console.log("recorded chunks are ", recordedChunks.length);
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.style.display = 'none';
+    a.href = url;
+    a.download = 'downloaded_video.mp4';
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(url);
+    document.body.removeChild(a);
+    recordedChunks = []; // Clear the recorded chunks
+}
+
+// function setupMediaRecorder(canvas) {
+//     const stream = canvas.captureStream(25); // Capture at 25 fps
+//     mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm; codecs=vp9' });
+//     mediaRecorder.ondataavailable = function (event) {
+//         console.log("ondataavailable");
+//         if (event.data.size > 0) {
+//             recordedChunks.push(event.data);
+//         }
+//     };
+
+//     mediaRecorder.onstop = function () {
+//         console.log("Recording stopped");
+//         downloadRecordedVideo();
+//     };
+// }
+
+// function downloadRecordedVideo() {
+//     const blob = new Blob(recordedChunks, {
+//         type: 'video/mp4'
+//     });
+
+//     console.log("recorded chunks are ",recordedChunks.length);
+//     const url = URL.createObjectURL(blob);
+//     const a = document.createElement('a');
+//     a.style.display = 'none';
+//     a.href = url;
+//     a.download = 'downloaded_video.mp4';
+//     document.body.appendChild(a);
+//     a.click();
+//     window.URL.revokeObjectURL(url);
+//     document.body.removeChild(a);
+//     recordedChunks = []; // Clear the recorded chunks
+// }
+
+// function startRecording() {
+//     mediaRecorder.start();
+//     console.log("Recording started");
+// }
+
+// function stopRecording() {
+//     console.log("video is finished recording, able to download");
+//     mediaRecorder.stop();
+//     console.log("Recording stopped");
+// }
 
 function fromVideoFile(file) {
     return new Promise((resolve, reject) => {
         const video = document.createElement('video');
         const videoURL = URL.createObjectURL(file); // Create URL once
-        console.log("current video is ", currentVideo);
-        // console.log("fromVideoFile url ", videoURL);
         video.src = videoURL;
-        video.controls = true;  // Add controls so users can play/pause
-        video.autoplay = true;  // Set autoplay to true to start playing automatically
-        video.muted = true;     // Mute the video to allow autoplay in most browsers
-        video.loop = true;      // Optional: Loop the video
-        currentVideo=video;
-
+        
         video.onloadedmetadata = () => {
+            console.log("current video is ", currentVideo);
+            // console.log("fromVideoFile url ", videoURL);
+            video.controls = true;  // Add controls so users can play/pause
+            video.autoplay = true;  // Set autoplay to true to start playing automatically
+            video.muted = true;     // Mute the video to allow autoplay in most browsers
+            video.loop = true;   
             let existingElement = document.getElementById('video-import');
             let childVideo = existingElement.querySelector('video');
             if (childVideo) {
                 childVideo.src = video.src; 
-                childVideo.load(); // Ensure the new video is loaded
+                // childVideo.load(); // Ensure the new video is loaded
+                currentVideo=childVideo;
                 resolve(childVideo); 
             } else {
                 console.log("no child video - loadImageAndProcess - append child video");
                 video.id = 'video-import'; 
                 existingElement.appendChild(video); 
+                currentVideo=video;
                 resolve(video);
             }
+
         };
 
         video.onerror = () => {
@@ -140,12 +232,19 @@ function fromVideoFile(file) {
     });
 }
 
-// video input 
 videoInput.addEventListener('change', function (event) {
-    currentVideo = null;
     const file = event.target.files[0];
     if (file) {
         fromVideoFile(file).then(video => {  
+        //     aalib.read.video.fromVideoElement(video)
+        // .map(aalib.aa({ width: 165, height: 68 }))
+        // .map(aalib.render.canvas({
+        //     width: 696,
+        //     height: 476,
+        //     el: document.querySelector("#video-scene")
+        // }))
+        // .subscribe();
+
             processVideo(video);
         }).catch(error => {
             console.error("Error loading video:", error);
@@ -192,15 +291,18 @@ function processVideo(video){
         width:  videoWidth ,  
         height: videoHeight , 
         background: "rgba(0,0,0,0)",
-        color: gradient
+        color: gradient,
+        el: document.querySelector("#video-scene")
+
     };
 
     aalib.read.video.fromVideoElement(video)
     .map(aalib.aa(aaReq))
-    .map(aalib.render.canvas(canvasOptions))
-    .do(function (el) {
-         replaceAssetToDiv(el, 'video-scene');
-    }).subscribe();
+    .map(aalib.render.canvas(canvasOptions)).subscribe();
+    // .do(function (el) {
+    //      replaceAssetToDiv(el, 'video-scene');
+    //      console.log("Canvas updated with video frames");
+
 
     // const canvasOptions = {
     //     width: 696,
@@ -543,11 +645,12 @@ function updateAsset(funcName){
             processImage(currentImage);
         }
     }else{
-        console.log("update asset for video");
         if(currentVideo){
+            console.log("current video is ",currentVideo);
             console.log(`${funcName} - update VIDEO`);
             processVideo(currentVideo);
         }
+
     }
 }
 
