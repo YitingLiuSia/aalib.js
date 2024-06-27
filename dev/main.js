@@ -374,7 +374,11 @@ class PresetInfo {
 }
 let currentImage, currentVideo;
 let gradientCanvas = document.getElementById("gradient-canvas");
+let gradientSliderCanvas = document.getElementById("gradient-slider-canvas");
+let gradientSliderCanvasCTX = gradientSliderCanvas.getContext('2d');
 let gradientCanvasCTX = gradientCanvas.getContext('2d');
+let gscWidth = gradientSliderCanvas.width;
+let gscHeight = gradientSliderCanvas.height;
 let gcWidth = gradientCanvas.width;
 let gcHeight = gradientCanvas.height;
 let gradientInfo = new GradientInfo();
@@ -560,14 +564,18 @@ function updateGradient(){
     let angle = currentGradientAngle * Math.PI / 180;
     let x2 = gcWidth * Math.cos(angle);
     let y2 = gcWidth * Math.sin(angle); 
+    let sliderX2 = gscWidth *Math.cos(angle);
+    let sliderY2 = gscHeight *Math.sin(angle);
+
     updateSaturation();
     updateGradientFromCanvas(gradientCanvasCTX,x2,y2);
     gradientCanvasCTX.fillStyle = gradient;
     gradientCanvasCTX.fillRect(0, 0, gcWidth, gcHeight);
-    
-    // this is not working 
-    slider.style.background = `linear-gradient(${angle}, ${currentColor1}, ${currentColor2}, ${currentColor3})}`; // Set the background of the slider
-     updateAsset("gradient");
+
+    updateGradientFromCanvas(gradientSliderCanvasCTX,sliderX2,sliderY2);
+    gradientSliderCanvasCTX.fillStyle = gradient;
+    gradientSliderCanvasCTX.fillRect(0,0,gscWidth,gscHeight);
+    updateAsset("gradient");
 }
 
 function updateColor(color){
