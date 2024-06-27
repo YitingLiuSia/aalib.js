@@ -106,11 +106,22 @@ p{
     align-items: space-around; 
 }
 
-#video-import{
-    width: 100%;
-    height: 100%;
+#video-import {
+    max-width: 100%; /* Ensure the container does not exceed the frame's width */
+    max-height: 100%; /* Ensure the container does not exceed the frame's height */
+    object-fit: contain; /* Ensures the container maintains its aspect ratio */
+    border-radius: 10px; /* Match the frame's border-radius to create a mask effect */
+    display: flex; /* Use flexbox to center the video */
+    justify-content: center; /* Center the video horizontally */
+    align-items: center; /* Center the video vertically */
 }
 
+#video-import video {
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /* Ensures the video maintains its aspect ratio */
+    border-radius: 10px; /* Match the frame's border-radius to create a mask effect */
+}
 /* a container for the image, place the image in the middle */
 /* move the vertical one to the center */
 #imported-image{

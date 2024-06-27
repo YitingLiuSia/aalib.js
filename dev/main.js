@@ -3,7 +3,114 @@ import { ASCII_CHARSET } from "../src/renderers/HTMLRenderer";
 const charset_ascii = ASCII_CHARSET;
 const charset_sia = "SIA/-.><?!^*()   ";
 const resource = filename => `../resources/${ filename }`;
+// media recorder and video exporter 
+const imageDropdown = document.getElementById('image-dropdown');
+let isCanvas = true; 
+let currentImage, currentVideo;
+let gradientCanvas = document.getElementById("gradient-canvas");
+let gradientSliderCanvas = document.getElementById("gradient-slider-canvas");
+let gradientSliderCanvasCTX = gradientSliderCanvas.getContext('2d');
+let gradientCanvasCTX = gradientCanvas.getContext('2d');
+let gscWidth = gradientSliderCanvas.width;
+let gscHeight = gradientSliderCanvas.height;
+let gcWidth = gradientCanvas.width;
+let gcHeight = gradientCanvas.height;
+
+let gradient;
+let savePresetButton = document.getElementById("save-preset");
+let inverseEle = document.getElementById("inverse");
+let fontSize = document.getElementById("fontSize");
+let charsetSelector = document.getElementById("charset-selector");
+let brightnessEle = document.getElementById("brightness");
+let contrastEle = document.getElementById("contrast");
+let brightnessValue = brightnessEle.nextElementSibling.querySelector(".sliderValue");
+let contrastValue = contrastEle.nextElementSibling.querySelector(".sliderValue");
+let imageExportRatio = document.getElementById("imageExportRatio");
+let saveImageButton = document.getElementById("save-image");
+let currentimageExportRatio = 1;
+let gradientAngleContainer = document.getElementById('gradient-angle');
+let gradientAngle = gradientAngleContainer.getElementsByTagName('input')[0];
+let gradientAngleValue = gradientAngle.nextElementSibling.querySelector('#gradient-angle .sliderValue');
+let currentGradientAngle = 90; // Initialize with a default value, e.g., 90 degrees
+let saturationContainer = document.getElementById("saturation");
+let saturationForGradient =saturationContainer.getElementsByTagName("input")[0]; 
+let saturationForGradientValue = document.querySelector('#saturation .sliderValue'); 
+let currentSaturationForGradient = 1; 
+let currentColor1,currentColor2,currentColor3='#000000'; 
+let colorSelectionDropdown = document.getElementById("color-selection");
+let colorBlack = "#0A151E";
+let colorWhite = "#ffffff"; 
+let colorGray = "#8796A9";
+let currentPos1,currentPos2,currentPos3=0;
+
+let assetSelector = document.getElementById("asset-selector");
+let videoImport = document.getElementById("video-import");
+let videoImportContainer = document.getElementById("video-container");
+let videoInput = document.getElementById('videoInput');
+let imageInput = document.getElementById("imageInput");
+let imageImportContainer = document.getElementById("image-container");
+let imageImport = document.getElementById('imported-image');
+
+let videoCanvasElement = document.getElementById('video-scene');
+let mediaRecorder;
+let recordedChunks = [];
+let startRecordingButton=document.getElementById('startRecording');
+let stopAndDownloadButton = document.getElementById('stopAndDownload');
+let videoTypeSelector = document.getElementById('video-type-selector');
+let currentVideoType = "MP4";
+
+
+
+savePresetButton.onclick= savePresetToFile;
+saveImageButton.onclick = downloadImageWithRatio;
+
+// gradient
+class GradientInfo {
+    constructor(color1, color2, color3, colorPosition1, colorPosition2, colorPosition3) {
+        this.color1 = color1;
+        this.color2 = color2;
+        this.color3 = color3;
+        this.colorPosition1 = colorPosition1;
+        this.colorPosition2 = colorPosition2;
+        this.colorPosition3 = colorPosition3;
+        // this.saturation = saturation;
+        // this.angle = angle; 
+    }
+}
+
+class PresetInfo {
+    constructor(inverseEle, brightnessEle, contrastEle, gradientInfo, fontSize, charset) {
+        this.inverseEle = inverseEle;
+        this.brightnessEle = brightnessEle;
+        this.contrastEle = contrastEle;
+        // this.colorSelection = colorSelection;
+        this.gradientInfo = gradientInfo;
+        this.fontSize = fontSize;
+        this.charset = charset;
+    }
+}
+
+// Define your saturation-color mapping
+const saturationColors = {
+    1: ['#B0D4FC','#FFCCDB','#FFE2CC'],
+    2: ['#99C9FF','#FFB2C8','#FFD4B2'],
+    3: ['#80BBFF','#FF99B6','#FFC599'],
+    4: ['#66ADFF','#FF80A4','#FFB780'],
+    5: ['#4DA0FF','#FF6692','#FFA866']
+};
+
+let gradientInfo = new GradientInfo();
+let presetInfo = new PresetInfo();
+
 document.addEventListener('DOMContentLoaded', () => fetchPresetFromJson("Presets/presetInfo.json"));
+setupMediaRecorder(videoCanvasElement);
+// startRecordingButton.onclick =  startRecording;
+stopAndDownloadButton.onclick= downloadVideo;//stopRecording;
+const charWidthOffsetRatio = 0.8;
+const lineHeightOffsetRatio = 1.6;
+const ratioValue = 2;
+imageInput.addEventListener('change', handleImageInputChange);
+
 function fetchPresetFromJson(filePath){
     fetch(resource(filePath))
     .then(response => response.json())
@@ -20,23 +127,12 @@ function fetchPresetFromJson(filePath){
     })
     .catch(error => console.error('Error loading preset:', error));
 }
-// media recorder and video exporter 
-const imageDropdown = document.getElementById('image-dropdown');
-let isCanvas = true; 
+
 imageDropdown.onchange = function(){
     isCanvas = this.value === "canvas";
     updateAsset("canvasORHTML");
     console.log("iscanvas", isCanvas);
 }
-
-let assetSelector = document.getElementById("asset-selector");
-let videoImport = document.getElementById("video-import");
-let videoImportContainer = document.getElementById("video-container");
-let videoInput = document.getElementById('videoInput');
-let imageInput = document.getElementById("imageInput");
-let imageImportContainer = document.getElementById("image-container");
-let imageImport = document.getElementById('imported-image');
-
 
 assetSelector.onchange=((e)=>{
     if(e.target.value==="video"){
@@ -57,19 +153,21 @@ assetSelector.onchange=((e)=>{
         videoImport.style.display="none";
         imageImport.style.display="block";
         currentImage=null;
-
     }
 });
 
+videoTypeSelector.onchange=((e)=>{
+    currentVideoType = e.target.value;
+    console.log("current video type is ",currentVideoType);
+});
 
-let videoCanvasElement = document.getElementById('video-scene');
-let mediaRecorder;
-let recordedChunks = [];
-setupMediaRecorder(videoCanvasElement);
-let startRecordingButton=document.getElementById('startRecording');
-let stopAndDownloadButton = document.getElementById('stopAndDownload');
-startRecordingButton.addEventListener('click', startRecording);
-stopAndDownloadButton.addEventListener('click', stopRecording);
+function downloadVideo(){
+    if (recordedChunks.length > 0) {
+        downloadRecordedVideo(currentVideoType);
+    } else {
+        console.error("No recorded chunks available");
+    }
+}
 function setupMediaRecorder(canvas) {
     console.log("canvas is ", canvas);
     const stream = canvas.captureStream(25); // Capture at 25 fps
@@ -85,12 +183,7 @@ function setupMediaRecorder(canvas) {
     };
 
     mediaRecorder.onstop = function () {
-        console.log("Recording stopped");
-        if (recordedChunks.length > 0) {
-            downloadRecordedVideo();
-        } else {
-            console.error("No recorded chunks available");
-        }
+       console.log("Recording stopped"); 
     };
 
     mediaRecorder.onerror = function (event) {
@@ -133,7 +226,7 @@ function stopRecording() {
     }
 }
 
-function downloadRecordedVideo() {
+function downloadRecordedVideo(videoType) {
     const blob = new Blob(recordedChunks, {
         type: 'video/webm'
     });
@@ -143,7 +236,7 @@ function downloadRecordedVideo() {
     const a = document.createElement('a');
     a.style.display = 'none';
     a.href = url;
-    a.download = 'downloaded_video.mp4';
+    a.download = 'downloaded_video.'+videoType;
     document.body.appendChild(a);
     a.click();
     window.URL.revokeObjectURL(url);
@@ -157,9 +250,9 @@ function fromVideoFile(file) {
         const videoURL = URL.createObjectURL(file); // Create URL once
         video.src = videoURL;
         video.controls = true;  // Add controls so users can play/pause
-            video.autoplay = true;  // Set autoplay to true to start playing automatically
-            video.muted = true;     // Mute the video to allow autoplay in most browsers
-            video.loop = true;    
+        video.autoplay = true;  // Set autoplay to true to start playing automatically
+        video.muted = true;     // Mute the video to allow autoplay in most browsers
+        video.loop = true;    
             
         video.onloadedmetadata = () => {
             if(currentVideo!=video){
@@ -178,9 +271,18 @@ function fromVideoFile(file) {
 
 videoInput.addEventListener('change', function (event) {
     const file = event.target.files[0];
+    // remove the previous video when input another one 
+    while (videoImport.firstChild) {
+        videoImport.removeChild(videoImport.firstChild);
+    }
+
     if (file) {
         fromVideoFile(file).then(video => {  
             processVideo(video);
+            startRecording();
+            setTimeout(() => {
+                stopRecording();
+            }, video.duration *1000);
         }).catch(error => {
             console.error("Error loading video:", error);
         });
@@ -197,16 +299,12 @@ function downloadImageWithRatio(){
     tempCanvas.height = newHeight;
     tempCtx.drawImage(canvas, 0, 0, newWidth, newHeight);
     let dataUrl = tempCanvas.toDataURL('image/png');
-
     let link = document.createElement('a');
     link.href = dataUrl;
     link.download = 'image.png';
     link.click();
     tempCanvas.remove();
 }
-const charWidthOffsetRatio = 0.8;
-const lineHeightOffsetRatio = 1.6;
-const ratioValue = 2;
 
 function processVideo(video){
     const videoWidth = video.videoWidth;  
@@ -214,7 +312,6 @@ function processVideo(video){
     const charWidthValue = fontSize.value*charWidthOffsetRatio;//*0.8;
     const lineHeightValue = fontSize.value*lineHeightOffsetRatio;//0.8;
     const asciiDimensions = calculateAsciiDimensionsForImageSize(videoWidth, videoHeight, fontSize.value , fontSize.value/charWidthOffsetRatio*lineHeightOffsetRatio);
-    // const asciiDimensions = calculateAsciiDimensionsForImageSize(videoWidth, videoHeight, ratioX , ratioY);
     const aaReq = { width:asciiDimensions.width  , height: asciiDimensions.height};
     
     const canvasOptions = {
@@ -234,50 +331,6 @@ function processVideo(video){
     aalib.read.video.fromVideoElement(video)
     .map(aalib.aa(aaReq))
     .map(aalib.render.canvas(canvasOptions)).subscribe();
-    // .do(function (el) {
-    //      replaceAssetToDiv(el, 'video-scene');
-    //      console.log("Canvas updated with video frames");
-
-
-    // const canvasOptions = {
-    //     width: 696,
-    //     height: 476,
-    //     el: document.querySelector("#video-scene")
-    // };
-
- //     aalib.read.video.fromVideoElement(video)
-        // .map(aalib.aa({ width: 165, height: 68 }))
-        // .map(aalib.render.canvas({
-        //     width: 696,
-        //     height: 476,
-        //     el: document.querySelector("#video-scene")
-        // }))
-        // .subscribe();
-
-   
-
-    // ORIGINAL 
-    // let videoProcessingPipeline = aalib.read.video.fromVideoElement(video);
-    // console.log("videoProcessingPipeline is ", videoProcessingPipeline);
-
-    // if (inverseEle.checked) {
-    //     console.log("inverse elemenet is checked ", inverseEle.checked)
-    //     videoProcessingPipeline = videoProcessingPipeline.map(aalib.filter.inverse());
-    // }
-    // if (brightnessValue.value !== undefined) {
-    //     console.log("brightnessValue value ", brightnessValue.value);
-    //     videoProcessingPipeline = videoProcessingPipeline.map(aalib.filter.brightness(brightnessValue.value));
-    // }
-    // if (contrastValue.value !== undefined) {
-    //     console.log("contrastValue value ", contrastValue.value);
-    //     videoProcessingPipeline = videoProcessingPipeline.map(aalib.filter.contrast(contrastValue.value));
-    // }
-    // videoProcessingPipeline = videoProcessingPipeline.map(aalib.aa(aaReq));
-    
-    // videoProcessingPipeline.map(aalib.render.canvas(canvasOptions))
-    // .do(function (el) {
-    //      replaceAssetToDiv(el, 'video-scene');
-    // }).subscribe();
 
 }
 
@@ -383,80 +436,6 @@ function handleImageInputChange(event) {
     }
 }
 
-document.getElementById('imageInput').addEventListener('change', handleImageInputChange);
-// gradient
-class GradientInfo {
-    constructor(color1, color2, color3, colorPosition1, colorPosition2, colorPosition3) {
-        this.color1 = color1;
-        this.color2 = color2;
-        this.color3 = color3;
-        this.colorPosition1 = colorPosition1;
-        this.colorPosition2 = colorPosition2;
-        this.colorPosition3 = colorPosition3;
-        // this.saturation = saturation;
-        // this.angle = angle; 
-    }
-}
-
-class PresetInfo {
-    constructor(inverseEle, brightnessEle, contrastEle, gradientInfo, fontSize, charset) {
-        this.inverseEle = inverseEle;
-        this.brightnessEle = brightnessEle;
-        this.contrastEle = contrastEle;
-        // this.colorSelection = colorSelection;
-        this.gradientInfo = gradientInfo;
-        this.fontSize = fontSize;
-        this.charset = charset;
-    }
-}
-let currentImage, currentVideo;
-let gradientCanvas = document.getElementById("gradient-canvas");
-let gradientSliderCanvas = document.getElementById("gradient-slider-canvas");
-let gradientSliderCanvasCTX = gradientSliderCanvas.getContext('2d');
-let gradientCanvasCTX = gradientCanvas.getContext('2d');
-let gscWidth = gradientSliderCanvas.width;
-let gscHeight = gradientSliderCanvas.height;
-let gcWidth = gradientCanvas.width;
-let gcHeight = gradientCanvas.height;
-let gradientInfo = new GradientInfo();
-let presetInfo = new PresetInfo();
-let gradient;
-let savePresetButton = document.getElementById("save-preset");
-let inverseEle = document.getElementById("inverse");
-let fontSize = document.getElementById("fontSize");
-let charsetSelector = document.getElementById("charset-selector");
-let brightnessEle = document.getElementById("brightness");
-let contrastEle = document.getElementById("contrast");
-let brightnessValue = brightnessEle.nextElementSibling.querySelector(".sliderValue");
-let contrastValue = contrastEle.nextElementSibling.querySelector(".sliderValue");
-let imageExportRatio = document.getElementById("imageExportRatio");
-let saveImageButton = document.getElementById("save-image");
-let currentimageExportRatio = 1;
-let gradientAngleContainer = document.getElementById('gradient-angle');
-let gradientAngle = gradientAngleContainer.getElementsByTagName('input')[0];
-let gradientAngleValue = gradientAngle.nextElementSibling.querySelector('#gradient-angle .sliderValue');
-let currentGradientAngle = 90; // Initialize with a default value, e.g., 90 degrees
-let saturationContainer = document.getElementById("saturation");
-let saturationForGradient =saturationContainer.getElementsByTagName("input")[0]; 
-let saturationForGradientValue = document.querySelector('#saturation .sliderValue'); 
-let currentSaturationForGradient = 1; 
-let currentColor1,currentColor2,currentColor3='#000000'; 
-let colorSelectionDropdown = document.getElementById("color-selection");
-let colorBlack = "#0A151E";
-let colorWhite = "#ffffff"; 
-let colorGray = "#8796A9";
-let currentPos1,currentPos2,currentPos3=0;
-savePresetButton.onclick= savePresetToFile;
-saveImageButton.onclick = downloadImageWithRatio;
-
-// Define your saturation-color mapping
-const saturationColors = {
-    1: ['#B0D4FC','#FFCCDB','#FFE2CC'],
-    2: ['#99C9FF','#FFB2C8','#FFD4B2'],
-    3: ['#80BBFF','#FF99B6','#FFC599'],
-    4: ['#66ADFF','#FF80A4','#FFB780'],
-    5: ['#4DA0FF','#FF6692','#FFA866']
-};
 
 function getColorFromSaturation(saturation) {
     return saturationColors[saturation];
@@ -535,7 +514,6 @@ window.onload = function() {
     currentimageExportRatio = imageExportRatio.value;
     charsetSelector.value = presetInfo.charset;
     presetInfo.fontFamily = "Sora";//fontDropdown.value;     
-    // colorSelectionDropdown.value = "Sia Gradient";
     updateAsset("chartset");
 }
 
@@ -572,20 +550,16 @@ charsetSelector.onchange=(e)=>{
 }
 
 function updateAsset(funcName){
-    console.log("assetSelector value is ", assetSelector.value);
     if(assetSelector.value=="image"){
-        console.log("update asset for IMAGE");
         if(currentImage){
             console.log(`${funcName} - update IMAGE`);
             processImage(currentImage);
         }
     }else{
         if(currentVideo){
-            console.log("current video is ",currentVideo);
             console.log(`${funcName} - update VIDEO`);
             processVideo(currentVideo);
         }
-
     }
 }
 
@@ -669,12 +643,6 @@ function updatePreset(){
         gradientInfo = presetInfo.gradientInfo;
         // console.log("gradient info is ", gradientInfo);
     }
-
-    // if(colorSelectionDropdown.value!=presetInfo.colorSelection){
-    //     colorSelectionDropdown.value = presetInfo.colorSelection;
-    //     console.log("colorSelectionDropdownis ", colorSelectionDropdown.value);
-    // }
-    // console.log("preset info is ", presetInfo);
 }
 
 function loadGradient(){
