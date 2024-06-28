@@ -20,7 +20,7 @@ const resource = filename => `../resources/${ filename }`;
 // track google events 
 // image download with image size 
 function trackImageDownload(imageId, imageSize,imageExportRatio) {
-    dataLayer.push({
+    window.dataLayer.push({
         'event': 'Image_Download',
         'imageId': imageId,
         'imageSize': imageSize,
