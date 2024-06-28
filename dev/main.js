@@ -17,6 +17,18 @@ const charset_ascii = ASCII_CHARSET;
 const charset_sia = "SIA/.><?!^() ";
 const resource = filename => `../resources/${ filename }`;
 
+
+// track google events 
+// image download with image size 
+function trackImageDownload(imageId, imageSize，imageExportRatio) {
+    dataLayer.push({
+        'event': 'imageDownload',
+        'imageId': imageId,
+        'imageSize': imageSize,
+        'currentRatio': imageExportRatio
+    });
+}
+
 document.addEventListener('DOMContentLoaded', () => fetchPresetFromJson("Presets/presetInfo.json"));
 function fetchPresetFromJson(filePath){
     fetch(resource(filePath))
@@ -162,6 +174,8 @@ function downloadImageWithRatio(){
     link.href = dataUrl;
     link.download = 'image.png';
     link.click();
+
+    trackImageDownload('processed-image', `${newWidth}x${newHeight}x${currentimageExportRatio}`);
 
     // Clean up: remove the temporary canvas
     tempCanvas.remove();
