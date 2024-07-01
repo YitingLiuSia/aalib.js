@@ -3,7 +3,6 @@ import { ASCII_CHARSET } from "../src/renderers/HTMLRenderer";
 const charset_ascii = ASCII_CHARSET;
 const charset_sia = "SIA/-.><!^*()   ";
 const resource = filename => `../resources/${ filename }`;
-// media recorder and video exporter 
 const imageDropdown = document.getElementById('image-dropdown');
 let isCanvas = true; 
 let currentImage, currentVideo;
@@ -15,7 +14,6 @@ let gscWidth = gradientSliderCanvas.width;
 let gscHeight = gradientSliderCanvas.height;
 let gcWidth = gradientCanvas.width;
 let gcHeight = gradientCanvas.height;
-
 let gradient;
 let savePresetButton = document.getElementById("save-preset");
 let inverseEle = document.getElementById("inverse");
@@ -42,7 +40,7 @@ let colorBlack = "#0A151E";
 let colorWhite = "#ffffff"; 
 let colorGray = "#8796A9";
 let currentPos1,currentPos2,currentPos3=0;
-
+let slider = document.getElementById('color-slider');
 let assetSelector = document.getElementById("asset-selector");
 let videoImport = document.getElementById("video-import");
 let videoImportContainer = document.getElementById("video-container");
@@ -50,12 +48,11 @@ let videoInput = document.getElementById('videoInput');
 let imageInput = document.getElementById("imageInput");
 let imageImportContainer = document.getElementById("image-container");
 let imageImport = document.getElementById('imported-image');
-
+let canvasContainer = document.getElementById('canvas-container');
 let videoCanvasElement = document.getElementById('processed-asset');//document.getElementById('video-scene');
 let mediaRecorder;
 let recordedChunks = [];
 let startRecordingButton=document.getElementById('startRecording');
-// let stopAndDownloadButton = document.getElementById('stopAndDownload');
 let videoTypeSelector = document.getElementById('video-type-selector');
 let currentVideoType = "mp4";
 let videoStatus = document.getElementById("video-status");
@@ -63,19 +60,21 @@ let videoStatus = document.getElementById("video-status");
 let videoInitialStatus = "Current status: click download video to start recording with current settings";
 let videoProcessing = "Current status: processing video";
 let videoDownloaded = "Current status: video saved";
+let backgroundCanvasForWhite= document.getElementById("background-setup");
+let backgroundCanvasForWhiteCTX=backgroundCanvasForWhite.getContext('2d');
 
+const charWidthOffsetRatio = 0.8;
+const lineHeightOffsetRatio = 1.6;
+const ratioValue = 2;
 const inputs = document.querySelectorAll('input');
 inputs.forEach(e => {
     e.disabled = true;
 });
-
-   // Function to enable buttons
 function enableInputs() {
 inputs.forEach(e => {
     e.disabled = false;
 });
 }
-
 
 savePresetButton.onclick= savePresetToFile;
 saveImageButton.onclick = downloadImageWithRatio;
@@ -119,12 +118,7 @@ let gradientInfo = new GradientInfo();
 let presetInfo = new PresetInfo();
 
 document.addEventListener('DOMContentLoaded', () => fetchPresetFromJson("Presets/presetInfo.json"));
-// startRecordingButton.onclick =  startRecording;
-// stopAndDownloadButton.onclick= downloadVideo;//stopRecording;
 startRecordingButton.onclick = recordAndDownloadVideo;
-const charWidthOffsetRatio = 0.8;
-const lineHeightOffsetRatio = 1.6;
-const ratioValue = 2;
 imageInput.addEventListener('change', handleImageInputChange);
 
 function fetchPresetFromJson(filePath){
@@ -183,8 +177,8 @@ function restartVideo(video){
     }
     video.currentTime = 0; // Reset video playback to the beginning
     video.play(); // Play the video
-
 }
+
 function recordAndDownloadVideo(){
     setupMediaRecorder(videoCanvasElement);
     restartVideo(currentVideo);
@@ -217,7 +211,6 @@ function setupMediaRecorder(canvas) {
     mediaRecorder.onstop = function () {
        console.log("Recording stopped"); 
        downloadVideo();
-
     };
 
     mediaRecorder.onerror = function (event) {
@@ -278,7 +271,6 @@ function downloadRecordedVideo(videoType) {
     document.body.removeChild(a);
     recordedChunks = []; // Clear the recorded chunks
     videoStatus.textContent=videoDownloaded;
-
 }
 
 function fromVideoFile(file) {
@@ -311,14 +303,9 @@ videoInput.addEventListener('change', function (event) {
     while (videoImport.firstChild) {
         videoImport.removeChild(videoImport.firstChild);
     }
-
     if (file) {
         fromVideoFile(file).then(video => {  
             processVideo(video);
-            // startRecording();
-            // setTimeout(() => {
-            //     stopRecording();
-            // }, video.duration *1000);
         }).catch(error => {
             console.error("Error loading video:", error);
         });
@@ -326,11 +313,10 @@ videoInput.addEventListener('change', function (event) {
 });
 
 function downloadImageWithRatio(){
-    let canvas = document.getElementById('processed-asset');
     let tempCanvas = document.createElement('canvas');
     let tempCtx = tempCanvas.getContext('2d');
-    let newWidth = canvas.width * currentimageExportRatio;
-    let newHeight = canvas.height * currentimageExportRatio;
+    let newWidth = videoCanvasElement.width * currentimageExportRatio;
+    let newHeight = videoCanvasElement.height * currentimageExportRatio;
     tempCanvas.width = newWidth;
     tempCanvas.height = newHeight;
     tempCtx.drawImage(canvas, 0, 0, newWidth, newHeight);
@@ -350,7 +336,6 @@ function processVideo(video){
     const lineHeightValue = fontSize.value*lineHeightOffsetRatio;//0.8;
     const asciiDimensions = calculateAsciiDimensionsForImageSize(videoWidth, videoHeight, fontSize.value , fontSize.value/charWidthOffsetRatio*lineHeightOffsetRatio);
     const aaReq = { width:asciiDimensions.width  , height: asciiDimensions.height};
-  
     const videoSceneCanvas = document.querySelector("#processed-asset");//("#video-scene");
     // if (videoSceneCanvas) {
     //     const ctx = videoSceneCanvas.getContext('2d');
@@ -358,6 +343,10 @@ function processVideo(video){
     //     ctx.clearRect(0, 0, videoWidth, videoHeight);
     // }
     restartVideo(video);
+    let backgroundColor = "rgba(255,255,255,1)"; 
+    if(colorSelectionDropdown.value==="white"){
+        backgroundColor =  "rgba(0,0,0,1)"; 
+    }
     const canvasOptions = {
         fontSize: fontSize.value,
         fontFamily: "Sora",
@@ -366,7 +355,7 @@ function processVideo(video){
         charset: presetInfo.charset,
         width:  videoWidth ,  
         height: videoHeight , 
-        background: "rgba(255,255,255,1)",// make the background white 
+        background: backgroundColor,// make the background white 
         color: gradient,
         el: videoSceneCanvas
 
@@ -388,8 +377,6 @@ function loadImageFromURL(img, isCanvas){
     const asciiDimensions = calculateAsciiDimensionsForImageSize(imageWidth, imageHeight, fontSize.value , fontSize.value/charWidthOffsetRatio*lineHeightOffsetRatio);
     // const asciiDimensions = calculateAsciiDimensionsForImageSize(imageWidth, imageHeight, ratioX , ratioY); - this didnt work 
     const aaReq = { width:asciiDimensions.width  , height: asciiDimensions.height, colored: false};
-    // let finalCanvas =document.getElementById("processed-asset");
-    //  let finalCanvasCTX =  finalCanvas.getContext('2d');
 
     const canvasOptions = {
         fontSize: fontSize.value,
@@ -491,18 +478,22 @@ colorSelectionDropdown.onchange = (e) => {
     switch (e.target.value) {
         case 'Sia Gradient':
             displayForGradientOrColor(true);
+            canvasContainer.style.backgroundColor = 'transparent';
             updateGradient(); // Assuming you have a function to update the gradient display
             break;
         case 'black':
             updateColor(colorBlack);
+            canvasContainer.style.backgroundColor = 'transparent';
             displayForGradientOrColor(false);
             break;
         case 'white':
             updateColor(colorWhite);
+            canvasContainer.style.backgroundColor = colorGray;
             displayForGradientOrColor(false);
             break;
         case 'gray':
             updateColor(colorGray);
+            canvasContainer.style.backgroundColor = 'transparent';
             displayForGradientOrColor(false);
             break;
     }
@@ -519,10 +510,9 @@ gradientAngle.addEventListener('input', (e) => {
     updateGradient(); 
 });
 
-var slider = document.getElementById('color-slider');
 
 noUiSlider.create(slider, {
-    start: [0, 50, 100],
+    start: [1, 50, 100],
     tooltips: true,
     format: {
         from: function(value) {
@@ -533,11 +523,10 @@ noUiSlider.create(slider, {
             }
         },
     range: {
-        'min': 0,
+        'min': 1,
         'max': 100
     }
 });
-
 
 slider.noUiSlider.on('update', function(values) {
     currentPos1 = values[0];
@@ -545,7 +534,6 @@ slider.noUiSlider.on('update', function(values) {
     currentPos3= values[2];
     updateGradient();
 });
-
 
 imageExportRatio.oninput=(e)=>{
     imageExportRatio.value = e.target.value;
@@ -641,6 +629,10 @@ function updateColor(color){
     gradientCanvasCTX.fillStyle = gradient;
     gradientCanvasCTX.fillRect(0, 0, gcWidth, gcHeight);
     updateAsset("color");
+}
+function updateBackgroundForWhite(color){
+    backgroundCanvasForWhiteCTX.fillStyle = color; 
+   backgroundCanvasForWhiteCTX.fillRect(0,0,gcWidth,gcHeight);
 }
 
 function displayForGradientOrColor(displayGradient){

@@ -154,6 +154,7 @@ p{
     height: auto; /* Fixed height */
     overflow: auto; /* Enable scroll bars when content overflows */
     padding-bottom: 30px;
+    /* background-color:gray; */
 }
 
 #processed-asset {
