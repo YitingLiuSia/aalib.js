@@ -361,9 +361,27 @@ function processVideo(video){
 
     };
 
-    aalib.read.video.fromVideoElement(video)
-    .map(aalib.aa(aaReq))
-    .map(aalib.render.canvas(canvasOptions)).subscribe();
+    let videoProcessingPipeline=aalib.read.video.fromVideoElement(video);
+    videoProcessingPipeline = videoProcessingPipeline.map(aalib.aa(aaReq));
+
+    if (inverseEle.checked) {
+        console.log("inverse elemenet is checked ", inverseEle.checked)
+        videoProcessingPipeline = videoProcessingPipeline.map(aalib.filter.inverse());
+    }
+    if (brightnessValue.value !== undefined) {
+        console.log("brightnessValue value ", brightnessValue.value);
+        videoProcessingPipeline = videoProcessingPipeline.map(aalib.filter.brightness(brightnessValue.value));
+    }
+    if (contrastValue.value !== undefined) {
+        console.log("contrastValue value ", contrastValue.value);
+        videoProcessingPipeline = videoProcessingPipeline.map(aalib.filter.contrast(contrastValue.value));
+    }
+
+    videoProcessingPipeline.map(aalib.render.canvas(canvasOptions)).subscribe();
+
+    // aalib.read.video.fromVideoElement(video)
+    // .map(aalib.aa(aaReq))
+    // .map(aalib.render.canvas(canvasOptions)).subscribe();
 
 }
 // 
