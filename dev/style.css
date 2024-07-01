@@ -209,6 +209,10 @@ hr{
 #gradient-angle{
     margin-top: 35px;
 }
+#video-status{
+    font-size: small;
+    
+}
 
 .noUi-handle {
     background: transparent;

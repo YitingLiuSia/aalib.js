@@ -55,10 +55,27 @@ let videoCanvasElement = document.getElementById('video-scene');
 let mediaRecorder;
 let recordedChunks = [];
 let startRecordingButton=document.getElementById('startRecording');
-let stopAndDownloadButton = document.getElementById('stopAndDownload');
+// let stopAndDownloadButton = document.getElementById('stopAndDownload');
 let videoTypeSelector = document.getElementById('video-type-selector');
 let currentVideoType = "mp4";
 let videoStatus = document.getElementById("video-status");
+
+let videoInitialStatus = "Current status: click download video to start recording with current settings";
+let videoProcessing = "Current status: processing video";
+let videoDownloaded = "Current status: video saved";
+
+const inputs = document.querySelectorAll('input');
+inputs.forEach(e => {
+    e.disabled = true;
+});
+
+   // Function to enable buttons
+function enableInputs() {
+inputs.forEach(e => {
+    e.disabled = false;
+});
+}
+
 
 savePresetButton.onclick= savePresetToFile;
 saveImageButton.onclick = downloadImageWithRatio;
@@ -104,7 +121,8 @@ let presetInfo = new PresetInfo();
 document.addEventListener('DOMContentLoaded', () => fetchPresetFromJson("Presets/presetInfo.json"));
 setupMediaRecorder(videoCanvasElement);
 // startRecordingButton.onclick =  startRecording;
-stopAndDownloadButton.onclick= downloadVideo;//stopRecording;
+// stopAndDownloadButton.onclick= downloadVideo;//stopRecording;
+startRecordingButton.onclick = recordAndDownloadVideo;
 const charWidthOffsetRatio = 0.8;
 const lineHeightOffsetRatio = 1.6;
 const ratioValue = 2;
@@ -159,7 +177,15 @@ videoTypeSelector.onchange=((e)=>{
     currentVideoType = e.target.value;
     console.log("current video type is ",currentVideoType);
 });
+function recordAndDownloadVideo(){
+    currentVideo.currentTime = 0;
+    startRecording();
+    setTimeout(() => {
+        stopRecording();
+        downloadVideo();
+    }, currentVideo.duration *1000);
 
+}
 function downloadVideo(){
     if (recordedChunks.length > 0) {
         downloadRecordedVideo(currentVideoType);
@@ -206,8 +232,7 @@ function setupMediaRecorder(canvas) {
 }
 
 function startRecording() {
-    videoStatus.textContent="Current Status: converting video ";
-
+    videoStatus.textContent=videoProcessing;
     if (mediaRecorder && mediaRecorder.state === "inactive") {
         recordedChunks = []; // Clear previous chunks
         mediaRecorder.start();
@@ -218,8 +243,6 @@ function startRecording() {
 }
 
 function stopRecording() {
-    videoStatus.textContent="Current Status: recording stopped";
-
     if (mediaRecorder && mediaRecorder.state === "recording") {
         console.log("Stopping recording");
         mediaRecorder.stop();
@@ -239,12 +262,13 @@ function downloadRecordedVideo(videoType) {
     a.style.display = 'none';
     a.href = url;
     a.download = 'downloaded_video.'+videoType;
-    videoStatus.textContent=`Current Status: downloading video downloaded_video.${videoType}`;
     document.body.appendChild(a);
     a.click();
     window.URL.revokeObjectURL(url);
     document.body.removeChild(a);
     recordedChunks = []; // Clear the recorded chunks
+    videoStatus.textContent=videoDownloaded;
+
 }
 
 function fromVideoFile(file) {
@@ -274,7 +298,6 @@ function fromVideoFile(file) {
 
 videoInput.addEventListener('change', function (event) {
     const file = event.target.files[0];
-    // remove the previous video when input another one 
     while (videoImport.firstChild) {
         videoImport.removeChild(videoImport.firstChild);
     }
@@ -282,10 +305,10 @@ videoInput.addEventListener('change', function (event) {
     if (file) {
         fromVideoFile(file).then(video => {  
             processVideo(video);
-            startRecording();
-            setTimeout(() => {
-                stopRecording();
-            }, video.duration *1000);
+            // startRecording();
+            // setTimeout(() => {
+            //     stopRecording();
+            // }, video.duration *1000);
         }).catch(error => {
             console.error("Error loading video:", error);
         });
@@ -310,25 +333,28 @@ function downloadImageWithRatio(){
 }
 
 function processVideo(video){
-    const videoSceneCanvas = document.querySelector("#video-scene");
-   
-    if (videoSceneCanvas) {
-        const ctx = videoSceneCanvas.getContext('2d');
-        ctx.clearRect(0, 0, videoSceneCanvas.width, videoSceneCanvas.height);
-    }
 
-    
-  // Reset video to start and ensure it plays automatically
-    video.currentTime = 0; // Reset video playback to the beginning
-    video.play(); // Ensure the video plays automatically
-
-    videoStatus.textContent="Current Status: processing video";
+    videoStatus.textContent=videoProcessing;
     const videoWidth = video.videoWidth;  
     const videoHeight = video.videoHeight;
     const charWidthValue = fontSize.value*charWidthOffsetRatio;//*0.8;
     const lineHeightValue = fontSize.value*lineHeightOffsetRatio;//0.8;
     const asciiDimensions = calculateAsciiDimensionsForImageSize(videoWidth, videoHeight, fontSize.value , fontSize.value/charWidthOffsetRatio*lineHeightOffsetRatio);
     const aaReq = { width:asciiDimensions.width  , height: asciiDimensions.height};
+  
+    const videoSceneCanvas = document.querySelector("#video-scene");
+    // if (videoSceneCanvas) {
+    //     const ctx = videoSceneCanvas.getContext('2d');
+    //     console.log("meant to clear the ctx");
+    //     ctx.clearRect(0, 0, videoWidth, videoHeight);
+    // }
+
+    
+    if (!video.paused && !video.ended && video.readyState > 2) {
+        video.pause(); // Pause only if the video is currently playing
+    }
+    video.currentTime = 0; // Reset video playback to the beginning
+    video.play(); // Play the video
     
     const canvasOptions = {
         fontSize: fontSize.value,
@@ -528,11 +554,12 @@ imageExportRatio.oninput=(e)=>{
 
 window.onload = function() {
     console.log("PHASE 2");
-    console.log("imageExportRatio ",imageExportRatio.value);
+    enableInputs();
     currentimageExportRatio = imageExportRatio.value;
     charsetSelector.value = presetInfo.charset;
     presetInfo.fontFamily = "Sora";//fontDropdown.value;     
     updateAsset("chartset");
+    videoStatus.textContent=videoInitialStatus;
 }
 
 fontSize.oninput = (e) => {
