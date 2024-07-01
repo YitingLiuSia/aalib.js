@@ -57,7 +57,7 @@ let recordedChunks = [];
 let startRecordingButton=document.getElementById('startRecording');
 let stopAndDownloadButton = document.getElementById('stopAndDownload');
 let videoTypeSelector = document.getElementById('video-type-selector');
-let currentVideoType = "MP4";
+let currentVideoType = "mp4";
 
 
 
@@ -164,6 +164,7 @@ videoTypeSelector.onchange=((e)=>{
 function downloadVideo(){
     if (recordedChunks.length > 0) {
         downloadRecordedVideo(currentVideoType);
+        console.log("downloading current video type of ",currentVideoType);
     } else {
         console.error("No recorded chunks available");
     }
@@ -172,9 +173,7 @@ function setupMediaRecorder(canvas) {
     console.log("canvas is ", canvas);
     const stream = canvas.captureStream(25); // Capture at 25 fps
     console.log("stream is ", stream);
-
     mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm; codecs=vp9' });
-
     mediaRecorder.ondataavailable = function (event) {
         console.log("mediaRecorder ondataavailable", event.data.size);
         if (event.data.size > 0) {
@@ -576,8 +575,10 @@ function updateGradient(){
     let angle = currentGradientAngle * Math.PI / 180;
     let x2 = gcWidth * Math.cos(angle);
     let y2 = gcWidth * Math.sin(angle); 
-    let sliderX2 = gscWidth *Math.cos(angle);
-    let sliderY2 = gscHeight *Math.sin(angle);
+    let sliderAngle = 0;
+
+    let sliderX2 = gscWidth * Math.cos(sliderAngle);
+    let sliderY2 = 0;// gscHeight * Math.sin(sliderAngle); 
 
     updateSaturation();
     updateGradientFromCanvas(gradientCanvasCTX,x2,y2);
