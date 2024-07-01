@@ -1,7 +1,7 @@
 import aalib from "../dist/aalib.js";
 import { ASCII_CHARSET } from "../src/renderers/HTMLRenderer";
 const charset_ascii = ASCII_CHARSET;
-const charset_sia = "SIA/-.><?!^*()   ";
+const charset_sia = "SIA/-.><!^*()   ";
 const resource = filename => `../resources/${ filename }`;
 // media recorder and video exporter 
 const imageDropdown = document.getElementById('image-dropdown');
@@ -332,7 +332,7 @@ function processVideo(video){
     .map(aalib.render.canvas(canvasOptions)).subscribe();
 
 }
-
+// 
 function loadImageFromURL(img, isCanvas){
     const imageWidth = img.width;  
     const imageHeight = img.height;
@@ -343,15 +343,17 @@ function loadImageFromURL(img, isCanvas){
     const asciiDimensions = calculateAsciiDimensionsForImageSize(imageWidth, imageHeight, fontSize.value , fontSize.value/charWidthOffsetRatio*lineHeightOffsetRatio);
     // const asciiDimensions = calculateAsciiDimensionsForImageSize(imageWidth, imageHeight, ratioX , ratioY); - this didnt work 
     const aaReq = { width:asciiDimensions.width  , height: asciiDimensions.height, colored: false};
-    
+    // let finalCanvas =document.getElementById("processed-asset");
+    //  let finalCanvasCTX =  finalCanvas.getContext('2d');
+
     const canvasOptions = {
         fontSize: fontSize.value,
         fontFamily: "Sora",
         lineHeight: lineHeightValue,
         charWidth: charWidthValue,
         charset: presetInfo.charset,
-        width:  imageWidth ,  
-        height: imageHeight , 
+        width:  imageWidth,  
+        height: imageHeight, 
         background: "rgba(0,0,0,0)",
         color: gradient
     };
@@ -549,7 +551,7 @@ charsetSelector.onchange=(e)=>{
 }
 
 function updateAsset(funcName){
-    if(assetSelector.value=="image"){
+    if(assetSelector.value==="image"){
         if(currentImage){
             console.log(`${funcName} - update IMAGE`);
             processImage(currentImage);
@@ -572,22 +574,20 @@ function updateSaturation(){
 }
 
 function updateGradient(){
-    let angle = currentGradientAngle * Math.PI / 180;
-    let x2 = gcWidth * Math.cos(angle);
-    let y2 = gcWidth * Math.sin(angle); 
     let sliderAngle = 0;
 
-    let sliderX2 = gscWidth * Math.cos(sliderAngle);
-    let sliderY2 = 0;// gscHeight * Math.sin(sliderAngle); 
-
     updateSaturation();
-    updateGradientFromCanvas(gradientCanvasCTX,x2,y2);
+ // Pass the angle and width directly for the slider canvas
+    updateGradientFromCanvas(gradientSliderCanvasCTX, sliderAngle, gscWidth);
+    gradientSliderCanvasCTX.fillStyle = gradient;
+    gradientSliderCanvasCTX.fillRect(0, 0, gscWidth, gscHeight);
+    
+    // Pass the currentGradientAngle and gcWidth for the main gradient canvas
+    updateGradientFromCanvas(gradientCanvasCTX, currentGradientAngle, gcWidth);
     gradientCanvasCTX.fillStyle = gradient;
     gradientCanvasCTX.fillRect(0, 0, gcWidth, gcHeight);
 
-    updateGradientFromCanvas(gradientSliderCanvasCTX,sliderX2,sliderY2);
-    gradientSliderCanvasCTX.fillStyle = gradient;
-    gradientSliderCanvasCTX.fillRect(0,0,gscWidth,gscHeight);
+
     updateAsset("gradient");
 }
 
@@ -612,12 +612,15 @@ function displayForGradientOrColor(displayGradient){
     }
 
 }
-function updateGradientFromCanvas(canvas,x2,y2){
-    gradient = canvas.createLinearGradient(0, 0, x2,y2);
-    if(currentPos1&&currentPos2&&currentPos3){
-        gradient.addColorStop(currentPos1/100.0, currentColor1);
-        gradient.addColorStop(currentPos2/100.0, currentColor2);
-        gradient.addColorStop(currentPos3/100.0, currentColor3);
+function updateGradientFromCanvas(canvas, angle, width){
+    let radian = angle * Math.PI / 180;
+    let x2 = width * Math.cos(radian);
+    let y2 = width * Math.sin(radian);
+    gradient = canvas.createLinearGradient(0, 0, x2, y2);
+    if(currentPos1 && currentPos2 && currentPos3){
+        gradient.addColorStop(currentPos1 / 100.0, currentColor1);
+        gradient.addColorStop(currentPos2 / 100.0, currentColor2);
+        gradient.addColorStop(currentPos3 / 100.0, currentColor3);
     }
 }
 function updatePreset(){
