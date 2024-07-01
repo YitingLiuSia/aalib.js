@@ -51,7 +51,7 @@ let imageInput = document.getElementById("imageInput");
 let imageImportContainer = document.getElementById("image-container");
 let imageImport = document.getElementById('imported-image');
 
-let videoCanvasElement = document.getElementById('video-scene');
+let videoCanvasElement = document.getElementById('processed-asset');//document.getElementById('video-scene');
 let mediaRecorder;
 let recordedChunks = [];
 let startRecordingButton=document.getElementById('startRecording');
@@ -351,7 +351,7 @@ function processVideo(video){
     const asciiDimensions = calculateAsciiDimensionsForImageSize(videoWidth, videoHeight, fontSize.value , fontSize.value/charWidthOffsetRatio*lineHeightOffsetRatio);
     const aaReq = { width:asciiDimensions.width  , height: asciiDimensions.height};
   
-    const videoSceneCanvas = document.querySelector("#video-scene");
+    const videoSceneCanvas = document.querySelector("#processed-asset");//("#video-scene");
     // if (videoSceneCanvas) {
     //     const ctx = videoSceneCanvas.getContext('2d');
     //     console.log("meant to clear the ctx");

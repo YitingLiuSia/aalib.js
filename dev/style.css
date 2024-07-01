@@ -132,7 +132,7 @@ p{
 }
 
 #asset-selector {
-    max-width: 100%;
+    min-width: 100%;
 }
 
 #imported-image-frame {
@@ -157,10 +157,10 @@ p{
 }
 
 #processed-asset {
-    display: block; /* Ensures the canvas is treated as a block-level element */
-    width: 100%; /* Make the image stretch to fill the container */
-    height: auto; /* Ensure the height adjusts to maintain the aspect ratio */
-}
+    display: block; /* Ensures the canvas is treated as a block-level element */  
+    max-width: 100%; /* Make the image stretch to fill the container */  
+    max-height: 100%;/* used to be auto */
+ }
 
 .container {
     padding-left: 15px;
@@ -210,8 +210,8 @@ hr{
     margin-top: 35px;
 }
 #video-status{
-    font-size: small;
-    
+    font-size: 10px;
+
 }
 
 .noUi-handle {
