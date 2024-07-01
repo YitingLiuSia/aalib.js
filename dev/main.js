@@ -119,7 +119,6 @@ let gradientInfo = new GradientInfo();
 let presetInfo = new PresetInfo();
 
 document.addEventListener('DOMContentLoaded', () => fetchPresetFromJson("Presets/presetInfo.json"));
-setupMediaRecorder(videoCanvasElement);
 // startRecordingButton.onclick =  startRecording;
 // stopAndDownloadButton.onclick= downloadVideo;//stopRecording;
 startRecordingButton.onclick = recordAndDownloadVideo;
@@ -177,12 +176,21 @@ videoTypeSelector.onchange=((e)=>{
     currentVideoType = e.target.value;
     console.log("current video type is ",currentVideoType);
 });
+
+function restartVideo(video){
+    if (!video.paused && !video.ended && video.readyState > 2) {
+        video.pause(); // Pause only if the video is currently playing
+    }
+    video.currentTime = 0; // Reset video playback to the beginning
+    video.play(); // Play the video
+
+}
 function recordAndDownloadVideo(){
-    currentVideo.currentTime = 0;
+    setupMediaRecorder(videoCanvasElement);
+    restartVideo(currentVideo);
     startRecording();
     setTimeout(() => {
         stopRecording();
-        downloadVideo();
     }, currentVideo.duration *1000);
 
 }
@@ -208,6 +216,8 @@ function setupMediaRecorder(canvas) {
 
     mediaRecorder.onstop = function () {
        console.log("Recording stopped"); 
+       downloadVideo();
+
     };
 
     mediaRecorder.onerror = function (event) {
@@ -333,7 +343,6 @@ function downloadImageWithRatio(){
 }
 
 function processVideo(video){
-
     videoStatus.textContent=videoProcessing;
     const videoWidth = video.videoWidth;  
     const videoHeight = video.videoHeight;
@@ -348,14 +357,7 @@ function processVideo(video){
     //     console.log("meant to clear the ctx");
     //     ctx.clearRect(0, 0, videoWidth, videoHeight);
     // }
-
-    
-    if (!video.paused && !video.ended && video.readyState > 2) {
-        video.pause(); // Pause only if the video is currently playing
-    }
-    video.currentTime = 0; // Reset video playback to the beginning
-    video.play(); // Play the video
-    
+    restartVideo(video);
     const canvasOptions = {
         fontSize: fontSize.value,
         fontFamily: "Sora",
