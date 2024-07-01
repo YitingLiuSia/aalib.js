@@ -49,7 +49,8 @@ let imageInput = document.getElementById("imageInput");
 let imageImportContainer = document.getElementById("image-container");
 let imageImport = document.getElementById('imported-image');
 let canvasContainer = document.getElementById('canvas-container');
-let videoCanvasElement = document.getElementById('processed-asset');//document.getElementById('video-scene');
+let processedAssetCanvas = document.getElementById('processed-asset');//document.getElementById('video-scene');
+let processedAssetCanvasCTX = processedAssetCanvas.getContext("2d");//document.getElementById('video-scene');
 let mediaRecorder;
 let recordedChunks = [];
 let startRecordingButton=document.getElementById('startRecording');
@@ -67,6 +68,11 @@ const charWidthOffsetRatio = 0.8;
 const lineHeightOffsetRatio = 1.6;
 const ratioValue = 2;
 const inputs = document.querySelectorAll('input');
+
+savePresetButton.onclick= savePresetToFile;
+saveImageButton.onclick = downloadImageWithRatio;
+
+
 inputs.forEach(e => {
     e.disabled = true;
 });
@@ -75,9 +81,6 @@ inputs.forEach(e => {
     e.disabled = false;
 });
 }
-
-savePresetButton.onclick= savePresetToFile;
-saveImageButton.onclick = downloadImageWithRatio;
 
 // gradient
 class GradientInfo {
@@ -180,7 +183,7 @@ function restartVideo(video){
 }
 
 function recordAndDownloadVideo(){
-    setupMediaRecorder(videoCanvasElement);
+    setupMediaRecorder(processedAssetCanvas);
     restartVideo(currentVideo);
     startRecording();
     setTimeout(() => {
@@ -313,10 +316,12 @@ videoInput.addEventListener('change', function (event) {
 });
 
 function downloadImageWithRatio(){
+    console.log("processedAssetCanvas is ",processedAssetCanvas);
+    let canvas = document.getElementById('processed-asset');
     let tempCanvas = document.createElement('canvas');
     let tempCtx = tempCanvas.getContext('2d');
-    let newWidth = videoCanvasElement.width * currentimageExportRatio;
-    let newHeight = videoCanvasElement.height * currentimageExportRatio;
+    let newWidth = canvas.width * currentimageExportRatio;
+    let newHeight = canvas.height * currentimageExportRatio;
     tempCanvas.width = newWidth;
     tempCanvas.height = newHeight;
     tempCtx.drawImage(canvas, 0, 0, newWidth, newHeight);
@@ -324,7 +329,7 @@ function downloadImageWithRatio(){
     let link = document.createElement('a');
     link.href = dataUrl;
     link.download = 'image.png';
-    link.click();
+    link.click();    
     tempCanvas.remove();
 }
 
@@ -336,12 +341,12 @@ function processVideo(video){
     const lineHeightValue = fontSize.value*lineHeightOffsetRatio;//0.8;
     const asciiDimensions = calculateAsciiDimensionsForImageSize(videoWidth, videoHeight, fontSize.value , fontSize.value/charWidthOffsetRatio*lineHeightOffsetRatio);
     const aaReq = { width:asciiDimensions.width  , height: asciiDimensions.height};
-    const videoSceneCanvas = document.querySelector("#processed-asset");//("#video-scene");
     // if (videoSceneCanvas) {
     //     const ctx = videoSceneCanvas.getContext('2d');
     //     console.log("meant to clear the ctx");
     //     ctx.clearRect(0, 0, videoWidth, videoHeight);
     // }
+
     restartVideo(video);
     let backgroundColor = "rgba(255,255,255,1)"; 
     if(colorSelectionDropdown.value==="white"){
@@ -357,11 +362,11 @@ function processVideo(video){
         height: videoHeight , 
         background: backgroundColor,// make the background white 
         color: gradient,
-        el: videoSceneCanvas
-
+        el: processedAssetCanvas
     };
 
     let videoProcessingPipeline=aalib.read.video.fromVideoElement(video);
+
     videoProcessingPipeline = videoProcessingPipeline.map(aalib.aa(aaReq));
 
     if (inverseEle.checked) {
@@ -378,16 +383,18 @@ function processVideo(video){
     }
 
     videoProcessingPipeline.map(aalib.render.canvas(canvasOptions)).subscribe();
-
-    // aalib.read.video.fromVideoElement(video)
-    // .map(aalib.aa(aaReq))
-    // .map(aalib.render.canvas(canvasOptions)).subscribe();
-
 }
-// 
-function loadImageFromURL(img, isCanvas){
+
+function processImage(img){
     const imageWidth = img.width;  
     const imageHeight = img.height;
+    // Adjust canvas size to match image size
+    // console.log("processedAssetCanvas dimension ", `${processedAssetCanvas.width}x${processedAssetCanvas.height}`);
+
+    // processedAssetCanvas.width = imageWidth;
+    // processedAssetCanvas.height = imageHeight;
+    // console.log("AFTER ProcessedAssetCanvas dimension ", `${processedAssetCanvas.width}x${processedAssetCanvas.height}`);
+
     const charWidthValue = fontSize.value*charWidthOffsetRatio;//*0.8;
     const lineHeightValue = fontSize.value*lineHeightOffsetRatio;//0.8;
     const ratioX =imageWidth/(fontSize.value+charWidthValue)*ratioValue; //2* fontSize.value/5*13.5;// 
@@ -395,7 +402,9 @@ function loadImageFromURL(img, isCanvas){
     const asciiDimensions = calculateAsciiDimensionsForImageSize(imageWidth, imageHeight, fontSize.value , fontSize.value/charWidthOffsetRatio*lineHeightOffsetRatio);
     // const asciiDimensions = calculateAsciiDimensionsForImageSize(imageWidth, imageHeight, ratioX , ratioY); - this didnt work 
     const aaReq = { width:asciiDimensions.width  , height: asciiDimensions.height, colored: false};
-
+    console.log("image dimension ", `${imageWidth}x${imageHeight}`);
+    console.log("asciiDimensions ", `${asciiDimensions.width}x${asciiDimensions.height}`);
+    
     const canvasOptions = {
         fontSize: fontSize.value,
         fontFamily: "Sora",
@@ -411,27 +420,18 @@ function loadImageFromURL(img, isCanvas){
     let imageProcessingPipeline = aalib.read.image.fromURL(img.src);
        
     if (inverseEle.checked) {
-        console.log("inverse elemenet is checked ", inverseEle.checked)
         imageProcessingPipeline = imageProcessingPipeline.map(aalib.filter.inverse());
     }
     if (brightnessValue.value !== undefined) {
-        console.log("brightnessValue value ", brightnessValue.value);
         imageProcessingPipeline = imageProcessingPipeline.map(aalib.filter.brightness(brightnessValue.value));
     }
     if (contrastValue.value !== undefined) {
-        console.log("contrastValue value ", contrastValue.value);
         imageProcessingPipeline = imageProcessingPipeline.map(aalib.filter.contrast(contrastValue.value));
     }
     imageProcessingPipeline = imageProcessingPipeline.map(aalib.aa(aaReq));
 
-    if (isCanvas) {
-        imageProcessingPipeline.map(aalib.render.canvas(canvasOptions))
-        .do(function (el) {replaceAssetToDiv(el,'processed-asset');}).subscribe(); 
-    } 
-    else {
-        imageProcessingPipeline.map(aalib.render.html(canvasOptions))
-        .do(function (el) {replaceAssetToDiv(el,'processed-asset'); }).subscribe(); 
-    }
+    imageProcessingPipeline.map(aalib.render.canvas(canvasOptions))
+    .do(function (el) {replaceAssetToDiv(el,'processed-asset');}).subscribe(); 
 }
 
 function replaceAssetToDiv(el, targetDivId ){
@@ -445,9 +445,7 @@ function replaceAssetToDiv(el, targetDivId ){
     }
 }
 
-function processImage(img) {
-    loadImageFromURL(img, true);
-}
+
 function loadImageAndProcess(url) {
     const img = new Image();
     img.src = url; 
