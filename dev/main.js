@@ -58,8 +58,7 @@ let startRecordingButton=document.getElementById('startRecording');
 let stopAndDownloadButton = document.getElementById('stopAndDownload');
 let videoTypeSelector = document.getElementById('video-type-selector');
 let currentVideoType = "mp4";
-
-
+let videoStatus = document.getElementById("video-status");
 
 savePresetButton.onclick= savePresetToFile;
 saveImageButton.onclick = downloadImageWithRatio;
@@ -207,6 +206,8 @@ function setupMediaRecorder(canvas) {
 }
 
 function startRecording() {
+    videoStatus.textContent="Current Status: converting video ";
+
     if (mediaRecorder && mediaRecorder.state === "inactive") {
         recordedChunks = []; // Clear previous chunks
         mediaRecorder.start();
@@ -217,6 +218,8 @@ function startRecording() {
 }
 
 function stopRecording() {
+    videoStatus.textContent="Current Status: recording stopped";
+
     if (mediaRecorder && mediaRecorder.state === "recording") {
         console.log("Stopping recording");
         mediaRecorder.stop();
@@ -236,6 +239,7 @@ function downloadRecordedVideo(videoType) {
     a.style.display = 'none';
     a.href = url;
     a.download = 'downloaded_video.'+videoType;
+    videoStatus.textContent=`Current Status: downloading video downloaded_video.${videoType}`;
     document.body.appendChild(a);
     a.click();
     window.URL.revokeObjectURL(url);
@@ -253,6 +257,8 @@ function fromVideoFile(file) {
         video.muted = true;     // Mute the video to allow autoplay in most browsers
         video.loop = true;    
             
+        console.log("videoa autoplay ",video.autoplay);
+        console.log("video autoplay ",video.playin)
         video.onloadedmetadata = () => {
             if(currentVideo!=video){
                 currentVideo = video;
@@ -306,6 +312,19 @@ function downloadImageWithRatio(){
 }
 
 function processVideo(video){
+    const videoSceneCanvas = document.querySelector("#video-scene");
+   
+    if (videoSceneCanvas) {
+        const ctx = videoSceneCanvas.getContext('2d');
+        ctx.clearRect(0, 0, videoSceneCanvas.width, videoSceneCanvas.height);
+    }
+
+    
+  // Reset video to start and ensure it plays automatically
+    video.currentTime = 0; // Reset video playback to the beginning
+    video.play(); // Ensure the video plays automatically
+
+    videoStatus.textContent="Current Status: processing video";
     const videoWidth = video.videoWidth;  
     const videoHeight = video.videoHeight;
     const charWidthValue = fontSize.value*charWidthOffsetRatio;//*0.8;
@@ -323,7 +342,7 @@ function processVideo(video){
         height: videoHeight , 
         background: "rgba(255,255,255,1)",// make the background white 
         color: gradient,
-        el: document.querySelector("#video-scene")
+        el: videoSceneCanvas
 
     };
 
@@ -560,6 +579,7 @@ function updateAsset(funcName){
         if(currentVideo){
             console.log(`${funcName} - update VIDEO`);
             processVideo(currentVideo);
+            
         }
     }
 }
@@ -575,7 +595,6 @@ function updateSaturation(){
 
 function updateGradient(){
     let sliderAngle = 0;
-
     updateSaturation();
  // Pass the angle and width directly for the slider canvas
     updateGradientFromCanvas(gradientSliderCanvasCTX, sliderAngle, gscWidth);
@@ -586,7 +605,6 @@ function updateGradient(){
     updateGradientFromCanvas(gradientCanvasCTX, currentGradientAngle, gcWidth);
     gradientCanvasCTX.fillStyle = gradient;
     gradientCanvasCTX.fillRect(0, 0, gcWidth, gcHeight);
-
 
     updateAsset("gradient");
 }

@@ -14,7 +14,7 @@
 
 <body>
     <div  class = "container" id="preset-container">
-        <h1 style="margin-bottom: 0;">Sia ASCII Generator</h1>
+        <h1 style="margin-bottom: 0;">Sia Data Art Generator</h1>
         <h2 hidden>Preset</h2>
         <div hidden style="justify-content: start;" class="sliderContainer" style="margin-top: -10px;">
             <input hidden type="file" id="load-preset" accept="application/json">
@@ -129,6 +129,8 @@
                 <option value="mov">MOV</option>
                 <option value="mp4">MP4</option>
             </select>
+
+            <p id="video-status">Current Status: </p>
             <button id="startRecording">Start Recording</button>
             <button id="stopAndDownload">Stop and Download</button>
             <canvas id="video-scene"></canvas>
