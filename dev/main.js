@@ -397,10 +397,13 @@ function processImage(img){
 
     const charWidthValue = fontSize.value*charWidthOffsetRatio;//*0.8;
     const lineHeightValue = fontSize.value*lineHeightOffsetRatio;//0.8;
-    const ratioX =imageWidth/(fontSize.value+charWidthValue)*ratioValue; //2* fontSize.value/5*13.5;// 
-    const ratioY = imageHeight/(fontSize.value+lineHeightValue)*ratioValue;//2*fontSize.value/5*13.5 ;//
-    const asciiDimensions = calculateAsciiDimensionsForImageSize(imageWidth, imageHeight, fontSize.value , fontSize.value/charWidthOffsetRatio*lineHeightOffsetRatio);
-    // const asciiDimensions = calculateAsciiDimensionsForImageSize(imageWidth, imageHeight, ratioX , ratioY); - this didnt work 
+    let ratioX =fontSize.value+charWidthValue;//*ratioValue; //2* fontSize.value/5*13.5;// 
+    let ratioY = fontSize.value+lineHeightValue;//*ratioValue;//2*fontSize.value/5*13.5 ;//
+    console.log(`font size: ${fontSize.value}, charwidth value: ${charWidthValue}, line height value: ${lineHeightValue}`);
+    console.log("RATIO dimension ", `${ratioX}x${ratioY}`);
+
+    // const asciiDimensions = calculateAsciiDimensionsForImageSize(imageWidth, imageHeight, fontSize.value , fontSize.value/charWidthOffsetRatio*lineHeightOffsetRatio);
+     const asciiDimensions = calculateAsciiDimensionsForImageSize(imageWidth, imageHeight, ratioX , ratioY); 
     const aaReq = { width:asciiDimensions.width  , height: asciiDimensions.height, colored: false};
     console.log("image dimension ", `${imageWidth}x${imageHeight}`);
     console.log("asciiDimensions ", `${asciiDimensions.width}x${asciiDimensions.height}`);
