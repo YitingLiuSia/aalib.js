@@ -256,9 +256,7 @@ function fromVideoFile(file) {
         video.autoplay = true;  // Set autoplay to true to start playing automatically
         video.muted = true;     // Mute the video to allow autoplay in most browsers
         video.loop = true;    
-            
-        console.log("videoa autoplay ",video.autoplay);
-        console.log("video autoplay ",video.playin)
+        
         video.onloadedmetadata = () => {
             if(currentVideo!=video){
                 currentVideo = video;
