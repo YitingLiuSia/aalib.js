@@ -339,18 +339,18 @@ function processVideo(video){
     const videoHeight = video.videoHeight;
     const charWidthValue = fontSize.value*charWidthOffsetRatio;//*0.8;
     const lineHeightValue = fontSize.value*lineHeightOffsetRatio;//0.8;
-    const asciiDimensions = calculateAsciiDimensionsForImageSize(videoWidth, videoHeight, fontSize.value , fontSize.value/charWidthOffsetRatio*lineHeightOffsetRatio);
+    const asciiDimensions = calculateAsciiDimensionsForImageSize(videoWidth, videoHeight, Number(fontSize.value) , Number(fontSize.value)/charWidthOffsetRatio*lineHeightOffsetRatio);
     const aaReq = { width:asciiDimensions.width  , height: asciiDimensions.height};
-    // if (videoSceneCanvas) {
-    //     const ctx = videoSceneCanvas.getContext('2d');
-    //     console.log("meant to clear the ctx");
-    //     ctx.clearRect(0, 0, videoWidth, videoHeight);
-    // }
+    if (processedAssetCanvas) {
+        const ctx = processedAssetCanvas.getContext('2d');
+        console.log("meant to clear the ctx");
+        ctx.clearRect(0, 0, videoWidth, videoHeight);
+    }
 
     restartVideo(video);
     let backgroundColor = "rgba(255,255,255,1)"; 
     if(colorSelectionDropdown.value==="white"){
-        backgroundColor =  "rgba(0,0,0,1)"; 
+        backgroundColor =  colorBlack; 
     }
     const canvasOptions = {
         fontSize: fontSize.value,
@@ -358,12 +358,16 @@ function processVideo(video){
         lineHeight: lineHeightValue,
         charWidth: charWidthValue,
         charset: presetInfo.charset,
-        width:  videoWidth ,  
-        height: videoHeight , 
+        width: asciiDimensions.width * charWidthValue,  
+        height: asciiDimensions.height * lineHeightValue, 
         background: backgroundColor,// make the background white 
         color: gradient,
         el: processedAssetCanvas
     };
+
+    // Adjust the canvas size to match the ASCII dimensions
+    processedAssetCanvas.width = canvasOptions.width;
+    processedAssetCanvas.height = canvasOptions.height;
 
     let videoProcessingPipeline=aalib.read.video.fromVideoElement(video);
 
@@ -388,37 +392,33 @@ function processVideo(video){
 function processImage(img){
     const imageWidth = img.width;  
     const imageHeight = img.height;
-    // Adjust canvas size to match image size
-    // console.log("processedAssetCanvas dimension ", `${processedAssetCanvas.width}x${processedAssetCanvas.height}`);
-
-    // processedAssetCanvas.width = imageWidth;
-    // processedAssetCanvas.height = imageHeight;
-    // console.log("AFTER ProcessedAssetCanvas dimension ", `${processedAssetCanvas.width}x${processedAssetCanvas.height}`);
-
     const charWidthValue = fontSize.value*charWidthOffsetRatio;//*0.8;
     const lineHeightValue = fontSize.value*lineHeightOffsetRatio;//0.8;
-    let ratioX =Number(fontSize.value) + charWidthValue;//*ratioValue; //2* fontSize.value/5*13.5;// 
-    let ratioY = Number(fontSize.value) + lineHeightValue;//*ratioValue;//2*fontSize.value/5*13.5 ;//
+    let ratioX =(Number(fontSize.value) + charWidthValue)*ratioValue; //2* fontSize.value/5*13.5;// 
+    let ratioY = (Number(fontSize.value) + lineHeightValue)*ratioValue;//2*fontSize.value/5*13.5 ;//
     console.log(`font size: ${fontSize.value}, charwidth value: ${charWidthValue}, line height value: ${lineHeightValue}`);
     console.log("RATIO dimension ", `${ratioX}x${ratioY}`);
 
-    // const asciiDimensions = calculateAsciiDimensionsForImageSize(imageWidth, imageHeight, fontSize.value , fontSize.value/charWidthOffsetRatio*lineHeightOffsetRatio);
-     const asciiDimensions = calculateAsciiDimensionsForImageSize(imageWidth, imageHeight, ratioX , ratioY); 
+    const asciiDimensions = calculateAsciiDimensionsForImageSize(imageWidth, imageHeight, Number(fontSize.value) , Number(fontSize.value)/charWidthOffsetRatio*lineHeightOffsetRatio);
     const aaReq = { width:asciiDimensions.width  , height: asciiDimensions.height, colored: false};
     console.log("image dimension ", `${imageWidth}x${imageHeight}`);
     console.log("asciiDimensions ", `${asciiDimensions.width}x${asciiDimensions.height}`);
-    
+
     const canvasOptions = {
         fontSize: fontSize.value,
         fontFamily: "Sora",
         lineHeight: lineHeightValue,
         charWidth: charWidthValue,
         charset: presetInfo.charset,
-        width:  imageWidth,  
-        height: imageHeight, 
+        width: asciiDimensions.width * charWidthValue,  
+        height: asciiDimensions.height * lineHeightValue, 
         background: "rgba(0,0,0,0)",
         color: gradient
     };
+
+    // Adjust the canvas size to match the ASCII dimensions
+    processedAssetCanvas.width = canvasOptions.width;
+    processedAssetCanvas.height = canvasOptions.height;
 
     let imageProcessingPipeline = aalib.read.image.fromURL(img.src);
        
@@ -434,7 +434,9 @@ function processImage(img){
     imageProcessingPipeline = imageProcessingPipeline.map(aalib.aa(aaReq));
 
     imageProcessingPipeline.map(aalib.render.canvas(canvasOptions))
-    .do(function (el) {replaceAssetToDiv(el,'processed-asset');}).subscribe(); 
+    .do(function (el) {
+        console.log("el dimension is ", `${el.width}x${el.height}`);
+        replaceAssetToDiv(el,'processed-asset');}).subscribe(); 
 }
 
 function replaceAssetToDiv(el, targetDivId ){
@@ -444,10 +446,9 @@ function replaceAssetToDiv(el, targetDivId ){
         existingElement.parentNode.replaceChild(el, existingElement);
     } else {
         el.id = targetDivId; 
-        document.body.appendChild(el);
+         document.body.appendChild(el);
     }
 }
-
 
 function loadImageAndProcess(url) {
     const img = new Image();
@@ -488,7 +489,6 @@ function handleImageInputChange(event) {
     }
 }
 
-
 function getColorFromSaturation(saturation) {
     return saturationColors[saturation];
 }
@@ -497,26 +497,27 @@ colorSelectionDropdown.onchange = (e) => {
     switch (e.target.value) {
         case 'Sia Gradient':
             displayForGradientOrColor(true);
-            canvasContainer.style.backgroundColor = 'transparent';
-            updateGradient(); // Assuming you have a function to update the gradient display
+            updateBackgroundForWhite('transparent');
+            updateGradient(); 
             break;
         case 'black':
             updateColor(colorBlack);
-            canvasContainer.style.backgroundColor = 'transparent';
             displayForGradientOrColor(false);
+            updateBackgroundForWhite('transparent');
             break;
         case 'white':
             updateColor(colorWhite);
-            canvasContainer.style.backgroundColor = colorGray;
+            updateBackgroundForWhite(colorGray);
             displayForGradientOrColor(false);
             break;
         case 'gray':
             updateColor(colorGray);
-            canvasContainer.style.backgroundColor = 'transparent';
+            updateBackgroundForWhite('transparent');
             displayForGradientOrColor(false);
             break;
     }
 }
+
 saturationForGradient.addEventListener('input',(e)=>{
     saturationForGradientValue.textContent = e.target.value;
     currentSaturationForGradient = e.target.value;
@@ -649,11 +650,18 @@ function updateColor(color){
     gradientCanvasCTX.fillRect(0, 0, gcWidth, gcHeight);
     updateAsset("color");
 }
-function updateBackgroundForWhite(color){
-    backgroundCanvasForWhiteCTX.fillStyle = color; 
-   backgroundCanvasForWhiteCTX.fillRect(0,0,gcWidth,gcHeight);
-}
+function updateBackgroundForWhite(color) {
+    if(assetSelector.value==="image"){
+        backgroundCanvasForWhite.width = processedAssetCanvas.width;
+        backgroundCanvasForWhite.height = processedAssetCanvas.height;
 
+        backgroundCanvasForWhite.style.top = processedAssetCanvas.offsetTop + 'px';
+        backgroundCanvasForWhite.style.left = processedAssetCanvas.offsetLeft + 'px';
+
+        backgroundCanvasForWhiteCTX.fillStyle = color;
+        backgroundCanvasForWhiteCTX.fillRect(0, 0, backgroundCanvasForWhite.width, backgroundCanvasForWhite.height);
+    }
+}
 function displayForGradientOrColor(displayGradient){
     if(displayGradient){
         saturationContainer.style.display="flex";

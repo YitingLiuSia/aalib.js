@@ -150,6 +150,7 @@ p{
 
 }
 #canvas-container {
+    position: relative; /* Ensure the container is positioned relatively */
     width: 100%; /* Fixed width */
     height: auto; /* Fixed height */
     overflow: auto; /* Enable scroll bars when content overflows */
@@ -157,11 +158,20 @@ p{
     /* background-color:gray; */
 }
 
+#background-setup {
+    position: absolute; /* Position it absolutely within the container */
+    top: 0;
+    left: 0;
+    z-index: 1; /* Ensure it is behind the processed-asset canvas */
+}
+
 #processed-asset {
+    position: relative; /* Ensure it is positioned relative to the container */
     display: block; /* Ensures the canvas is treated as a block-level element */  
     max-width: 100%; /* Make the image stretch to fill the container */  
-    max-height: 100%;/* used to be auto */
- }
+    max-height: 100%; /* used to be auto */
+    z-index: 2; /* Ensure it is in front of the background-setup canvas */
+}
 
 .container {
     padding-left: 15px;
