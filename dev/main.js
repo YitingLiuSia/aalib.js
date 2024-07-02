@@ -704,11 +704,11 @@ function updatePreset(){
     if(fontSize.value!=presetInfo.fontSize){
         fontSize.value = presetInfo.fontSize;
     }
-    if(charsetSelector.value!=presetInfo.charset){
-        if(presetInfo.charset.contains("SIA/")){
-            charsetSelector.target.value = "SIA/";
-        }else{
-            charsetSelector.target.value = "ASCII";
+    if (charsetSelector.value != presetInfo.charset) {
+        if (presetInfo.charset.includes("SIA/")) {
+            charsetSelector.value = "SIA/";
+        } else {
+            charsetSelector.value = "ASCII";
         }
     }
     if(gradientInfo!=presetInfo.gradientInfo){
@@ -761,7 +761,6 @@ function savePreset(){
     presetInfo.contrastEle = contrastEle.value;
     presetInfo.gradientInfo = gradientInfo;
     console.log("gradient info is ",gradientInfo);
-    // presetInfo.colorSelection = colorSelectionDropdown.value;
     saveGradient();
     presetInfo.fontSize = fontSize.value;
     presetInfo.fontFamily = "Sora";  
