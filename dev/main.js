@@ -567,10 +567,14 @@ window.onload = function() {
     enableInputs();
     currentimageExportRatio = imageExportRatio.value;
     charsetSelector.value = presetInfo.charset;
-    presetInfo.fontFamily = "Sora";//fontDropdown.value;     
-    updateAsset("chartset");
-    videoStatus.textContent=videoInitialStatus;
-}
+    presetInfo.fontFamily = "Sora"; // fontDropdown.value;
+    videoStatus.textContent = videoInitialStatus;
+
+    requestAnimationFrame(() => {
+        updateGradient();
+        updateAsset("charset");
+    });
+};
 
 fontSize.oninput = (e) => {
     fontSize.value = e.target.value;
@@ -744,7 +748,7 @@ function loadPreset(){
     contrastValue.innerHTML = presetInfo.contrastEle;
     fontSize.value = presetInfo.fontSize;
     charsetSelector.value = presetInfo.charset;
-    // colorSelectionDropdown.value = presetInfo.colorSelection;
+    charsetSelector.dispatchEvent(new Event('change'));
     loadGradient();
     updateGradient();
     updatePreset();
