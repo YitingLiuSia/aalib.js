@@ -107,24 +107,18 @@ p{
 }
 
 #video-import {
-    max-width: 100%; /* Ensure the container does not exceed the frame's width */
-    max-height: 100%; /* Ensure the container does not exceed the frame's height */
+    width: auto; /* Ensure the container does not exceed the frame's width */
+    height: 100%; /* Ensure the container does not exceed the frame's height */
     object-fit: contain; /* Ensures the container maintains its aspect ratio */
     border-radius: 10px; /* Match the frame's border-radius to create a mask effect */
     display: flex; /* Use flexbox to center the video */
     justify-content: center; /* Center the video horizontally */
     align-items: center; /* Center the video vertically */
+    align-content: center;
+    margin: auto;
 }
 
-#video-import video {
-    width: 100%;
-    height: 100%;
-    object-fit: contain; /* Ensures the video maintains its aspect ratio */
-    border-radius: 10px; /* Match the frame's border-radius to create a mask effect */
-}
-/* a container for the image, place the image in the middle */
-/* move the vertical one to the center */
-#imported-image{
+#imported-image, #video-import video{
     max-width: 100%; /* Ensure the image does not exceed the frame's width */
     max-height: 100%; /* Ensure the image does not exceed the frame's height */
     object-fit: contain; /* Ensures the image maintains its aspect ratio */
@@ -132,7 +126,7 @@ p{
 }
 
 #asset-selector {
-    min-width: 100%;
+    width: 100%;
 }
 
 #imported-image-frame {
@@ -147,6 +141,7 @@ p{
     justify-content: center;
     align-items: center;
     align-content: center;
+    /* overflow: hidden;  */
 
 }
 #canvas-container {
@@ -155,7 +150,6 @@ p{
     height: auto; /* Fixed height */
     overflow: auto; /* Enable scroll bars when content overflows */
     padding-bottom: 30px;
-    /* background-color:gray; */
 }
 
 #background-setup {
