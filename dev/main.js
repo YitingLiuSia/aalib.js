@@ -148,8 +148,10 @@ imageDropdown.onchange = function(){
 }
 
 assetSelector.onchange = (e) => {
-    // clearCanvas();
     if (e.target.value === "video") {
+        clearCanvas();
+
+        currentImage = null;
         console.log("selected VIDEO");
         videoInput.style.display = "block";
         imageInput.style.display = "none";
@@ -157,15 +159,12 @@ assetSelector.onchange = (e) => {
         imageImportContainer.style.display = "none";
         imageImport.style.display = "none";
         videoImport.style.display = "block";
-
-        // // Check if there's a current video and process it
-        // if (currentVideo) {
-        //     processVideo(currentVideo);
-        // } else {
-        //     // Handle case where there's no current video selected
-        //     console.log("No video selected");
-        // }
     } else {
+        clearCanvas();
+        if (currentVideo) {
+            currentVideo.pause();
+            currentVideo = null;
+        }
         console.log("selected IMAGE");
         videoInput.style.display = "none";
         imageInput.style.display = "block";
@@ -173,19 +172,6 @@ assetSelector.onchange = (e) => {
         imageImportContainer.style.display = "inline-block";
         videoImport.style.display = "none";
         imageImport.style.display = "block";
-        if (currentVideo) {
-            currentVideo.pause();
-            currentVideo = null;
-        }
-        
-        // Pause and clear current video if it exists
-        // Check if there's a current image and process it
-        // if (currentImage) {
-        //     processImage(currentImage);
-        // } else {
-        //     // Handle case where there's no current image selected
-        //     console.log("No image selected");
-        // }
      }
 };
 
@@ -307,9 +293,6 @@ function fromVideoFile(file) {
         video.loop = true;    
         
         video.onloadedmetadata = () => {
-            // if(currentVideo!=video){
-            //     currentVideo = video;
-            // }
            currentVideo = video;
            videoImport.appendChild(currentVideo);  // Append to a specific container
            console.log("current video is ",currentVideo);
@@ -412,7 +395,6 @@ function processVideo(video){
 
     videoProcessingPipeline.map(aalib.render.canvas(canvasOptions))
     .do(function (el) {
-        console.log("el dimension is ", `${el.width}x${el.height}`);
         replaceAssetToDiv(el,'processed-asset');}).subscribe(); 
 }
 
