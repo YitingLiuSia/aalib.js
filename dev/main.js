@@ -72,6 +72,8 @@ const inputs = document.querySelectorAll('input');
 savePresetButton.onclick= savePresetToFile;
 saveImageButton.onclick = downloadImageWithRatio;
 
+let videoResolutionRatio = 3;
+// const throttledProcessVideo = throttle(processVideo, 200); // Adjust the 200ms to your needs
 
 inputs.forEach(e => {
     e.disabled = true;
@@ -119,6 +121,39 @@ const saturationColors = {
 
 let gradientInfo = new GradientInfo();
 let presetInfo = new PresetInfo();
+
+// const domRefs = {
+//     videoImportContainer: document.getElementById("video-container"),
+//     imageImportContainer: document.getElementById("image-container"),
+//     videoInput: document.getElementById('videoInput'),
+//     imageInput: document.getElementById("imageInput"),
+//     imageImport: document.getElementById("imported-image"),
+//     videoImport: document.getElementById('video-import')
+// };
+
+// // Use event delegation for assetSelector changes
+// document.addEventListener('change', (e) => {
+//     clearCanvas();
+//     if (e.target.id === 'asset-selector') {
+//         const isVideo = e.target.value === "video";
+//         domRefs.videoImportContainer.style.display = isVideo ? "block" : "none";
+//         domRefs.imageImportContainer.style.display = isVideo ? "none" : "inline-block";
+//         domRefs.videoInput.style.display = isVideo ? "block" : "none";
+//         domRefs.imageInput.style.display = isVideo ? "none" : "block";
+//         domRefs.imageImport.style.display =isVideo ? "block" : "none";
+//         domRefs.videoImport.style.display =isVideo ? "none" : "block";
+
+//         if(isVideo){
+//             if (currentVideo) {
+//                 currentVideo.pause();
+//                 currentVideo = null;
+//             } 
+//         }else{
+//             currentImage = null;
+//         }
+//     }
+// });
+
 
 document.addEventListener('DOMContentLoaded', () => fetchPresetFromJson("Presets/presetInfo.json"));
 startRecordingButton.onclick = recordAndDownloadVideo;
@@ -293,11 +328,13 @@ function fromVideoFile(file) {
         video.loop = true;    
         
         video.onloadedmetadata = () => {
-           currentVideo = video;
+            currentVideo = video;
+        //     if(currentVideo!=video){
+        //    currentVideo = video;}
            videoImport.appendChild(currentVideo);  // Append to a specific container
            console.log("current video is ",currentVideo);
            resolve(currentVideo);
-           processVideo(currentVideo);
+        //    processVideo(currentVideo);
         };
 
         video.onerror = () => {
@@ -359,6 +396,8 @@ function processVideo(video){
     if(colorSelectionDropdown.value==="white"){
         backgroundColor =  colorBlack; 
     }
+
+    console.log("video width and height is ",asciiDimensions.width * charWidthValue, asciiDimensions.height * lineHeightValue );
     const canvasOptions = {
         fontSize: fontSize.value,
         fontFamily: "Sora",
@@ -392,7 +431,7 @@ function processVideo(video){
         console.log("contrastValue value ", contrastValue.value);
         videoProcessingPipeline = videoProcessingPipeline.map(aalib.filter.contrast(contrastValue.value));
     }
-
+       
     videoProcessingPipeline.map(aalib.render.canvas(canvasOptions))
     .do(function (el) {
         replaceAssetToDiv(el,'processed-asset');}).subscribe(); 
@@ -639,8 +678,8 @@ function updateAsset(funcName){
     }else{
         if(currentVideo){
             console.log(`${funcName} - update VIDEO`);
-            processVideo(currentVideo);
-            
+            //processVideo(currentVideo);
+            throttle(processVideo(currentVideo),200);
         }
     }
 }
@@ -657,16 +696,12 @@ function updateSaturation(){
 function updateGradient(){
     let sliderAngle = 0;
     updateSaturation();
- // Pass the angle and width directly for the slider canvas
     updateGradientFromCanvas(gradientSliderCanvasCTX, sliderAngle, gscWidth);
     gradientSliderCanvasCTX.fillStyle = gradient;
     gradientSliderCanvasCTX.fillRect(0, 0, gscWidth, gscHeight);
-    
-    // Pass the currentGradientAngle and gcWidth for the main gradient canvas
     updateGradientFromCanvas(gradientCanvasCTX, currentGradientAngle, gcWidth);
     gradientCanvasCTX.fillStyle = gradient;
     gradientCanvasCTX.fillRect(0, 0, gcWidth, gcHeight);
-
     updateAsset("gradient");
 }
 
@@ -735,7 +770,6 @@ function updatePreset(){
     }
     if(gradientInfo!=presetInfo.gradientInfo){
         gradientInfo = presetInfo.gradientInfo;
-        // console.log("gradient info is ", gradientInfo);
     }
 }
 
@@ -838,4 +872,39 @@ function calculateAsciiDimensionsForImageSize(pixelWidth, pixelHeight, charPixel
         width: asciiWidth,
         height: asciiHeight
     };}
+}
+
+
+//Use throttling when you want to ensure that your function is called at regular intervals. For example, updating a UI element in response to a scroll event.
+
+function throttle(func, limit) {
+    let lastFunc;
+    let lastRan;
+    return function() {
+        const context = this;
+        const args = arguments;
+        if (!lastRan) {
+            func.apply(context, args);
+            lastRan = Date.now();
+        } else {
+            clearTimeout(lastFunc);
+            lastFunc = setTimeout(function() {
+                if ((Date.now() - lastRan) >= limit) {
+                    func.apply(context, args);
+                    lastRan = Date.now();
+                }
+            }, limit - (Date.now() - lastRan));
+        }
+    }
+}
+
+//Use debouncing when you want to ensure that your function is called after the event stops firing for a specified period.
+function debounce(func, delay) {
+    let inDebounce;
+    return function() {
+        const context = this;
+        const args = arguments;
+        clearTimeout(inDebounce);
+        inDebounce = setTimeout(() => func.apply(context, args), delay);
+    }
 }
