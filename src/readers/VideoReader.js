@@ -22,14 +22,20 @@ export default class VideoReader extends AbstractReader {
 
     onRead(observer) {
         const video = this.video;
-
-        this.playbackLoop = () => {
+        let lastTime = 0; // Keep track of the last capture time
+        const captureInterval = 1000 / 30; // Capture at 30 fps, adjust as needed
+    
+        this.playbackLoop = (time) => {
             if (video.paused || video.ended) {
                 return;
             }
-
-            observer.next(AAImage.fromImageData(this.captureFrame(video)));
-
+    
+            // Only capture if enough time has passed
+            if (time - lastTime >= captureInterval) {
+                observer.next(AAImage.fromImageData(this.captureFrame(video)));
+                lastTime = time;
+            }
+    
             requestAnimationFrame(this.playbackLoop);
         };
 
