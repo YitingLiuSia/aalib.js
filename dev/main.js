@@ -384,8 +384,8 @@ function processVideo(video){
     }
 
     videoStatus.textContent=videoProcessing;
-    const videoWidth = video.videoWidth;  
-    const videoHeight = video.videoHeight;
+    const videoWidth = video.videoWidth * videoResolutionRatio;  
+    const videoHeight = video.videoHeight* videoResolutionRatio; 
     const charWidthValue = fontSize.value*charWidthOffsetRatio;//*0.8;
     const lineHeightValue = fontSize.value*lineHeightOffsetRatio;//0.8;
     const asciiDimensions = calculateAsciiDimensionsForImageSize(videoWidth, videoHeight, Number(fontSize.value) , Number(fontSize.value)/charWidthOffsetRatio*lineHeightOffsetRatio);
