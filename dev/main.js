@@ -147,27 +147,47 @@ imageDropdown.onchange = function(){
     console.log("iscanvas", isCanvas);
 }
 
-assetSelector.onchange=((e)=>{
-    if(e.target.value==="video"){
-        console.log("selected video");
-        videoInput.style.display="block";
-        imageInput.style.display="none";
-        videoImportContainer.style.display="block";
-        imageImportContainer.style.display="none";
-        imageImport.style.display="none";
-        videoImport.style.display="block";
-        currentVideo=null;
+assetSelector.onchange = (e) => {
+    // clearCanvas();
+    if (e.target.value === "video") {
+        console.log("selected VIDEO");
+        videoInput.style.display = "block";
+        imageInput.style.display = "none";
+        videoImportContainer.style.display = "block";
+        imageImportContainer.style.display = "none";
+        imageImport.style.display = "none";
+        videoImport.style.display = "block";
 
-    }else{
-        videoInput.style.display="none";
-        imageInput.style.display="block";
-        videoImportContainer.style.display="none";
-        imageImportContainer.style.display="inline-block";
-        videoImport.style.display="none";
-        imageImport.style.display="block";
-        currentImage=null;
-    }
-});
+        // // Check if there's a current video and process it
+        // if (currentVideo) {
+        //     processVideo(currentVideo);
+        // } else {
+        //     // Handle case where there's no current video selected
+        //     console.log("No video selected");
+        // }
+    } else {
+        console.log("selected IMAGE");
+        videoInput.style.display = "none";
+        imageInput.style.display = "block";
+        videoImportContainer.style.display = "none";
+        imageImportContainer.style.display = "inline-block";
+        videoImport.style.display = "none";
+        imageImport.style.display = "block";
+        if (currentVideo) {
+            currentVideo.pause();
+            currentVideo = null;
+        }
+        
+        // Pause and clear current video if it exists
+        // Check if there's a current image and process it
+        // if (currentImage) {
+        //     processImage(currentImage);
+        // } else {
+        //     // Handle case where there's no current image selected
+        //     console.log("No image selected");
+        // }
+     }
+};
 
 videoTypeSelector.onchange=((e)=>{
     currentVideoType = e.target.value;
@@ -175,7 +195,7 @@ videoTypeSelector.onchange=((e)=>{
 });
 
 function restartVideo(video){
-    if (!video.paused && !video.ended && video.readyState > 2) {
+    if (video && !video.paused && !video.ended && video.readyState > 2) {
         video.pause(); // Pause only if the video is currently playing
     }
     video.currentTime = 0; // Reset video playback to the beginning
@@ -287,12 +307,14 @@ function fromVideoFile(file) {
         video.loop = true;    
         
         video.onloadedmetadata = () => {
-            if(currentVideo!=video){
-                currentVideo = video;
-            }
+            // if(currentVideo!=video){
+            //     currentVideo = video;
+            // }
+           currentVideo = video;
            videoImport.appendChild(currentVideo);  // Append to a specific container
            console.log("current video is ",currentVideo);
            resolve(currentVideo);
+           processVideo(currentVideo);
         };
 
         video.onerror = () => {
@@ -308,6 +330,7 @@ videoInput.addEventListener('change', function (event) {
     }
     if (file) {
         fromVideoFile(file).then(video => {  
+            clearCanvas();
             processVideo(video);
         }).catch(error => {
             console.error("Error loading video:", error);
@@ -334,6 +357,12 @@ function downloadImageWithRatio(){
 }
 
 function processVideo(video){
+    // clearCanvas();
+    if (!video || typeof video.videoWidth === 'undefined' || typeof video.videoHeight === 'undefined') {
+        console.error('Video is not loaded or undefined');
+        return; // Exit the function to avoid further errors
+    }
+
     videoStatus.textContent=videoProcessing;
     const videoWidth = video.videoWidth;  
     const videoHeight = video.videoHeight;
@@ -341,11 +370,6 @@ function processVideo(video){
     const lineHeightValue = fontSize.value*lineHeightOffsetRatio;//0.8;
     const asciiDimensions = calculateAsciiDimensionsForImageSize(videoWidth, videoHeight, Number(fontSize.value) , Number(fontSize.value)/charWidthOffsetRatio*lineHeightOffsetRatio);
     const aaReq = { width:asciiDimensions.width  , height: asciiDimensions.height};
-    if (processedAssetCanvas) {
-        const ctx = processedAssetCanvas.getContext('2d');
-        console.log("meant to clear the ctx");
-        ctx.clearRect(0, 0, videoWidth, videoHeight);
-    }
 
     restartVideo(video);
     let backgroundColor = "rgba(255,255,255,1)"; 
@@ -386,10 +410,19 @@ function processVideo(video){
         videoProcessingPipeline = videoProcessingPipeline.map(aalib.filter.contrast(contrastValue.value));
     }
 
-    videoProcessingPipeline.map(aalib.render.canvas(canvasOptions)).subscribe();
+    videoProcessingPipeline.map(aalib.render.canvas(canvasOptions))
+    .do(function (el) {
+        console.log("el dimension is ", `${el.width}x${el.height}`);
+        replaceAssetToDiv(el,'processed-asset');}).subscribe(); 
 }
 
 function processImage(img){
+    // clearCanvas();
+    if (!img || typeof img.width === 'undefined' || typeof img.height === 'undefined') {
+        console.error('Image is not loaded or undefined');
+        return; // Exit the function to avoid further errors
+    }
+
     const imageWidth = img.width;  
     const imageHeight = img.height;
     const charWidthValue = fontSize.value*charWidthOffsetRatio;//*0.8;
@@ -608,6 +641,13 @@ charsetSelector.onchange=(e)=>{
     updateAsset("charset");
 }
 
+function clearCanvas(){
+    let ctx = processedAssetCanvas.getContext('2d');
+    if (processedAssetCanvas) {
+        console.log("meant to clear the ctx ",processedAssetCanvas.width, processedAssetCanvas.height);
+        ctx.clearRect(0, 0, processedAssetCanvas.width, processedAssetCanvas.height);
+    }
+}
 function updateAsset(funcName){
     if(assetSelector.value==="image"){
         if(currentImage){
