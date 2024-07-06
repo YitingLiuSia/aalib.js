@@ -68,6 +68,8 @@ const charWidthOffsetRatio = 0.8;
 const lineHeightOffsetRatio = 1.6;
 const ratioValue = 2;
 const inputs = document.querySelectorAll('input');
+let debounceDelay = 500;
+let throttleDelay = 200;
 
 savePresetButton.onclick= savePresetToFile;
 saveImageButton.onclick = downloadImageWithRatio;
@@ -669,7 +671,9 @@ function clearCanvas(){
         ctx.clearRect(0, 0, processedAssetCanvas.width, processedAssetCanvas.height);
     }
 }
-function updateAsset(funcName){
+
+function updateAssetBeforeDebounce(funcName){
+    console.log("in debounce");
     if(assetSelector.value==="image"){
         if(currentImage){
             console.log(`${funcName} - update IMAGE`);
@@ -678,10 +682,15 @@ function updateAsset(funcName){
     }else{
         if(currentVideo){
             console.log(`${funcName} - update VIDEO`);
-            //processVideo(currentVideo);
-            throttle(processVideo(currentVideo),200);
+            throttle(processVideo(currentVideo),throttleDelay);
         }
     }
+
+
+}
+function updateAsset(funcName){
+    console.log("update asset before debounce");
+   debounce(updateAssetBeforeDebounce(funcName),debounceDelay);
 }
 
 function updateSaturation(){
@@ -876,7 +885,6 @@ function calculateAsciiDimensionsForImageSize(pixelWidth, pixelHeight, charPixel
 
 
 //Use throttling when you want to ensure that your function is called at regular intervals. For example, updating a UI element in response to a scroll event.
-
 function throttle(func, limit) {
     let lastFunc;
     let lastRan;
