@@ -338,6 +338,22 @@ function downloadRecordedVideo(videoType) {
     videoStatus.textContent=videoDownloaded;
 }
 
+let videoFileLimit = 500;
+
+function checkVideoFileSize(video){
+
+    if(video.size >=videoFileLimit){
+
+      return  compressVideoFile(video);
+    }else{
+        return video;
+    }
+}
+function compressVideoFile(video){
+
+
+
+}
 function fromVideoFile(file) {
     return new Promise((resolve, reject) => {
         const video = document.createElement('video');
