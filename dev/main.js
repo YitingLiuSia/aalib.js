@@ -71,8 +71,8 @@ const ratioValue = 2;
 const inputs = document.querySelectorAll('input');
 let debounceDelay = 500;
 let throttleDelay = 200;
-const videoFPS = 30; // Example: 30 FPS, adjust this based on your video's FPS
-let currentvideoExportRatio = 3;
+const videoFPS = 60; // Example: 30 FPS, adjust this based on your video's FPS
+let currentvideoExportRatio = 1;
 
 savePresetButton.onclick= savePresetToFile;
 saveImageButton.onclick = downloadImageWithRatio;
@@ -219,14 +219,18 @@ videoTypeSelector.onchange=((e)=>{
     currentVideoType = e.target.value;
     console.log("current video type is ",currentVideoType);
 });
+
 videoExportRatio.oninput=((e)=>{
     videoExportRatio.value = e.target.value;
     currentvideoExportRatio = e.target.value;
+    updateAsset("video ratio");
+
     console.log("current video export ratio is ", currentvideoExportRatio);
 });
 
 function restartVideo(video){
     if (video && !video.paused && !video.ended && video.readyState > 2) {
+        console.log("pause video first");
         video.pause(); // Pause only if the video is currently playing
     }
     video.currentTime = 0; // Reset video playback to the beginning
@@ -234,7 +238,8 @@ function restartVideo(video){
 }
 
 function recordAndDownloadVideo(){
-    setupMediaRecorder(processedAssetCanvas, 1, currentimageExportRatio); // displayScaleFactor = 1, downloadScaleFactor = 3
+    console.log("record and download video");
+    setupMediaRecorder(processedAssetCanvas); 
     restartVideo(currentVideo);
     startRecording();
     setTimeout(() => {
@@ -250,15 +255,12 @@ function downloadVideo(){
         console.error("No recorded chunks available");
     }
 }
-function setupMediaRecorder(canvas, displayScaleFactor = 1, downloadScaleFactor = 3) {
-
-    const displayWidth = canvas.width * displayScaleFactor;
-    const displayHeight = canvas.height * displayScaleFactor;
-    canvas.width = displayWidth;
-    canvas.height = displayHeight;
-
-    const ctx = canvas.getContext('2d');
-    ctx.scale(displayScaleFactor, displayScaleFactor);
+function setupMediaRecorder(canvas, downloadScaleFactor = 3) {
+    const originalWidth = canvas.width;
+    const originalHeight = canvas.height;
+    const ctx = canvas.getContext("2d");
+    // canvas.width= displayWidth;
+    // canvas.height = displayHeight;
 
     const stream = canvas.captureStream(videoFPS);
     mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm; codecs=vp9' });
@@ -270,18 +272,15 @@ function setupMediaRecorder(canvas, displayScaleFactor = 1, downloadScaleFactor 
 
     mediaRecorder.onstop = function () {
         // Reset canvas to original size for high resolution download
-        canvas.width /= displayScaleFactor;
-        canvas.height /= displayScaleFactor;
-        ctx.scale(downloadScaleFactor / displayScaleFactor, downloadScaleFactor / displayScaleFactor);
         downloadVideo();
     };
-
 
     mediaRecorder.onerror = function (event) {
         console.error("MediaRecorder error:", event.error);
     };
 
     mediaRecorder.onstart = function () {
+        ctx.scale(1,1);
         console.log("MediaRecorder started");
     };
 
@@ -397,67 +396,130 @@ function downloadImageWithRatio(){
     link.click();    
     tempCanvas.remove();
 }
+let videoProcessingPipeline;
 
 function processVideo(video){
-    // clearCanvas();
+    clearCanvas();
     if (!video || typeof video.videoWidth === 'undefined' || typeof video.videoHeight === 'undefined') {
         console.error('Video is not loaded or undefined');
         return; // Exit the function to avoid further errors
     }
 
     videoStatus.textContent=videoProcessing;
-    const videoWidth = video.videoWidth;// * videoResolutionRatio;  
-    const videoHeight = video.videoHeight;//* videoResolutionRatio; 
-    const charWidthValue = fontSize.value*charWidthOffsetRatio;//*0.8;
-    const lineHeightValue = fontSize.value*lineHeightOffsetRatio;//0.8;
-    const asciiDimensions = calculateAsciiDimensionsForImageSize(videoWidth, videoHeight, Number(fontSize.value) , Number(fontSize.value)/charWidthOffsetRatio*lineHeightOffsetRatio);
-    const aaReq = { width:asciiDimensions.width  , height: asciiDimensions.height};
+    const videoWidth = video.videoWidth * currentvideoExportRatio;
+    const videoHeight = video.videoHeight * currentvideoExportRatio;
+    const charWidthValue = fontSize.value * charWidthOffsetRatio;
+    const lineHeightValue = fontSize.value * lineHeightOffsetRatio;
+    const asciiDimensions = calculateAsciiDimensionsForImageSize(videoWidth, videoHeight, Number(fontSize.value), Number(fontSize.value)/charWidthOffsetRatio*lineHeightOffsetRatio);
+    const aaReq = { width:asciiDimensions.width, height: asciiDimensions.height };
 
-    restartVideo(video);
-    let backgroundColor = "rgba(255,255,255,1)"; 
+    let backgroundColor = "rgba(255,255,255,1)";
     if(colorSelectionDropdown.value==="white"){
-        backgroundColor =  colorBlack; 
+        backgroundColor = colorBlack;
     }
 
-    console.log("video width and height is ",asciiDimensions.width * charWidthValue, asciiDimensions.height * lineHeightValue );
     const canvasOptions = {
         fontSize: fontSize.value,
         fontFamily: "Sora",
         lineHeight: lineHeightValue,
         charWidth: charWidthValue,
         charset: presetInfo.charset,
-        width: asciiDimensions.width * charWidthValue,  
-        height: asciiDimensions.height * lineHeightValue, 
-        background: backgroundColor,// make the background white 
+        width: asciiDimensions.width * charWidthValue,
+        height: asciiDimensions.height * lineHeightValue,
+        background: backgroundColor,
         color: gradient,
         el: processedAssetCanvas
     };
 
+    console.log(`video dimension is ${video.videoWidth}x${video.videoHeight}`);
+    console.log(`canvas dimension is ${canvasOptions.width}x${canvasOptions.height}`);
     // Adjust the canvas size to match the ASCII dimensions
     processedAssetCanvas.width = canvasOptions.width;
     processedAssetCanvas.height = canvasOptions.height;
 
-    let videoProcessingPipeline=aalib.read.video.fromVideoElement(video);
+    videoProcessingPipeline = aalib.read.video.fromVideoElement(video);
 
     videoProcessingPipeline = videoProcessingPipeline.map(aalib.aa(aaReq));
 
     if (inverseEle.checked) {
-        console.log("inverse elemenet is checked ", inverseEle.checked)
         videoProcessingPipeline = videoProcessingPipeline.map(aalib.filter.inverse());
     }
     if (brightnessValue.value !== undefined) {
-        console.log("brightnessValue value ", brightnessValue.value);
         videoProcessingPipeline = videoProcessingPipeline.map(aalib.filter.brightness(brightnessValue.value));
     }
     if (contrastValue.value !== undefined) {
-        console.log("contrastValue value ", contrastValue.value);
         videoProcessingPipeline = videoProcessingPipeline.map(aalib.filter.contrast(contrastValue.value));
     }
-       
+
     videoProcessingPipeline.map(aalib.render.canvas(canvasOptions))
     .do(function (el) {
-        replaceAssetToDiv(el,'processed-asset');}).subscribe(); 
+        replaceAssetToDiv(el,'processed-asset');
+    }).subscribe();
+    
+    restartVideo(video); // This will also play the video
+
+
 }
+
+// function processVideo(video){
+//     clearCanvas();
+//     if (!video || typeof video.videoWidth === 'undefined' || typeof video.videoHeight === 'undefined') {
+//         console.error('Video is not loaded or undefined');
+//         return; // Exit the function to avoid further errors
+//     }
+
+//     restartVideo(video);
+//     videoStatus.textContent=videoProcessing;
+//     const videoWidth = video.videoWidth;// * videoResolutionRatio;  
+//     const videoHeight = video.videoHeight;//* videoResolutionRatio; 
+//     const charWidthValue = fontSize.value*charWidthOffsetRatio;//*0.8;
+//     const lineHeightValue = fontSize.value*lineHeightOffsetRatio;//0.8;
+//     const asciiDimensions = calculateAsciiDimensionsForImageSize(videoWidth, videoHeight, Number(fontSize.value) , Number(fontSize.value)/charWidthOffsetRatio*lineHeightOffsetRatio);
+//     const aaReq = { width:asciiDimensions.width  , height: asciiDimensions.height};
+
+//     let backgroundColor = "rgba(255,255,255,1)"; 
+//     if(colorSelectionDropdown.value==="white"){
+//         backgroundColor =  colorBlack; 
+//     }
+
+//     console.log("video width and height is ",asciiDimensions.width * charWidthValue, asciiDimensions.height * lineHeightValue );
+//     const canvasOptions = {
+//         fontSize: fontSize.value,
+//         fontFamily: "Sora",
+//         lineHeight: lineHeightValue,
+//         charWidth: charWidthValue,
+//         charset: presetInfo.charset,
+//         width: asciiDimensions.width * charWidthValue,  
+//         height: asciiDimensions.height * lineHeightValue, 
+//         background: backgroundColor,// make the background white 
+//         color: gradient,
+//         el: processedAssetCanvas
+//     };
+
+//     processedAssetCanvas.width = canvasOptions.width;
+//     processedAssetCanvas.height = canvasOptions.height;
+  
+//     videoProcessingPipeline =aalib.read.video.fromVideoElement(video);
+   
+//     videoProcessingPipeline = videoProcessingPipeline.map(aalib.aa(aaReq));
+
+//     if (inverseEle.checked) {
+//         console.log("inverse elemenet is checked ", inverseEle.checked)
+//         videoProcessingPipeline = videoProcessingPipeline.map(aalib.filter.inverse());
+//     }
+//     if (brightnessValue.value !== undefined) {
+//         console.log("brightnessValue value ", brightnessValue.value);
+//         videoProcessingPipeline = videoProcessingPipeline.map(aalib.filter.brightness(brightnessValue.value));
+//     }
+//     if (contrastValue.value !== undefined) {
+//         console.log("contrastValue value ", contrastValue.value);
+//         videoProcessingPipeline = videoProcessingPipeline.map(aalib.filter.contrast(contrastValue.value));
+//     }
+    
+//     videoProcessingPipeline.map(aalib.render.canvas(canvasOptions))
+//     .do(function (el) {
+//         replaceAssetToDiv(el,'processed-asset');}).subscribe(); 
+// }
 
 function processImage(img){
     // clearCanvas();
@@ -710,7 +772,7 @@ function updateAssetBeforeDebounce(funcName){
 }
 function updateAsset(funcName){
     console.log("update asset before debounce");
-   debounce(updateAssetBeforeDebounce(funcName),debounceDelay);
+    debounce(updateAssetBeforeDebounce(funcName),debounceDelay);
 }
 
 function updateSaturation(){
