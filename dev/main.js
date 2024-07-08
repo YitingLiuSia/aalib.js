@@ -10,10 +10,7 @@ let gradientCanvas = document.getElementById("gradient-canvas");
 let gradientSliderCanvas = document.getElementById("gradient-slider-canvas");
 let gradientSliderCanvasCTX = gradientSliderCanvas.getContext('2d');
 let gradientCanvasCTX = gradientCanvas.getContext('2d');
-let gscWidth = gradientSliderCanvas.width;
-let gscHeight = gradientSliderCanvas.height;
-let gcWidth = gradientCanvas.width;
-let gcHeight = gradientCanvas.height;
+
 let gradient;
 let savePresetButton = document.getElementById("save-preset");
 let inverseEle = document.getElementById("inverse");
@@ -570,10 +567,14 @@ function processImage(img){
         color: gradient
     };
 
+
     // Adjust the canvas size to match the ASCII dimensions
     processedAssetCanvas.width = canvasOptions.width;
     processedAssetCanvas.height = canvasOptions.height;
 
+    processedAssetCanvasCTX.fillStyle = gradient;
+    processedAssetCanvasCTX.fillRect(0, 0, processedAssetCanvas.width, processedAssetCanvas.height);
+    
     let imageProcessingPipeline = aalib.read.image.fromURL(img.src);
        
     if (inverseEle.checked) {
@@ -802,15 +803,60 @@ function updateSaturation(){
 
 function updateGradient(){
     let sliderAngle = 0;
+    let gscWidth = gradientSliderCanvas.width;
+    let gscHeight = gradientSliderCanvas.height;
+    let gcWidth = gradientCanvas.width;
+    let gcHeight = gradientCanvas.height;
     updateSaturation();
-    updateGradientFromCanvas(gradientSliderCanvasCTX, sliderAngle, gscWidth);
+    // Pass both width and height to consider the gradient's direction properly
+    updateGradientFromCanvas(gradientSliderCanvasCTX, sliderAngle, gscWidth, gscHeight);
     gradientSliderCanvasCTX.fillStyle = gradient;
     gradientSliderCanvasCTX.fillRect(0, 0, gscWidth, gscHeight);
-    updateGradientFromCanvas(gradientCanvasCTX, currentGradientAngle, gcWidth);
+    console.log(`gradientSliderCanvasCTX dimension: ${gscWidth}x${gscHeight}`);
+    // Use both gcWidth and gcHeight for the main gradient canvas
+    updateGradientFromCanvas(gradientCanvasCTX, currentGradientAngle, gcWidth, gcHeight);
+    console.log(`gradientCanvasCTX dimension: ${gcWidth}x${gcHeight}`);
     gradientCanvasCTX.fillStyle = gradient;
     gradientCanvasCTX.fillRect(0, 0, gcWidth, gcHeight);
     updateAsset("gradient");
 }
+
+function updateGradientFromCanvas(canvas, angle, width, height){
+    let radian = angle * Math.PI / 180;
+    // Calculate the end point considering both width and height for a diagonal gradient
+    let x2 = width * Math.cos(radian);
+    let y2 = height * Math.sin(radian);
+    gradient = canvas.createLinearGradient(0, 0, x2, y2);
+    if(currentPos1 && currentPos2 && currentPos3){
+        gradient.addColorStop(currentPos1 / 100.0, currentColor1);
+        gradient.addColorStop(currentPos2 / 100.0, currentColor2);
+        gradient.addColorStop(currentPos3 / 100.0, currentColor3);
+    }
+}
+
+// function updateGradient(){
+//     let sliderAngle = 0;
+//     updateSaturation();
+//     updateGradientFromCanvas(gradientSliderCanvasCTX, sliderAngle, gscWidth);
+//     gradientSliderCanvasCTX.fillStyle = gradient;
+//     gradientSliderCanvasCTX.fillRect(0, 0, gscWidth, gscHeight);
+//     updateGradientFromCanvas(gradientCanvasCTX, currentGradientAngle, gcWidth);
+//     gradientCanvasCTX.fillStyle = gradient;
+//     gradientCanvasCTX.fillRect(0, 0, gcWidth, gcHeight);
+//     updateAsset("gradient");
+// }
+
+// function updateGradientFromCanvas(canvas, angle, width){
+//     let radian = angle * Math.PI / 180;
+//     let x2 = width * Math.cos(radian);
+//     let y2 = width * Math.sin(radian);
+//     gradient = canvas.createLinearGradient(0, 0, x2, y2);
+//     if(currentPos1 && currentPos2 && currentPos3){
+//         gradient.addColorStop(currentPos1 / 100.0, currentColor1);
+//         gradient.addColorStop(currentPos2 / 100.0, currentColor2);
+//         gradient.addColorStop(currentPos3 / 100.0, currentColor3);
+//     }
+// }
 
 function updateColor(color){
     gradient=color;
@@ -844,17 +890,7 @@ function displayForGradientOrColor(displayGradient){
     }
 
 }
-function updateGradientFromCanvas(canvas, angle, width){
-    let radian = angle * Math.PI / 180;
-    let x2 = width * Math.cos(radian);
-    let y2 = width * Math.sin(radian);
-    gradient = canvas.createLinearGradient(0, 0, x2, y2);
-    if(currentPos1 && currentPos2 && currentPos3){
-        gradient.addColorStop(currentPos1 / 100.0, currentColor1);
-        gradient.addColorStop(currentPos2 / 100.0, currentColor2);
-        gradient.addColorStop(currentPos3 / 100.0, currentColor3);
-    }
-}
+
 function updatePreset(){
     if(brightnessEle.value!=presetInfo.brightnessEle){
         brightnessEle.value = presetInfo.brightnessEle;
