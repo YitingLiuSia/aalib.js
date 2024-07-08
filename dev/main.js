@@ -69,7 +69,7 @@ const charWidthOffsetRatio = 0.8;
 const lineHeightOffsetRatio = 1.6;
 const ratioValue = 2;
 const inputs = document.querySelectorAll('input');
-let debounceDelay = 500;
+let debounceDelay = 1000;
 let throttleDelay = 200;
 const videoFPS = 60; // Example: 30 FPS, adjust this based on your video's FPS
 let currentvideoExportRatio = 1;
@@ -190,7 +190,6 @@ imageDropdown.onchange = function(){
 assetSelector.onchange = (e) => {
     if (e.target.value === "video") {
         clearCanvas();
-
         currentImage = null;
         console.log("selected VIDEO");
         videoInput.style.display = "block";
@@ -224,7 +223,6 @@ videoExportRatio.oninput=((e)=>{
     videoExportRatio.value = e.target.value;
     currentvideoExportRatio = e.target.value;
     updateAsset("video ratio");
-
     console.log("current video export ratio is ", currentvideoExportRatio);
 });
 
@@ -239,7 +237,7 @@ function restartVideo(video){
 
 function recordAndDownloadVideo(){
     console.log("record and download video");
-    setupMediaRecorder(processedAssetCanvas); 
+    setupMediaRecorder(processedAssetCanvas, currentvideoExportRatio); 
     restartVideo(currentVideo);
     startRecording();
     setTimeout(() => {
@@ -255,21 +253,25 @@ function downloadVideo(){
         console.error("No recorded chunks available");
     }
 }
-function setupMediaRecorder(canvas, downloadScaleFactor = 3) {
-    const originalWidth = canvas.width;
-    const originalHeight = canvas.height;
-    const ctx = canvas.getContext("2d");
-    // canvas.width= displayWidth;
-    // canvas.height = displayHeight;
+function setupMediaRecorder(canvas, scaleFactor = 3) {
+    const scaledCanvas = document.createElement('canvas');
+    const scaledCtx = scaledCanvas.getContext('2d');
+    scaledCanvas.width = canvas.width * scaleFactor;
+    scaledCanvas.height = canvas.height * scaleFactor;
 
-    const stream = canvas.captureStream(videoFPS);
+    // Draw the original canvas content onto the scaled canvas
+    scaledCtx.scale(scaleFactor, scaleFactor);
+    scaledCtx.drawImage(canvas, 0, 0, scaledCtx.width, scaledCtx.height);
+
+    // Use the scaled canvas for capturing the stream
+    const stream = scaledCanvas.captureStream(videoFPS); // Assuming videoFPS is defined elsewhere
     mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm; codecs=vp9' });
+
     mediaRecorder.ondataavailable = function (event) {
         if (event.data.size > 0) {
             recordedChunks.push(event.data);
         }
     };
-
     mediaRecorder.onstop = function () {
         // Reset canvas to original size for high resolution download
         downloadVideo();
@@ -280,7 +282,7 @@ function setupMediaRecorder(canvas, downloadScaleFactor = 3) {
     };
 
     mediaRecorder.onstart = function () {
-        ctx.scale(1,1);
+        // ctx.scale(1,1);
         console.log("MediaRecorder started");
     };
 
@@ -406,8 +408,10 @@ function processVideo(video){
     }
 
     videoStatus.textContent=videoProcessing;
-    const videoWidth = video.videoWidth * currentvideoExportRatio;
-    const videoHeight = video.videoHeight * currentvideoExportRatio;
+    // const videoWidth = video.videoWidth * currentvideoExportRatio;
+    // const videoHeight = video.videoHeight * currentvideoExportRatio;  
+    const videoWidth = video.videoWidth;
+    const videoHeight = video.videoHeight;
     const charWidthValue = fontSize.value * charWidthOffsetRatio;
     const lineHeightValue = fontSize.value * lineHeightOffsetRatio;
     const asciiDimensions = calculateAsciiDimensionsForImageSize(videoWidth, videoHeight, Number(fontSize.value), Number(fontSize.value)/charWidthOffsetRatio*lineHeightOffsetRatio);
@@ -433,6 +437,7 @@ function processVideo(video){
 
     console.log(`video dimension is ${video.videoWidth}x${video.videoHeight}`);
     console.log(`canvas dimension is ${canvasOptions.width}x${canvasOptions.height}`);
+
     // Adjust the canvas size to match the ASCII dimensions
     processedAssetCanvas.width = canvasOptions.width;
     processedAssetCanvas.height = canvasOptions.height;
@@ -749,13 +754,13 @@ charsetSelector.onchange=(e)=>{
 function clearCanvas(){
     let ctx = processedAssetCanvas.getContext('2d');
     if (processedAssetCanvas) {
-        console.log("meant to clear the ctx ",processedAssetCanvas.width, processedAssetCanvas.height);
+        // console.log("meant to clear the ctx ",processedAssetCanvas.width, processedAssetCanvas.height);
         ctx.clearRect(0, 0, processedAssetCanvas.width, processedAssetCanvas.height);
     }
 }
 
 function updateAssetBeforeDebounce(funcName){
-    console.log("in debounce");
+    // console.log("in debounce");
     if(assetSelector.value==="image"){
         if(currentImage){
             console.log(`${funcName} - update IMAGE`);
@@ -764,14 +769,13 @@ function updateAssetBeforeDebounce(funcName){
     }else{
         if(currentVideo){
             console.log(`${funcName} - update VIDEO`);
-            throttle(processVideo(currentVideo),throttleDelay);
+            processVideo(currentVideo);
+            // throttle(processVideo(currentVideo),throttleDelay);
         }
     }
 
-
 }
 function updateAsset(funcName){
-    console.log("update asset before debounce");
     debounce(updateAssetBeforeDebounce(funcName),debounceDelay);
 }
 
@@ -785,6 +789,10 @@ function updateSaturation(){
 }
 
 function updateGradient(){
+   debounce(updateGradientBeforeDebounce, debounceDelay);
+}
+
+function updateGradientBeforeDebounce(){
     let sliderAngle = 0;
     updateSaturation();
     updateGradientFromCanvas(gradientSliderCanvasCTX, sliderAngle, gscWidth);
@@ -795,7 +803,6 @@ function updateGradient(){
     gradientCanvasCTX.fillRect(0, 0, gcWidth, gcHeight);
     updateAsset("gradient");
 }
-
 function updateColor(color){
     gradient=color;
     gradientCanvasCTX.fillStyle = gradient;
