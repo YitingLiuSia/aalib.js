@@ -66,7 +66,7 @@ let backgroundCanvasForWhiteCTX=backgroundCanvasForWhite.getContext('2d');
 let videoExportRatio = document.getElementById("videoExportRatio");
 
 const charWidthOffsetRatio = 0.8;
-const lineHeightOffsetRatio = 1.6;
+const lineHeightOffsetRatio = 2.5;
 const ratioValue = 2;
 const inputs = document.querySelectorAll('input');
 let debounceDelay = 500;
