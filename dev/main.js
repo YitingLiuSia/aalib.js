@@ -63,6 +63,7 @@ let videoProcessing = "Current status: processing video";
 let videoDownloaded = "Current status: video saved";
 let backgroundCanvasForWhite= document.getElementById("background-setup");
 let backgroundCanvasForWhiteCTX=backgroundCanvasForWhite.getContext('2d');
+let videoExportRatio = document.getElementById("videoExportRatio");
 
 const charWidthOffsetRatio = 0.8;
 const lineHeightOffsetRatio = 1.6;
@@ -70,12 +71,14 @@ const ratioValue = 2;
 const inputs = document.querySelectorAll('input');
 let debounceDelay = 500;
 let throttleDelay = 200;
+const videoFPS = 30; // Example: 30 FPS, adjust this based on your video's FPS
+let currentvideoExportRatio = 3;
 
 savePresetButton.onclick= savePresetToFile;
 saveImageButton.onclick = downloadImageWithRatio;
 
-let videoResolutionRatio = 3;
 // const throttledProcessVideo = throttle(processVideo, 200); // Adjust the 200ms to your needs
+
 
 inputs.forEach(e => {
     e.disabled = true;
@@ -216,6 +219,11 @@ videoTypeSelector.onchange=((e)=>{
     currentVideoType = e.target.value;
     console.log("current video type is ",currentVideoType);
 });
+videoExportRatio.oninput=((e)=>{
+    videoExportRatio.value = e.target.value;
+    currentvideoExportRatio = e.target.value;
+    console.log("current video export ratio is ", currentvideoExportRatio);
+});
 
 function restartVideo(video){
     if (video && !video.paused && !video.ended && video.readyState > 2) {
@@ -226,12 +234,12 @@ function restartVideo(video){
 }
 
 function recordAndDownloadVideo(){
-    setupMediaRecorder(processedAssetCanvas);
+    setupMediaRecorder(processedAssetCanvas, 1, currentimageExportRatio); // displayScaleFactor = 1, downloadScaleFactor = 3
     restartVideo(currentVideo);
     startRecording();
     setTimeout(() => {
         stopRecording();
-    }, currentVideo.duration *1000);
+    }, currentVideo.duration * 1000);
 
 }
 function downloadVideo(){
@@ -242,22 +250,32 @@ function downloadVideo(){
         console.error("No recorded chunks available");
     }
 }
-function setupMediaRecorder(canvas) {
-    console.log("canvas is ", canvas);
-    const stream = canvas.captureStream(25); // Capture at 25 fps
-    console.log("stream is ", stream);
+function setupMediaRecorder(canvas, displayScaleFactor = 1, downloadScaleFactor = 3) {
+
+    const displayWidth = canvas.width * displayScaleFactor;
+    const displayHeight = canvas.height * displayScaleFactor;
+    canvas.width = displayWidth;
+    canvas.height = displayHeight;
+
+    const ctx = canvas.getContext('2d');
+    ctx.scale(displayScaleFactor, displayScaleFactor);
+
+    const stream = canvas.captureStream(videoFPS);
     mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm; codecs=vp9' });
     mediaRecorder.ondataavailable = function (event) {
-        console.log("mediaRecorder ondataavailable", event.data.size);
         if (event.data.size > 0) {
             recordedChunks.push(event.data);
         }
     };
 
     mediaRecorder.onstop = function () {
-       console.log("Recording stopped"); 
-       downloadVideo();
+        // Reset canvas to original size for high resolution download
+        canvas.width /= displayScaleFactor;
+        canvas.height /= displayScaleFactor;
+        ctx.scale(downloadScaleFactor / displayScaleFactor, downloadScaleFactor / displayScaleFactor);
+        downloadVideo();
     };
+
 
     mediaRecorder.onerror = function (event) {
         console.error("MediaRecorder error:", event.error);
@@ -313,8 +331,10 @@ function downloadRecordedVideo(videoType) {
     a.download = 'downloaded_video.'+videoType;
     document.body.appendChild(a);
     a.click();
-    window.URL.revokeObjectURL(url);
-    document.body.removeChild(a);
+    setTimeout(() => {
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+    }, 100); // Cleanup
     recordedChunks = []; // Clear the recorded chunks
     videoStatus.textContent=videoDownloaded;
 }
@@ -386,8 +406,8 @@ function processVideo(video){
     }
 
     videoStatus.textContent=videoProcessing;
-    const videoWidth = video.videoWidth * videoResolutionRatio;  
-    const videoHeight = video.videoHeight* videoResolutionRatio; 
+    const videoWidth = video.videoWidth;// * videoResolutionRatio;  
+    const videoHeight = video.videoHeight;//* videoResolutionRatio; 
     const charWidthValue = fontSize.value*charWidthOffsetRatio;//*0.8;
     const lineHeightValue = fontSize.value*lineHeightOffsetRatio;//0.8;
     const asciiDimensions = calculateAsciiDimensionsForImageSize(videoWidth, videoHeight, Number(fontSize.value) , Number(fontSize.value)/charWidthOffsetRatio*lineHeightOffsetRatio);
