@@ -1,4 +1,4 @@
-import { FFmpeg } from '@ffmpeg/ffmpeg';
+import { createFFmpeg, fetchFile } from '@ffmpeg/ffmpeg';
 import aalib from "../dist/aalib.js";
 import { ASCII_CHARSET } from "../src/renderers/HTMLRenderer";
 const charset_ascii = ASCII_CHARSET;
@@ -336,41 +336,35 @@ function downloadRecordedVideo(videoType) {
     videoStatus.textContent=videoDownloaded;
 }
 
-let videoFileLimit = 500;
-function checkVideoFileSize(video){
-    console.log("current video file is ", video.size);
-    if(video.size >= videoFileLimit){
-      return compressVideoFile(video);
-    }
-    else{
-
+let videoFileLimit = 500 * 1024; // 500 KB in bytes
+async function checkVideoFileSize(video) {
+    console.log("current video file size is ", video.size);
+    if (video.size >= videoFileLimit) {
+        return compressVideoFile(video);
+    } else {
         return video;
     }
 }
 
 async function compressVideoFile(video) {
-    const ffmpeg = FFmpeg.createFFmpeg({ log: true });
-
+    const ffmpeg = createFFmpeg({ log: true });
     await ffmpeg.load();
-    ffmpeg.FS('writeFile', 'input.mp4', await FFmpeg.fetchFile(video));
-
+    ffmpeg.FS('writeFile', 'input.mp4', await fetchFile(video));
     await ffmpeg.run('-i', 'input.mp4', '-vcodec', 'libx264', '-crf', '28', 'output.mp4');
-
     const data = ffmpeg.FS('readFile', 'output.mp4');
     const compressedVideo = new Blob([data.buffer], { type: 'video/mp4' });
-    console.log("compressedVideo is ", compressedVideo);
-    console.log("compressedVideo is ", compressedVideo.size);
+    console.log("compressed video size is ", compressedVideo.size);
 
     return compressedVideo;
 }
+
 function fromVideoFile(file) {
     return new Promise(async (resolve, reject) => {
         const video = document.createElement('video');
-        const videoURL = URL.createObjectURL(file); // Create URL once
-
+        
         try {
-            const processedVideo = await checkVideoFileSize(file); // Await the result of checkVideoFileSize
-            const processedVideoURL = URL.createObjectURL(processedVideo); // Create URL for the processed video
+            const processedVideo = await checkVideoFileSize(file);
+            const processedVideoURL = URL.createObjectURL(processedVideo);
 
             video.src = processedVideoURL;
             video.controls = true;  // Add controls so users can play/pause
@@ -379,10 +373,11 @@ function fromVideoFile(file) {
             video.loop = true;
 
             video.onloadedmetadata = () => {
-                currentVideo = video;
-                videoImport.appendChild(currentVideo);  // Append to a specific container
-                console.log("current video is ", currentVideo);
-                resolve(currentVideo);
+                const videoContainer = document.getElementById('videoContainer'); // Your specific container ID
+                videoContainer.innerHTML = ''; // Clear any existing content
+                videoContainer.appendChild(video);  // Append to the container
+                console.log("current video is ", video);
+                resolve(video);
             };
 
             video.onerror = () => {
@@ -393,6 +388,7 @@ function fromVideoFile(file) {
         }
     });
 }
+
 videoInput.addEventListener('change', function (event) {
     const file = event.target.files[0];
     while (videoImport.firstChild) {
