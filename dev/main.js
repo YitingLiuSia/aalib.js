@@ -431,14 +431,19 @@ function processVideo(video){
         backgroundColor = colorBlack;
     }
 
+    let processedWidth = asciiDimensions.width * charWidthValue;
+    let processedHeight = asciiDimensions.height * lineHeightValue;
+    updateGradientFromCanvas(processedAssetCanvasCTX, currentGradientAngle, processedWidth, processedHeight);
+    console.log(`processedAssetCanvasCTX dimension: ${processedWidth}x${processedHeight}`);
+
     const canvasOptions = {
         fontSize: fontSize.value,
         fontFamily: "Sora",
         lineHeight: lineHeightValue,
         charWidth: charWidthValue,
         charset: presetInfo.charset,
-        width: asciiDimensions.width * charWidthValue,
-        height: asciiDimensions.height * lineHeightValue,
+        width: processedWidth,
+        height: processedHeight,
         background: backgroundColor,
         color: gradient,
         el: processedAssetCanvas
@@ -470,69 +475,7 @@ function processVideo(video){
     }).subscribe();
     
     restartVideo(video); // This will also play the video
-
-
 }
-
-// function processVideo(video){
-//     clearCanvas();
-//     if (!video || typeof video.videoWidth === 'undefined' || typeof video.videoHeight === 'undefined') {
-//         console.error('Video is not loaded or undefined');
-//         return; // Exit the function to avoid further errors
-//     }
-
-//     restartVideo(video);
-//     videoStatus.textContent=videoProcessing;
-//     const videoWidth = video.videoWidth;// * videoResolutionRatio;  
-//     const videoHeight = video.videoHeight;//* videoResolutionRatio; 
-//     const charWidthValue = fontSize.value*charWidthOffsetRatio;//*0.8;
-//     const lineHeightValue = fontSize.value*lineHeightOffsetRatio;//0.8;
-//     const asciiDimensions = calculateAsciiDimensionsForImageSize(videoWidth, videoHeight, Number(fontSize.value) , Number(fontSize.value)/charWidthOffsetRatio*lineHeightOffsetRatio);
-//     const aaReq = { width:asciiDimensions.width  , height: asciiDimensions.height};
-
-//     let backgroundColor = "rgba(255,255,255,1)"; 
-//     if(colorSelectionDropdown.value==="white"){
-//         backgroundColor =  colorBlack; 
-//     }
-
-//     console.log("video width and height is ",asciiDimensions.width * charWidthValue, asciiDimensions.height * lineHeightValue );
-//     const canvasOptions = {
-//         fontSize: fontSize.value,
-//         fontFamily: "Sora",
-//         lineHeight: lineHeightValue,
-//         charWidth: charWidthValue,
-//         charset: presetInfo.charset,
-//         width: asciiDimensions.width * charWidthValue,  
-//         height: asciiDimensions.height * lineHeightValue, 
-//         background: backgroundColor,// make the background white 
-//         color: gradient,
-//         el: processedAssetCanvas
-//     };
-
-//     processedAssetCanvas.width = canvasOptions.width;
-//     processedAssetCanvas.height = canvasOptions.height;
-  
-//     videoProcessingPipeline =aalib.read.video.fromVideoElement(video);
-   
-//     videoProcessingPipeline = videoProcessingPipeline.map(aalib.aa(aaReq));
-
-//     if (inverseEle.checked) {
-//         console.log("inverse elemenet is checked ", inverseEle.checked)
-//         videoProcessingPipeline = videoProcessingPipeline.map(aalib.filter.inverse());
-//     }
-//     if (brightnessValue.value !== undefined) {
-//         console.log("brightnessValue value ", brightnessValue.value);
-//         videoProcessingPipeline = videoProcessingPipeline.map(aalib.filter.brightness(brightnessValue.value));
-//     }
-//     if (contrastValue.value !== undefined) {
-//         console.log("contrastValue value ", contrastValue.value);
-//         videoProcessingPipeline = videoProcessingPipeline.map(aalib.filter.contrast(contrastValue.value));
-//     }
-    
-//     videoProcessingPipeline.map(aalib.render.canvas(canvasOptions))
-//     .do(function (el) {
-//         replaceAssetToDiv(el,'processed-asset');}).subscribe(); 
-// }
 
 function processImage(img){
     // clearCanvas();
@@ -571,7 +514,7 @@ function processImage(img){
         background: "rgba(0,0,0,0)",
         color: gradient
     };
-    
+
     let imageProcessingPipeline = aalib.read.image.fromURL(img.src);
        
     if (inverseEle.checked) {
