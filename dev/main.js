@@ -554,6 +554,11 @@ function processImage(img){
     const aaReq = { width:asciiDimensions.width  , height: asciiDimensions.height, colored: false};
     console.log("image dimension ", `${imageWidth}x${imageHeight}`);
     console.log("asciiDimensions ", `${asciiDimensions.width}x${asciiDimensions.height}`);
+   
+    let processedWidth = asciiDimensions.width * charWidthValue;
+    let processedHeight = asciiDimensions.height * lineHeightValue;
+    updateGradientFromCanvas(processedAssetCanvasCTX, currentGradientAngle, processedWidth, processedHeight);
+    console.log(`processedAssetCanvasCTX dimension: ${processedWidth}x${processedHeight}`);
 
     const canvasOptions = {
         fontSize: fontSize.value,
@@ -561,19 +566,11 @@ function processImage(img){
         lineHeight: lineHeightValue,
         charWidth: charWidthValue,
         charset: presetInfo.charset,
-        width: asciiDimensions.width * charWidthValue,  
-        height: asciiDimensions.height * lineHeightValue, 
+        width: processedWidth,  
+        height: processedHeight, 
         background: "rgba(0,0,0,0)",
         color: gradient
     };
-
-
-    // Adjust the canvas size to match the ASCII dimensions
-    processedAssetCanvas.width = canvasOptions.width;
-    processedAssetCanvas.height = canvasOptions.height;
-
-    processedAssetCanvasCTX.fillStyle = gradient;
-    processedAssetCanvasCTX.fillRect(0, 0, processedAssetCanvas.width, processedAssetCanvas.height);
     
     let imageProcessingPipeline = aalib.read.image.fromURL(img.src);
        
@@ -821,17 +818,26 @@ function updateGradient(){
     updateAsset("gradient");
 }
 
-function updateGradientFromCanvas(canvas, angle, width, height){
+function updateGradientFromCanvas(canvas, angle, width, height) {
     let radian = angle * Math.PI / 180;
     // Calculate the end point considering both width and height for a diagonal gradient
     let x2 = width * Math.cos(radian);
     let y2 = height * Math.sin(radian);
     gradient = canvas.createLinearGradient(0, 0, x2, y2);
-    if(currentPos1 && currentPos2 && currentPos3){
-        gradient.addColorStop(currentPos1 / 100.0, currentColor1);
-        gradient.addColorStop(currentPos2 / 100.0, currentColor2);
-        gradient.addColorStop(currentPos3 / 100.0, currentColor3);
-    }
+
+    // Normalize color stop positions
+    let pos1 = currentPos1 / 100.0;
+    let pos2 = currentPos2 / 100.0;
+    let pos3 = currentPos3 / 100.0;
+
+    // Ensure positions are in ascending order
+    if (pos1 > pos2) [pos1, pos2] = [pos2, pos1];
+    if (pos2 > pos3) [pos2, pos3] = [pos3, pos2];
+    if (pos1 > pos2) [pos1, pos2] = [pos2, pos1];
+
+    gradient.addColorStop(pos1, currentColor1);
+    gradient.addColorStop(pos2, currentColor2);
+    gradient.addColorStop(pos3, currentColor3);
 }
 
 // function updateGradient(){
@@ -923,8 +929,8 @@ function loadGradient(){
     currentColor1 = gradientInfo.color1;
     currentColor2 = gradientInfo.color2;
     currentColor3 = gradientInfo.color3;
-    saturationForGradient =  gradientInfo.saturation;
-    gradientAngle = gradientInfo.angle;
+    // saturationForGradient = gradientInfo.saturation;
+    // gradientAngle = gradientInfo.angle;
 }
 
 function saveGradient() {
@@ -934,8 +940,8 @@ function saveGradient() {
     gradientInfo.color1 = currentColor1;
     gradientInfo.color2= currentColor2;
     gradientInfo.color3 = currentColor3;
-    gradientInfo.saturation = saturationForGradient;
-    gradientInfo.angle = gradientAngle;
+    // gradientInfo.saturation = saturationForGradient;
+    // gradientInfo.angle = gradientAngle;
 }
 
 function loadPreset(){
