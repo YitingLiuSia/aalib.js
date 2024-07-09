@@ -1,3 +1,4 @@
+import { FFmpeg } from '@ffmpeg/ffmpeg';
 import aalib from "../dist/aalib.js";
 import { ASCII_CHARSET } from "../src/renderers/HTMLRenderer";
 const charset_ascii = ASCII_CHARSET;
@@ -336,47 +337,62 @@ function downloadRecordedVideo(videoType) {
 }
 
 let videoFileLimit = 500;
-
 function checkVideoFileSize(video){
+    console.log("current video file is ", video.size);
+    if(video.size >= videoFileLimit){
+      return compressVideoFile(video);
+    }
+    else{
 
-    if(video.size >=videoFileLimit){
-
-      return  compressVideoFile(video);
-    }else{
         return video;
     }
 }
-function compressVideoFile(video){
 
+async function compressVideoFile(video) {
+    const ffmpeg = FFmpeg.createFFmpeg({ log: true });
 
+    await ffmpeg.load();
+    ffmpeg.FS('writeFile', 'input.mp4', await FFmpeg.fetchFile(video));
 
+    await ffmpeg.run('-i', 'input.mp4', '-vcodec', 'libx264', '-crf', '28', 'output.mp4');
+
+    const data = ffmpeg.FS('readFile', 'output.mp4');
+    const compressedVideo = new Blob([data.buffer], { type: 'video/mp4' });
+    console.log("compressedVideo is ", compressedVideo);
+    console.log("compressedVideo is ", compressedVideo.size);
+
+    return compressedVideo;
 }
 function fromVideoFile(file) {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
         const video = document.createElement('video');
         const videoURL = URL.createObjectURL(file); // Create URL once
-        video.src = videoURL;
-        video.controls = true;  // Add controls so users can play/pause
-        video.autoplay = true;  // Set autoplay to true to start playing automatically
-        video.muted = true;     // Mute the video to allow autoplay in most browsers
-        video.loop = true;    
-        
-        video.onloadedmetadata = () => {
-            currentVideo = video;
-        //     if(currentVideo!=video){
-        //    currentVideo = video;}
-           videoImport.appendChild(currentVideo);  // Append to a specific container
-           console.log("current video is ",currentVideo);
-           resolve(currentVideo);
-        //    processVideo(currentVideo);
-        };
 
-        video.onerror = () => {
-            reject(new Error("Failed to load video"));
-        };
+        try {
+            const processedVideo = await checkVideoFileSize(file); // Await the result of checkVideoFileSize
+            const processedVideoURL = URL.createObjectURL(processedVideo); // Create URL for the processed video
+
+            video.src = processedVideoURL;
+            video.controls = true;  // Add controls so users can play/pause
+            video.autoplay = true;  // Set autoplay to true to start playing automatically
+            video.muted = true;     // Mute the video to allow autoplay in most browsers
+            video.loop = true;
+
+            video.onloadedmetadata = () => {
+                currentVideo = video;
+                videoImport.appendChild(currentVideo);  // Append to a specific container
+                console.log("current video is ", currentVideo);
+                resolve(currentVideo);
+            };
+
+            video.onerror = () => {
+                reject(new Error("Failed to load video"));
+            };
+        } catch (error) {
+            reject(error);
+        }
     });
 }
-
 videoInput.addEventListener('change', function (event) {
     const file = event.target.files[0];
     while (videoImport.firstChild) {
