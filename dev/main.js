@@ -1,8 +1,9 @@
-import { FFmpeg } from '@ffmpeg/ffmpeg';
+const { createWorker } = FFmpeg;
+import { FFmpeg } from "@ffmpeg/ffmpeg";
 import aalib from "../dist/aalib.js";
 import { ASCII_CHARSET } from "../src/renderers/HTMLRenderer";
 const charset_ascii = ASCII_CHARSET;
-const charset_sia = "SIA/-.><!^*()   ";
+const charset_sia = "SIA/-.><!*()   ";
 const resource = filename => `../resources/${ filename }`;
 const imageDropdown = document.getElementById('image-dropdown');
 let isCanvas = true; 
@@ -27,7 +28,7 @@ let currentimageExportRatio = 1;
 let gradientAngleContainer = document.getElementById('gradient-angle');
 let gradientAngle = gradientAngleContainer.getElementsByTagName('input')[0];
 let gradientAngleValue = gradientAngle.nextElementSibling.querySelector('#gradient-angle .sliderValue');
-let currentGradientAngle = 90; // Initialize with a default value, e.g., 90 degrees
+let currentGradientAngle = 0; // Initialize with a default value, e.g., 90 degrees
 let saturationContainer = document.getElementById("saturation");
 let saturationForGradient =saturationContainer.getElementsByTagName("input")[0]; 
 let saturationForGradientValue = document.querySelector('#saturation .sliderValue'); 
@@ -340,12 +341,11 @@ let videoFileLimit = 500;
 function checkVideoFileSize(video){
     console.log("current video file is ", video.size);
     if(video.size >= videoFileLimit){
-      return compressVideoFile(video);
+       video = compressVideoFile(video);
     }
-    else{
+    
+    return video; 
 
-        return video;
-    }
 }
 
 async function compressVideoFile(video) {
@@ -366,10 +366,12 @@ async function compressVideoFile(video) {
 function fromVideoFile(file) {
     return new Promise(async (resolve, reject) => {
         const video = document.createElement('video');
-        const videoURL = URL.createObjectURL(file); // Create URL once
+        // const videoURL = URL.createObjectURL(file); // Create URL once
 
         try {
             const processedVideo = await checkVideoFileSize(file); // Await the result of checkVideoFileSize
+           
+            console.log("processed video is ", processedVideo);
             const processedVideoURL = URL.createObjectURL(processedVideo); // Create URL for the processed video
 
             video.src = processedVideoURL;
@@ -492,6 +494,7 @@ function processVideo(video){
     
     restartVideo(video); // This will also play the video
 }
+let gradient2 ;
 
 function processImage(img){
     // clearCanvas();
@@ -499,6 +502,7 @@ function processImage(img){
         console.error('Image is not loaded or undefined');
         return; // Exit the function to avoid further errors
     }
+   // gradient2 = updateGradientFromCSS(currentGradientAngle);
 
     const imageWidth = img.width;  
     const imageHeight = img.height;
@@ -506,18 +510,23 @@ function processImage(img){
     const lineHeightValue = fontSize.value*lineHeightOffsetRatio;//0.8;
     let ratioX =(Number(fontSize.value) + charWidthValue)*ratioValue; //2* fontSize.value/5*13.5;// 
     let ratioY = (Number(fontSize.value) + lineHeightValue)*ratioValue;//2*fontSize.value/5*13.5 ;//
-    console.log(`font size: ${fontSize.value}, charwidth value: ${charWidthValue}, line height value: ${lineHeightValue}`);
-    console.log("RATIO dimension ", `${ratioX}x${ratioY}`);
+    // console.log(`font size: ${fontSize.value}, charwidth value: ${charWidthValue}, line height value: ${lineHeightValue}`);
+    // console.log("RATIO dimension ", `${ratioX}x${ratioY}`);
 
     const asciiDimensions = calculateAsciiDimensionsForImageSize(imageWidth, imageHeight, Number(fontSize.value) , Number(fontSize.value)/charWidthOffsetRatio*lineHeightOffsetRatio);
     const aaReq = { width:asciiDimensions.width  , height: asciiDimensions.height, colored: false};
-    console.log("image dimension ", `${imageWidth}x${imageHeight}`);
-    console.log("asciiDimensions ", `${asciiDimensions.width}x${asciiDimensions.height}`);
+    // console.log("image dimension ", `${imageWidth}x${imageHeight}`);
+    // console.log("asciiDimensions ", `${asciiDimensions.width}x${asciiDimensions.height}`);
    
     let processedWidth = asciiDimensions.width * charWidthValue;
     let processedHeight = asciiDimensions.height * lineHeightValue;
-    updateGradientFromCanvas(processedAssetCanvasCTX, currentGradientAngle, processedWidth, processedHeight);
-    console.log(`processedAssetCanvasCTX dimension: ${processedWidth}x${processedHeight}`);
+   //updateGradientFromCanvas(processedAssetCanvasCTX, currentGradientAngle, processedWidth, processedHeight);
+   // console.log(`processedAssetCanvasCTX dimension: ${processedWidth}x${processedHeight}`);
+    //updateGradientFromCanvasForDisplay(currentGradientAngle);
+    gradient2 = `linear-gradient(${currentGradientAngle}deg, ${currentColor1} ${currentPos1}%, ${currentColor2} ${currentPos2}%, ${currentColor3} ${currentPos3}%)`; 
+
+    processedAssetCanvas.style.color = gradient2;
+    // gradient 2 is not working for the imported image 
 
     const canvasOptions = {
         fontSize: fontSize.value,
@@ -528,9 +537,9 @@ function processImage(img){
         width: processedWidth,  
         height: processedHeight, 
         background: "rgba(0,0,0,0)",
-        color: gradient
+        color: gradient2
     };
-
+ 
     let imageProcessingPipeline = aalib.read.image.fromURL(img.src);
        
     if (inverseEle.checked) {
@@ -764,27 +773,39 @@ function updateGradient(){
     let gcWidth = gradientCanvas.width;
     let gcHeight = gradientCanvas.height;
     updateSaturation();
-    // Pass both width and height to consider the gradient's direction properly
+
     updateGradientFromCanvas(gradientSliderCanvasCTX, sliderAngle, gscWidth, gscHeight);
-    gradientSliderCanvasCTX.fillStyle = gradient;
-    gradientSliderCanvasCTX.fillRect(0, 0, gscWidth, gscHeight);
-    console.log(`gradientSliderCanvasCTX dimension: ${gscWidth}x${gscHeight}`);
-    // Use both gcWidth and gcHeight for the main gradient canvas
-    updateGradientFromCanvas(gradientCanvasCTX, currentGradientAngle, gcWidth, gcHeight);
-    console.log(`gradientCanvasCTX dimension: ${gcWidth}x${gcHeight}`);
-    gradientCanvasCTX.fillStyle = gradient;
-    gradientCanvasCTX.fillRect(0, 0, gcWidth, gcHeight);
+
+    //updateGradientFromCanvasForDisplay(currentGradientAngle);\
+    gradient = updateGradientFromCSS(currentGradientAngle);
+    gradientCanvas.style.background =gradient;
+
     updateAsset("gradient");
 }
 
+// function updateGradientFromCanvasForDisplay(angle){
+//     let pos1 = currentPos1 / 100.0;
+//     let pos2 = currentPos2 / 100.0;
+//     let pos3 = currentPos3 / 100.0;
+//     // Ensure positions are in ascending order
+//     if (pos1 > pos2) [pos1, pos2] = [pos2, pos1];
+//     if (pos2 > pos3) [pos2, pos3] = [pos3, pos2];
+//     if (pos1 > pos2) [pos1, pos2] = [pos2, pos1];
+//     console.log("current color 1 is ",currentColor1);
+//     gradient = `linear-gradient(${angle}deg, ${currentColor1} ${pos1 * 100}%, ${currentColor2} ${pos2 * 100}%, ${currentColor3} ${pos3 * 100}%)`;
+
+// }
+function updateGradientFromCSS(angle){
+     return `linear-gradient(${angle}deg, ${currentColor1} ${currentPos1}%, ${currentColor2} ${currentPos2}%, ${currentColor3} ${currentPos3}%)`;
+}
 function updateGradientFromCanvas(canvas, angle, width, height) {
-    let radian = angle * Math.PI / 180;
-    // Calculate the end point considering both width and height for a diagonal gradient
+
+    let radian = angle * (Math.PI / 180);
     let x2 = width * Math.cos(radian);
     let y2 = height * Math.sin(radian);
-    gradient = canvas.createLinearGradient(0, 0, x2, y2);
+    let x1 = 0, y1 =0;
 
-    // Normalize color stop positions
+    gradient = canvas.createLinearGradient(x1,y1,x2,y2);
     let pos1 = currentPos1 / 100.0;
     let pos2 = currentPos2 / 100.0;
     let pos3 = currentPos3 / 100.0;
@@ -797,32 +818,11 @@ function updateGradientFromCanvas(canvas, angle, width, height) {
     gradient.addColorStop(pos1, currentColor1);
     gradient.addColorStop(pos2, currentColor2);
     gradient.addColorStop(pos3, currentColor3);
+
+    canvas.fillStyle = gradient; 
+    canvas.fillRect(0,0,width,height);
+
 }
-
-// function updateGradient(){
-//     let sliderAngle = 0;
-//     updateSaturation();
-//     updateGradientFromCanvas(gradientSliderCanvasCTX, sliderAngle, gscWidth);
-//     gradientSliderCanvasCTX.fillStyle = gradient;
-//     gradientSliderCanvasCTX.fillRect(0, 0, gscWidth, gscHeight);
-//     updateGradientFromCanvas(gradientCanvasCTX, currentGradientAngle, gcWidth);
-//     gradientCanvasCTX.fillStyle = gradient;
-//     gradientCanvasCTX.fillRect(0, 0, gcWidth, gcHeight);
-//     updateAsset("gradient");
-// }
-
-// function updateGradientFromCanvas(canvas, angle, width){
-//     let radian = angle * Math.PI / 180;
-//     let x2 = width * Math.cos(radian);
-//     let y2 = width * Math.sin(radian);
-//     gradient = canvas.createLinearGradient(0, 0, x2, y2);
-//     if(currentPos1 && currentPos2 && currentPos3){
-//         gradient.addColorStop(currentPos1 / 100.0, currentColor1);
-//         gradient.addColorStop(currentPos2 / 100.0, currentColor2);
-//         gradient.addColorStop(currentPos3 / 100.0, currentColor3);
-//     }
-// }
-
 function updateColor(color){
     gradient=color;
     gradientCanvasCTX.fillStyle = gradient;
