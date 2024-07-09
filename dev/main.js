@@ -522,7 +522,7 @@ function processImage(img){
     let processedHeight = asciiDimensions.height * lineHeightValue;
    //updateGradientFromCanvas(processedAssetCanvasCTX, currentGradientAngle, processedWidth, processedHeight);
    // console.log(`processedAssetCanvasCTX dimension: ${processedWidth}x${processedHeight}`);
-    //updateGradientFromCanvasForDisplay(currentGradientAngle);
+    updateGradientFromCSS(currentGradientAngle);
     gradient2 = `linear-gradient(${currentGradientAngle}deg, ${currentColor1} ${currentPos1}%, ${currentColor2} ${currentPos2}%, ${currentColor3} ${currentPos3}%)`; 
 
     processedAssetCanvas.style.color = gradient2;
@@ -537,7 +537,7 @@ function processImage(img){
         width: processedWidth,  
         height: processedHeight, 
         background: "rgba(0,0,0,0)",
-        color: gradient2
+        color: gradient
     };
  
     let imageProcessingPipeline = aalib.read.image.fromURL(img.src);
@@ -776,25 +776,12 @@ function updateGradient(){
 
     updateGradientFromCanvas(gradientSliderCanvasCTX, sliderAngle, gscWidth, gscHeight);
 
-    //updateGradientFromCanvasForDisplay(currentGradientAngle);\
     gradient = updateGradientFromCSS(currentGradientAngle);
     gradientCanvas.style.background =gradient;
 
     updateAsset("gradient");
 }
 
-// function updateGradientFromCanvasForDisplay(angle){
-//     let pos1 = currentPos1 / 100.0;
-//     let pos2 = currentPos2 / 100.0;
-//     let pos3 = currentPos3 / 100.0;
-//     // Ensure positions are in ascending order
-//     if (pos1 > pos2) [pos1, pos2] = [pos2, pos1];
-//     if (pos2 > pos3) [pos2, pos3] = [pos3, pos2];
-//     if (pos1 > pos2) [pos1, pos2] = [pos2, pos1];
-//     console.log("current color 1 is ",currentColor1);
-//     gradient = `linear-gradient(${angle}deg, ${currentColor1} ${pos1 * 100}%, ${currentColor2} ${pos2 * 100}%, ${currentColor3} ${pos3 * 100}%)`;
-
-// }
 function updateGradientFromCSS(angle){
      return `linear-gradient(${angle}deg, ${currentColor1} ${currentPos1}%, ${currentColor2} ${currentPos2}%, ${currentColor3} ${currentPos3}%)`;
 }
@@ -819,8 +806,9 @@ function updateGradientFromCanvas(canvas, angle, width, height) {
     gradient.addColorStop(pos2, currentColor2);
     gradient.addColorStop(pos3, currentColor3);
 
-    canvas.fillStyle = gradient; 
-    canvas.fillRect(0,0,width,height);
+    canvas.clearRect(0, 0, width, height);
+    canvas.fillStyle = gradient;
+    canvas.fillRect(0, 0, width, height);
 
 }
 function updateColor(color){
