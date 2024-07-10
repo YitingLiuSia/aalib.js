@@ -362,7 +362,7 @@ function checkVideoFileSize(video){
 //     return compressedVideo;
 // }
 function fromVideoFile(file) {
-    return new Promise( (resolve, reject) => {
+    return new Promise((resolve, reject) => {
         const video = document.createElement('video');
         const videoURL = URL.createObjectURL(file); // Create URL once
             video.src = videoURL;
@@ -483,7 +483,7 @@ function processVideo(video){
     
     restartVideo(video); // This will also play the video
 }
-let gradient2 ;
+let imageWidthSize = 3000 ;
 
 function processImage(img){
     // clearCanvas();
@@ -491,8 +491,16 @@ function processImage(img){
         console.error('Image is not loaded or undefined');
         return; // Exit the function to avoid further errors
     }
-    const imageWidth = img.width;  
-    const imageHeight = img.height;
+    let imageWidth, imageHeight;
+
+
+    if(img.width>imageWidthSize){
+        imageWidth = imageWidthSize;
+        imageHeight = imageWidthSize*img.height/img.width;
+    }else{
+        imageWidth = img.width;
+        imageHeight = img.height;
+    }
     const charWidthValue = fontSize.value*charWidthOffsetRatio;//*0.8;
     const lineHeightValue = fontSize.value*lineHeightOffsetRatio;//0.8;
     // let ratioX =(Number(fontSize.value) + charWidthValue)*ratioValue; //2* fontSize.value/5*13.5;// 
@@ -501,11 +509,13 @@ function processImage(img){
     const asciiDimensions = calculateAsciiDimensionsForImageSize(imageWidth, imageHeight, Number(fontSize.value) , Number(fontSize.value)/charWidthOffsetRatio*lineHeightOffsetRatio);
     const aaReq = { width:asciiDimensions.width  , height: asciiDimensions.height, colored: false};
 
+    console.log(`IMAGE dimension is ${img.width}x${img.height}`);
+    console.log(`ascii dimension is ${aaReq.width}x${aaReq.height}`);
+    console.log(`AFTER CONVERSION IMAGE dimension is ${imageWidth}x${imageHeight}`);
+    
     let processedWidth = asciiDimensions.width * charWidthValue;
     let processedHeight = asciiDimensions.height * lineHeightValue;
     updateGradientFromCanvas(processedAssetCanvasCTX, currentGradientAngle, processedWidth, processedHeight);
-
-    processedAssetCanvas.style.color = gradient2;
 
     const canvasOptions = {
         fontSize: fontSize.value,
