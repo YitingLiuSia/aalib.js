@@ -483,8 +483,6 @@ function processVideo(video){
     
     restartVideo(video); // This will also play the video
 }
-let imageWidthSize = 3000 ;
-
 function processImage(img){
     // clearCanvas();
     if (!img || typeof img.width === 'undefined' || typeof img.height === 'undefined') {
@@ -492,15 +490,15 @@ function processImage(img){
         return; // Exit the function to avoid further errors
     }
     let imageWidth, imageHeight;
-
-
-    if(img.width>imageWidthSize){
-        imageWidth = imageWidthSize;
-        imageHeight = imageWidthSize*img.height/img.width;
-    }else{
-        imageWidth = img.width;
-        imageHeight = img.height;
-    }
+    imageWidth = img.width;
+    imageHeight = img.height;
+    // if(img.width>imageWidthSize){
+    //     imageWidth = imageWidthSize;
+    //     imageHeight = imageWidthSize*img.height/img.width;
+    // }else{
+    //     imageWidth = img.width;
+    //     imageHeight = img.height;
+    // }
     const charWidthValue = fontSize.value*charWidthOffsetRatio;//*0.8;
     const lineHeightValue = fontSize.value*lineHeightOffsetRatio;//0.8;
     // let ratioX =(Number(fontSize.value) + charWidthValue)*ratioValue; //2* fontSize.value/5*13.5;// 
@@ -559,10 +557,23 @@ function replaceAssetToDiv(el, targetDivId ){
     }
 }
 
+function updateImageSizeWithWidth(img, newWidth) {
+  // Getting the width and height of the current image 
+  const oldWidth =  Number.parseFloat(getComputedStyle(img).width || img.getAttribute("width"));
+  const oldHeight = Number.parseFloat(getComputedStyle(img).height || img.getAttribute("height"));
+  // Getting proportional height with new width
+  const newHeight = (newWidth * oldHeight)/oldWidth;
+  // Setting dimensions in the image
+  img.style.width = `${newWidth}px`;
+  img.style.height = `${newHeight}px`;
+  console.log("in the updateImageSizeWithWidth to ", newWidth);
+
+}
 function loadImageAndProcess(url) {
     const img = new Image();
-    img.src = url; 
+    img.src = url;        
     img.onload = function () {
+        updateImageSizeWithWidth(img,1000);
         let existingElement = document.getElementById('imported-image');
         if (existingElement) {
             console.log("loadImageAndProcess - replace child image");
@@ -573,6 +584,7 @@ function loadImageAndProcess(url) {
             img.id = 'imported-image'; 
             document.body.appendChild(img); 
         }
+        console.log("current image is ", img.width);
         processImage(currentImage); 
     };
     img.onerror = function () {
@@ -656,7 +668,7 @@ noUiSlider.create(slider, {
     }
 });
 
-slider.noUiSlider.on('update', function(values) {
+slider.noUiSlider.on('change', function(values) {
     currentPos1 = values[0];
     currentPos2= values[1];
     currentPos3= values[2];
@@ -677,11 +689,11 @@ window.onload = function() {
     charsetSelector.value = presetInfo.charset;
     presetInfo.fontFamily = "Sora"; // fontDropdown.value;
     videoStatus.textContent = videoInitialStatus;
-
-    requestAnimationFrame(() => {
-        updateGradient();
-        updateAsset("charset");
-    });
+    updateGradient();
+    updateAsset("charset");
+    // requestAnimationFrame(() => {
+       
+    // });
 };
 
 fontSize.oninput = (e) => {
