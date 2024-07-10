@@ -668,7 +668,7 @@ noUiSlider.create(slider, {
     }
 });
 
-slider.noUiSlider.on('change', function(values) {
+slider.noUiSlider.on('update', function(values) {
     currentPos1 = values[0];
     currentPos2= values[1];
     currentPos3= values[2];
