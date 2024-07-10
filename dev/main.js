@@ -1,5 +1,3 @@
-const { createWorker } = FFmpeg;
-import { FFmpeg } from "@ffmpeg/ffmpeg";
 import aalib from "../dist/aalib.js";
 import { ASCII_CHARSET } from "../src/renderers/HTMLRenderer";
 const charset_ascii = ASCII_CHARSET;
@@ -348,33 +346,26 @@ function checkVideoFileSize(video){
 
 }
 
-async function compressVideoFile(video) {
-    const ffmpeg = FFmpeg.createFFmpeg({ log: true });
+// async function compressVideoFile(video) {
+//     const ffmpeg = FFmpeg.createFFmpeg({ log: true });
 
-    await ffmpeg.load();
-    ffmpeg.FS('writeFile', 'input.mp4', await FFmpeg.fetchFile(video));
+//     await ffmpeg.load();
+//     ffmpeg.FS('writeFile', 'input.mp4', await FFmpeg.fetchFile(video));
 
-    await ffmpeg.run('-i', 'input.mp4', '-vcodec', 'libx264', '-crf', '28', 'output.mp4');
+//     await ffmpeg.run('-i', 'input.mp4', '-vcodec', 'libx264', '-crf', '28', 'output.mp4');
 
-    const data = ffmpeg.FS('readFile', 'output.mp4');
-    const compressedVideo = new Blob([data.buffer], { type: 'video/mp4' });
-    console.log("compressedVideo is ", compressedVideo);
-    console.log("compressedVideo is ", compressedVideo.size);
+//     const data = ffmpeg.FS('readFile', 'output.mp4');
+//     const compressedVideo = new Blob([data.buffer], { type: 'video/mp4' });
+//     console.log("compressedVideo is ", compressedVideo);
+//     console.log("compressedVideo is ", compressedVideo.size);
 
-    return compressedVideo;
-}
+//     return compressedVideo;
+// }
 function fromVideoFile(file) {
-    return new Promise(async (resolve, reject) => {
+    return new Promise( (resolve, reject) => {
         const video = document.createElement('video');
-        // const videoURL = URL.createObjectURL(file); // Create URL once
-
-        try {
-            const processedVideo = await checkVideoFileSize(file); // Await the result of checkVideoFileSize
-           
-            console.log("processed video is ", processedVideo);
-            const processedVideoURL = URL.createObjectURL(processedVideo); // Create URL for the processed video
-
-            video.src = processedVideoURL;
+        const videoURL = URL.createObjectURL(file); // Create URL once
+            video.src = videoURL;
             video.controls = true;  // Add controls so users can play/pause
             video.autoplay = true;  // Set autoplay to true to start playing automatically
             video.muted = true;     // Mute the video to allow autoplay in most browsers
@@ -390,10 +381,8 @@ function fromVideoFile(file) {
             video.onerror = () => {
                 reject(new Error("Failed to load video"));
             };
-        } catch (error) {
-            reject(error);
-        }
-    });
+        });
+       
 }
 videoInput.addEventListener('change', function (event) {
     const file = event.target.files[0];
@@ -502,31 +491,21 @@ function processImage(img){
         console.error('Image is not loaded or undefined');
         return; // Exit the function to avoid further errors
     }
-   // gradient2 = updateGradientFromCSS(currentGradientAngle);
-
     const imageWidth = img.width;  
     const imageHeight = img.height;
     const charWidthValue = fontSize.value*charWidthOffsetRatio;//*0.8;
     const lineHeightValue = fontSize.value*lineHeightOffsetRatio;//0.8;
-    let ratioX =(Number(fontSize.value) + charWidthValue)*ratioValue; //2* fontSize.value/5*13.5;// 
-    let ratioY = (Number(fontSize.value) + lineHeightValue)*ratioValue;//2*fontSize.value/5*13.5 ;//
-    // console.log(`font size: ${fontSize.value}, charwidth value: ${charWidthValue}, line height value: ${lineHeightValue}`);
-    // console.log("RATIO dimension ", `${ratioX}x${ratioY}`);
+    // let ratioX =(Number(fontSize.value) + charWidthValue)*ratioValue; //2* fontSize.value/5*13.5;// 
+    // let ratioY = (Number(fontSize.value) + lineHeightValue)*ratioValue;//2*fontSize.value/5*13.5 ;//
 
     const asciiDimensions = calculateAsciiDimensionsForImageSize(imageWidth, imageHeight, Number(fontSize.value) , Number(fontSize.value)/charWidthOffsetRatio*lineHeightOffsetRatio);
     const aaReq = { width:asciiDimensions.width  , height: asciiDimensions.height, colored: false};
-    // console.log("image dimension ", `${imageWidth}x${imageHeight}`);
-    // console.log("asciiDimensions ", `${asciiDimensions.width}x${asciiDimensions.height}`);
-   
+
     let processedWidth = asciiDimensions.width * charWidthValue;
     let processedHeight = asciiDimensions.height * lineHeightValue;
-   //updateGradientFromCanvas(processedAssetCanvasCTX, currentGradientAngle, processedWidth, processedHeight);
-   // console.log(`processedAssetCanvasCTX dimension: ${processedWidth}x${processedHeight}`);
-    updateGradientFromCSS(currentGradientAngle);
-    gradient2 = `linear-gradient(${currentGradientAngle}deg, ${currentColor1} ${currentPos1}%, ${currentColor2} ${currentPos2}%, ${currentColor3} ${currentPos3}%)`; 
+    updateGradientFromCanvas(processedAssetCanvasCTX, currentGradientAngle, processedWidth, processedHeight);
 
     processedAssetCanvas.style.color = gradient2;
-    // gradient 2 is not working for the imported image 
 
     const canvasOptions = {
         fontSize: fontSize.value,
@@ -650,7 +629,6 @@ gradientAngle.addEventListener('input', (e) => {
     updateGradient(); 
 });
 
-
 noUiSlider.create(slider, {
     start: [1, 50, 100],
     tooltips: true,
@@ -749,8 +727,6 @@ function updateAssetBeforeDebounce(funcName){
             throttle(processVideo(currentVideo),throttleDelay);
         }
     }
-
-
 }
 function updateAsset(funcName){
     console.log("update asset before debounce");
@@ -767,7 +743,7 @@ function updateSaturation(){
 }
 
 function updateGradient(){
-    let sliderAngle = 0;
+    let sliderAngle = 90;
     let gscWidth = gradientSliderCanvas.width;
     let gscHeight = gradientSliderCanvas.height;
     let gcWidth = gradientCanvas.width;
@@ -775,29 +751,30 @@ function updateGradient(){
     updateSaturation();
 
     updateGradientFromCanvas(gradientSliderCanvasCTX, sliderAngle, gscWidth, gscHeight);
-
-    gradient = updateGradientFromCSS(currentGradientAngle);
-    gradientCanvas.style.background =gradient;
+    updateGradientFromCanvas(gradientCanvasCTX, currentGradientAngle, gcWidth, gcHeight);
 
     updateAsset("gradient");
 }
 
-function updateGradientFromCSS(angle){
-     return `linear-gradient(${angle}deg, ${currentColor1} ${currentPos1}%, ${currentColor2} ${currentPos2}%, ${currentColor3} ${currentPos3}%)`;
-}
-function updateGradientFromCanvas(canvas, angle, width, height) {
+function updateGradientFromCanvas(ctx, angle, width, height) {
+    let radians = (angle - 90) * (Math.PI / 180); // Convert angle to radians and adjust by -90 degrees
+    let x1 = width / 2;
+    let y1 = height / 2;
+    let x2, y2;
 
-    let radian = angle * (Math.PI / 180);
-    let x2 = width * Math.cos(radian);
-    let y2 = height * Math.sin(radian);
-    let x1 = 0, y1 =0;
+    let diagonalLength = Math.sqrt(width * width + height * height) / 2;
 
-    gradient = canvas.createLinearGradient(x1,y1,x2,y2);
+    x2 = x1 + Math.cos(radians) * diagonalLength;
+    y2 = y1 + Math.sin(radians) * diagonalLength;
+
+    x1 = x1 - Math.cos(radians) * diagonalLength;
+    y1 = y1 - Math.sin(radians) * diagonalLength;
+
+    gradient = ctx.createLinearGradient(x1,y1,x2,y2);
     let pos1 = currentPos1 / 100.0;
     let pos2 = currentPos2 / 100.0;
     let pos3 = currentPos3 / 100.0;
 
-    // Ensure positions are in ascending order
     if (pos1 > pos2) [pos1, pos2] = [pos2, pos1];
     if (pos2 > pos3) [pos2, pos3] = [pos3, pos2];
     if (pos1 > pos2) [pos1, pos2] = [pos2, pos1];
@@ -806,9 +783,9 @@ function updateGradientFromCanvas(canvas, angle, width, height) {
     gradient.addColorStop(pos2, currentColor2);
     gradient.addColorStop(pos3, currentColor3);
 
-    canvas.clearRect(0, 0, width, height);
-    canvas.fillStyle = gradient;
-    canvas.fillRect(0, 0, width, height);
+    ctx.clearRect(0, 0, width, height);
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, width, height);
 
 }
 function updateColor(color){
