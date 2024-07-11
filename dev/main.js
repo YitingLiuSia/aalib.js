@@ -664,9 +664,8 @@ window.onload = function() {
     currentPos1 = 1;
     currentPos2= 50;
     currentPos3= 100;
-    updateGradient();
-    updateAsset("charset");
- 
+    updateAsset("onload");
+
 };
 
 fontSize.oninput = (e) => {
@@ -700,7 +699,6 @@ charsetSelector.onchange=(e)=>{
     }
     updateAsset("charset");
 }
-
 
 function clearCanvas(){
     let ctx = processedAssetCanvas.getContext('2d');
@@ -739,12 +737,9 @@ function updateSaturation(){
 
 function updateGradient(){
     let sliderAngle = 90;
-  
     updateSaturation();
-
     updateGradientFromCanvas(gradientSliderCanvasCTX, sliderAngle, gscWidth, gscHeight);
     updateGradientFromCanvas(gradientCanvasCTX, currentGradientAngle, gcWidth, gcHeight);
-
     updateAsset("gradient");
 }
 
