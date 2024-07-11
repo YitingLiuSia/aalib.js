@@ -222,23 +222,35 @@ hr{
     position:absolute;
     width: 100vw;
     height: 100vh;
-    opacity: 0.5;
     z-index: 10;
-    background-color: gray;
+    background-color: rgba(23, 48, 68, 0.5); 
 }
 #popup-container button {
     position: absolute;
+    background-color: transparent;
     width: 15px;
     height: 15px;
     top: 10px;
     right: 10px;
 }
+
+.warning-header {
+    display: flex; /* Use flexbox to align items in a row */
+    align-items: center; /* Center-align the items vertically */
+    gap: 10px; /* Optional: adds some space between the icon and the text */
+}
+
+/* Edit: Removed inline styles from the img tag and moved them to CSS */
+.warning-header img {
+    width: 25px;
+    height:  25px;
+}
 #popup-container{
+    border-radius: 20px;
     position: absolute;
-    width: 300px;
-    height: 200px;
-    background-color: white;
-    border: 1px solid black;
+    width: 400px;
+    height: 220px;
+    background-color:#FFF2F6;
     display: flex;
     justify-content: space-between;
     align-content: space-between;
@@ -249,11 +261,28 @@ hr{
 }
 
 #popup{
-    background-color: red;
-    border-radius: 10px;
+    border-radius: 2cap;
     margin: auto;
-    width: 80%;
+    width: 90%;
+    height: auto;
     z-index: 20;
+}
+
+#close-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+}
+
+/* Edit: Adjusted styles for the close button image */
+#close-button img {
+    width: 15px; /* Adjust the width as needed */
+    height: 15px; /* Adjust the height as needed */
+    margin: 0 auto;
 }
 .noUi-handle {
     background: transparent;

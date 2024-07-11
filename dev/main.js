@@ -76,13 +76,9 @@ let imageWidthLimit = 15000;
 
 
 let popupBackground = document.getElementById("popup-bg");
-let popup = document.getElementById('popup');
-let popupText = popup.querySelector('p');
-let closeButtonForPopup = popupBackground.querySelector('button');
-
+let closeButtonForPopup = document.getElementById('close-button');
 closeButtonForPopup.onclick = ()=>{
     popupBackground.style.display = "none";
-
 }
 
 savePresetButton.onclick= savePresetToFile;
@@ -385,7 +381,6 @@ function downloadImageWithRatio(){
     let newHeight = canvas.height * currentimageExportRatio;
     if(newWidth>=imageWidthLimit){
         popupBackground.style.display = "block";
-        popupText.textContent = "File size too big. Refuse to download";
         console.error("File size too big. Refuse to download");
     }else{
         tempCanvas.width = newWidth;
@@ -398,7 +393,6 @@ function downloadImageWithRatio(){
         link.click();    
         tempCanvas.remove();
     }
-
 
 }
 
@@ -887,6 +881,7 @@ function saveGradient() {
 
 function loadPreset(){
     console.log("load preset");
+    loadGradient();
     inverseEle.checked = presetInfo.inverseEle;
     brightnessEle.value = presetInfo.brightnessEle;
     contrastEle.value = presetInfo.contrastEle;
@@ -899,7 +894,6 @@ function loadPreset(){
     currentSaturationForGradient = presetInfo.currentSaturationForGradient;
     currentimageExportRatio = presetInfo.currentimageExportRatio;
     // charsetSelector.dispatchEvent(new Event('change'));
-    loadGradient();
     updateGradient();
     updatePreset();
 }
