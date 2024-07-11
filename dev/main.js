@@ -25,7 +25,7 @@ let currentimageExportRatio = 1;
 let gradientAngleContainer = document.getElementById('gradient-angle');
 let gradientAngle = gradientAngleContainer.getElementsByTagName('input')[0];
 let gradientAngleValue = gradientAngle.nextElementSibling.querySelector('#gradient-angle .sliderValue');
-let currentGradientAngle = 0; // Initialize with a default value, e.g., 90 degrees
+let currentGradientAngle = 0; 
 let saturationContainer = document.getElementById("saturation");
 let saturationForGradient =saturationContainer.getElementsByTagName("input")[0]; 
 let saturationForGradientValue = document.querySelector('#saturation .sliderValue'); 
@@ -61,7 +61,6 @@ let videoExportRatio = document.getElementById("videoExportRatio");
 
 const charWidthOffsetRatio = 0.8;
 const lineHeightOffsetRatio = 2.5;
-const ratioValue = 2;
 const inputs = document.querySelectorAll('input');
 let debounceDelay = 500;
 let throttleDelay = 200;
@@ -73,6 +72,7 @@ let gcWidth = gradientCanvas.width;
 let gcHeight = gradientCanvas.height;
 let processedWidth,processedHeight;
 let videoProcessingPipeline;
+
 savePresetButton.onclick= savePresetToFile;
 saveImageButton.onclick = downloadImageWithRatio;
 
@@ -130,39 +130,6 @@ const saturationColors = {
 let gradientInfo = new GradientInfo();
 let presetInfo = new PresetInfo();
 
-// const domRefs = {
-//     videoImportContainer: document.getElementById("video-container"),
-//     imageImportContainer: document.getElementById("image-container"),
-//     videoInput: document.getElementById('videoInput'),
-//     imageInput: document.getElementById("imageInput"),
-//     imageImport: document.getElementById("imported-image"),
-//     videoImport: document.getElementById('video-import')
-// };
-
-// // Use event delegation for assetSelector changes
-// document.addEventListener('change', (e) => {
-//     clearCanvas();
-//     if (e.target.id === 'asset-selector') {
-//         const isVideo = e.target.value === "video";
-//         domRefs.videoImportContainer.style.display = isVideo ? "block" : "none";
-//         domRefs.imageImportContainer.style.display = isVideo ? "none" : "inline-block";
-//         domRefs.videoInput.style.display = isVideo ? "block" : "none";
-//         domRefs.imageInput.style.display = isVideo ? "none" : "block";
-//         domRefs.imageImport.style.display =isVideo ? "block" : "none";
-//         domRefs.videoImport.style.display =isVideo ? "none" : "block";
-
-//         if(isVideo){
-//             if (currentVideo) {
-//                 currentVideo.pause();
-//                 currentVideo = null;
-//             } 
-//         }else{
-//             currentImage = null;
-//         }
-//     }
-// });
-
-
 document.addEventListener('DOMContentLoaded', () => fetchPresetFromJson("Presets/presetInfo.json"));
 startRecordingButton.onclick = recordAndDownloadVideo;
 imageInput.addEventListener('change', handleImageInputChange);
@@ -193,7 +160,6 @@ imageDropdown.onchange = function(){
 assetSelector.onchange = (e) => {
     if (e.target.value === "video") {
         clearCanvas();
-
         currentImage = null;
         console.log("selected VIDEO");
         videoInput.style.display = "block";
@@ -260,7 +226,6 @@ function downloadVideo(){
 }
 function setupMediaRecorder(canvas, downloadScaleFactor = 3) {
     const ctx = canvas.getContext("2d");
-
     const stream = canvas.captureStream(videoFPS);
     mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm; codecs=vp9' });
     mediaRecorder.ondataavailable = function (event) {
@@ -487,14 +452,13 @@ function processVideo(video){
     restartVideo(video); // This will also play the video
 }
 
-
-
 function processImage(img){
-    // clearCanvas();
     if (!img || typeof img.width === 'undefined' || typeof img.height === 'undefined') {
         console.error('Image is not loaded or undefined');
         return; // Exit the function to avoid further errors
     }
+
+    console.log("Process image ");
     let imageWidth, imageHeight;
     imageWidth = img.width;
     imageHeight = img.height;
@@ -504,9 +468,9 @@ function processImage(img){
     const asciiDimensions = calculateAsciiDimensionsForImageSize(imageWidth, imageHeight, Number(fontSize.value) , Number(fontSize.value)/charWidthOffsetRatio*lineHeightOffsetRatio);
     const aaReq = { width:asciiDimensions.width  , height: asciiDimensions.height, colored: false};
 
-    console.log(`IMAGE dimension is ${img.width}x${img.height}`);
-    console.log(`ascii dimension is ${aaReq.width}x${aaReq.height}`);
-    console.log(`AFTER CONVERSION IMAGE dimension is ${imageWidth}x${imageHeight}`);
+    // console.log(`IMAGE dimension is ${img.width}x${img.height}`);
+    // console.log(`ascii dimension is ${aaReq.width}x${aaReq.height}`);
+    // console.log(`AFTER CONVERSION IMAGE dimension is ${imageWidth}x${imageHeight}`);
     
     processedWidth = asciiDimensions.width * charWidthValue;
     processedHeight = asciiDimensions.height * lineHeightValue;
@@ -514,13 +478,13 @@ function processImage(img){
     processedAssetCanvas.width = processedWidth;
     processedAssetCanvas.height = processedHeight;
 
-    console.log(`processed Size ${processedWidth}x${processedHeight}`);
-    console.log(`processed Asset Canvas ${processedAssetCanvas.width}x${processedAssetCanvas.height}` );
+    // console.log(`processed Size ${processedWidth}x${processedHeight}`);
+    // console.log(`processed Asset Canvas ${processedAssetCanvas.width}x${processedAssetCanvas.height}` );
+    
     let backgroundColor = "rgba(0,0,0,0)"
     if(colorSelectionDropdown.value==="white"){
         backgroundColor = colorGray;
     }
-
     if(colorSelectionDropdown.value == "Sia Gradient")
     {
         updateGradientFromCanvas(processedAssetCanvasCTX, currentGradientAngle, processedWidth, processedHeight);
@@ -583,7 +547,7 @@ function loadImageAndProcess(url) {
     const img = new Image();
     img.src = url;        
     img.onload = function () {
-        updateImageSizeWithWidth(img,1000);
+        // updateImageSizeWithWidth(img,1000);
         let existingElement = document.getElementById('imported-image');
         if (existingElement) {
             console.log("loadImageAndProcess - replace child image");
@@ -594,8 +558,9 @@ function loadImageAndProcess(url) {
             img.id = 'imported-image'; 
             document.body.appendChild(img); 
         }
-        console.log("current image is ", img.width);
-        processImage(currentImage); 
+        updateAsset("idle");
+
+        // throttle(updateAsset("idle"),throttleDelay);
     };
     img.onerror = function () {
         console.error('Error loading the image');
@@ -701,9 +666,7 @@ window.onload = function() {
     currentPos3= 100;
     updateGradient();
     updateAsset("charset");
-    // requestAnimationFrame(() => {
-       
-    // });
+ 
 };
 
 fontSize.oninput = (e) => {
@@ -760,7 +723,7 @@ function updateAssetBeforeDebounce(funcName){
     }
 }
 function updateAsset(funcName){
-    updateAssetBeforeDebounce(funcName);// no delay for image for testing 
+    updateAssetBeforeDebounce(funcName);// no delay for image for testing - still has trouble updating teh impacts upon first import
 
     // debounce(updateAssetBeforeDebounce(funcName),debounceDelay);
 }
@@ -891,6 +854,7 @@ function saveGradient() {
 }
 
 function loadPreset(){
+    console.log("load preset");
     inverseEle.checked = presetInfo.inverseEle;
     brightnessEle.value = presetInfo.brightnessEle;
     contrastEle.value = presetInfo.contrastEle;
