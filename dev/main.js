@@ -1,6 +1,6 @@
 import aalib from "../dist/aalib.js";
-import { ASCII_CHARSET } from "../src/renderers/HTMLRenderer";
-const charset_ascii = ASCII_CHARSET;
+// import { ASCII_CHARSET } from "../src/renderers/HTMLRenderer";
+// const charset_ascii = ASCII_CHARSET;
 const charset_sia = "SIA/-.><!*()   ";
 const resource = filename => `../resources/${ filename }`;
 const imageDropdown = document.getElementById('image-dropdown');
@@ -101,20 +101,20 @@ class GradientInfo {
         this.colorPosition1 = colorPosition1;
         this.colorPosition2 = colorPosition2;
         this.colorPosition3 = colorPosition3;
-        // this.saturation = saturation;
-        // this.angle = angle; 
     }
 }
 
 class PresetInfo {
-    constructor(inverseEle, brightnessEle, contrastEle, gradientInfo, fontSize, charset) {
+    constructor(inverseEle, brightnessEle, contrastEle, gradientInfo, fontSize, charset,currentGradientAngle,currentSaturationForGradient,currentimageExportRatio) {
         this.inverseEle = inverseEle;
         this.brightnessEle = brightnessEle;
         this.contrastEle = contrastEle;
-        // this.colorSelection = colorSelection;
         this.gradientInfo = gradientInfo;
         this.fontSize = fontSize;
         this.charset = charset;
+        this.currentGradientAngle = currentGradientAngle;
+        this.currentSaturationForGradient = currentSaturationForGradient; 
+        this.currentimageExportRatio = currentimageExportRatio;
     }
 }
 
@@ -130,7 +130,6 @@ const saturationColors = {
 let gradientInfo = new GradientInfo();
 let presetInfo = new PresetInfo();
 
-document.addEventListener('DOMContentLoaded', () => fetchPresetFromJson("Presets/presetInfo.json"));
 startRecordingButton.onclick = recordAndDownloadVideo;
 imageInput.addEventListener('change', handleImageInputChange);
 
@@ -656,16 +655,19 @@ imageExportRatio.oninput=(e)=>{
 
 window.onload = function() {
     console.log("PHASE 2");
-    enableInputs();
-    currentimageExportRatio = imageExportRatio.value;
-    charsetSelector.value = "SIA/";
-    presetInfo.fontFamily = "Sora"; // fontDropdown.value;
-    videoStatus.textContent = videoInitialStatus;
-    currentPos1 = 1;
-    currentPos2= 50;
-    currentPos3= 100;
-    updateAsset("onload");
-
+    fetchPresetFromJson("Presets/presetInfo.json").then(() => {
+        enableInputs();
+        currentimageExportRatio = imageExportRatio.value;
+        charsetSelector.value = "SIA/";
+        presetInfo.fontFamily = "Sora"; 
+        videoStatus.textContent = videoInitialStatus;
+        currentPos1 = 1;
+        currentPos2 = 50;
+        currentPos3 = 100;
+        updateAsset("onload");
+    }).catch(error => {
+        console.error("Error loading presets:", error);
+    });
 };
 
 fontSize.oninput = (e) => {
@@ -692,14 +694,14 @@ inverseEle.onchange = (e) => {
     updateAsset("inverseEle");
 }
 
-charsetSelector.onchange=(e)=>{
-    if(e.target.value==="SIA/"){
-        presetInfo.charset =charset_sia;
-    }else{
-        presetInfo.charset =charset_ascii;
-    }
-    updateAsset("charset");
-}
+// charsetSelector.onchange=(e)=>{
+//     if(e.target.value==="SIA/"){
+//         presetInfo.charset =charset_sia;
+//     }else{
+//         presetInfo.charset =charset_ascii;
+//     }
+//     updateAsset("charset");
+// }
 
 function clearCanvas(){
     let ctx = processedAssetCanvas.getContext('2d');
@@ -880,11 +882,16 @@ function savePreset(){
     presetInfo.brightnessEle = brightnessEle.value;
     presetInfo.contrastEle = contrastEle.value;
     presetInfo.gradientInfo = gradientInfo;
-    console.log("gradient info is ",gradientInfo);
-    saveGradient();
     presetInfo.fontSize = fontSize.value;
     presetInfo.fontFamily = "Sora";  
     presetInfo.charset = charsetSelector.value;
+    // Add additional properties to be saved
+    presetInfo.currentGradientAngle = currentGradientAngle;
+    presetInfo.currentSaturationForGradient = currentSaturationForGradient;
+    presetInfo.currentimageExportRatio = currentimageExportRatio;
+    // Save the gradient positions and colors
+    saveGradient();
+    console.log("gradient info is ",gradientInfo);
 }
 
 function savePresetToFile(){
@@ -901,7 +908,6 @@ function savePresetToFile(){
     console.log("Preset saved to file.");
 }
 
-// needs to update in the preset info values as well - UI 
 function loadPresetFromFile(file){
     const reader = new FileReader();
     reader.onload = function(event){
@@ -912,7 +918,10 @@ function loadPresetFromFile(file){
         presetInfo.gradientInfo = data.gradientInfo;
         presetInfo.fontSize = data.fontSize;
         presetInfo.charset = data.charset;
-    //    presetInfo.colorSelection = data.colorSelection;
+        // Load additional properties
+        currentGradientAngle = data.currentGradientAngle || currentGradientAngle; // Use existing value as fallback
+        currentSaturationForGradient = data.currentSaturationForGradient || currentSaturationForGradient; // Use existing value as fallback
+        currentimageExportRatio = data.currentimageExportRatio || currentimageExportRatio; // Use existing value as fallback
         console.log("preset loaded from file: ",presetInfo);
         loadPreset();
     }
