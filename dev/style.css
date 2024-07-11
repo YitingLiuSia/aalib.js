@@ -119,8 +119,8 @@ p{
 }
 
 #imported-image, #video-import video{
-    max-width: 100%; /* Ensure the image does not exceed the frame's width */
-    max-height: 100%; /* Ensure the image does not exceed the frame's height */
+    width: 100%; /* Ensure the image does not exceed the frame's width */
+    height: 100%; /* Ensure the image does not exceed the frame's height */
     object-fit: contain; /* Ensures the image maintains its aspect ratio */
     border-radius: 10px; /* Match the frame's border-radius to create a mask effect */
 }
