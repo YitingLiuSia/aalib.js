@@ -72,6 +72,18 @@ let gcWidth = gradientCanvas.width;
 let gcHeight = gradientCanvas.height;
 let processedWidth,processedHeight;
 let videoProcessingPipeline;
+let imageWidthLimit = 15000;
+
+
+let popupBackground = document.getElementById("popup-bg");
+let popup = document.getElementById('popup');
+let popupText = popup.querySelector('p');
+let closeButtonForPopup = popupBackground.querySelector('button');
+
+closeButtonForPopup.onclick = ()=>{
+    popupBackground.style.display = "none";
+
+}
 
 savePresetButton.onclick= savePresetToFile;
 saveImageButton.onclick = downloadImageWithRatio;
@@ -91,8 +103,6 @@ function enableInputs() {
         e.disabled = false;
     });
 }
-
-// gradient
 class GradientInfo {
     constructor(color1, color2, color3, colorPosition1, colorPosition2, colorPosition3) {
         this.color1 = color1;
@@ -368,21 +378,28 @@ videoInput.addEventListener('change', function (event) {
 });
 
 function downloadImageWithRatio(){
-    console.log("processedAssetCanvas is ",processedAssetCanvas);
     let canvas = document.getElementById('processed-asset');
     let tempCanvas = document.createElement('canvas');
     let tempCtx = tempCanvas.getContext('2d');
     let newWidth = canvas.width * currentimageExportRatio;
     let newHeight = canvas.height * currentimageExportRatio;
-    tempCanvas.width = newWidth;
-    tempCanvas.height = newHeight;
-    tempCtx.drawImage(canvas, 0, 0, newWidth, newHeight);
-    let dataUrl = tempCanvas.toDataURL('image/png');
-    let link = document.createElement('a');
-    link.href = dataUrl;
-    link.download = 'image.png';
-    link.click();    
-    tempCanvas.remove();
+    if(newWidth>=imageWidthLimit){
+        popupBackground.style.display = "block";
+        popupText.textContent = "File size too big. Refuse to download";
+        console.error("File size too big. Refuse to download");
+    }else{
+        tempCanvas.width = newWidth;
+        tempCanvas.height = newHeight;
+        tempCtx.drawImage(canvas, 0, 0, newWidth, newHeight);
+        let dataUrl = tempCanvas.toDataURL('image/png');
+        let link = document.createElement('a');
+        link.href = dataUrl;
+        link.download = 'image.png';
+        link.click();    
+        tempCanvas.remove();
+    }
+
+
 }
 
 function processVideo(video){
@@ -658,6 +675,7 @@ imageExportRatio.oninput=(e)=>{
 
 window.onload = function() {
     console.log("PHASE 2");
+    popupBackground.style.display = "none";
     fetchPresetFromJson("Presets/presetInfo.json").then(() => {
         enableInputs();
         currentimageExportRatio = imageExportRatio.value;
