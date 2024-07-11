@@ -450,9 +450,9 @@ function processVideo(video){
     if (inverseEle.checked) {
         videoProcessingPipeline = videoProcessingPipeline.map(aalib.filter.inverse());
     }
-    if (brightnessValue.value !== undefined) {
-        videoProcessingPipeline = videoProcessingPipeline.map(aalib.filter.brightness(brightnessValue.value));
-    }
+    // if (brightnessValue.value !== undefined) {
+    //     videoProcessingPipeline = videoProcessingPipeline.map(aalib.filter.brightness(brightnessValue.value));
+    // }
     if (contrastValue.value !== undefined) {
         videoProcessingPipeline = videoProcessingPipeline.map(aalib.filter.contrast(contrastValue.value));
     }
@@ -519,9 +519,9 @@ function processImage(img){
     if (inverseEle.checked) {
         imageProcessingPipeline = imageProcessingPipeline.map(aalib.filter.inverse());
     }
-    if (brightnessValue.value !== undefined) {
-        imageProcessingPipeline = imageProcessingPipeline.map(aalib.filter.brightness(brightnessValue.value));
-    }
+    // if (brightnessValue.value !== undefined) {
+    //     imageProcessingPipeline = imageProcessingPipeline.map(aalib.filter.brightness(brightnessValue.value));
+    // }
     if (contrastValue.value !== undefined) {
         imageProcessingPipeline = imageProcessingPipeline.map(aalib.filter.contrast(contrastValue.value));
     }
