@@ -15,9 +15,9 @@ let savePresetButton = document.getElementById("save-preset");
 let inverseEle = document.getElementById("inverse");
 let fontSize = document.getElementById("fontSize");
 let charsetSelector = document.getElementById("charset-selector");
-let brightnessEle = document.getElementById("brightness");
+// let brightnessEle = document.getElementById("brightness");
 let contrastEle = document.getElementById("contrast");
-let brightnessValue = brightnessEle.nextElementSibling.querySelector(".sliderValue");
+// let brightnessValue = brightnessEle.nextElementSibling.querySelector(".sliderValue");
 let contrastValue = contrastEle.nextElementSibling.querySelector(".sliderValue");
 let imageExportRatio = document.getElementById("imageExportRatio");
 let saveImageButton = document.getElementById("save-image");
@@ -111,9 +111,9 @@ class GradientInfo {
 }
 
 class PresetInfo {
-    constructor(inverseEle, brightnessEle, contrastEle, gradientInfo, fontSize, charset,currentGradientAngle,currentSaturationForGradient,currentimageExportRatio) {
+    constructor(inverseEle, contrastEle, gradientInfo, fontSize, charset,currentGradientAngle,currentSaturationForGradient,currentimageExportRatio) {
         this.inverseEle = inverseEle;
-        this.brightnessEle = brightnessEle;
+        // this.brightnessEle = brightnessEle;
         this.contrastEle = contrastEle;
         this.gradientInfo = gradientInfo;
         this.fontSize = fontSize;
@@ -145,7 +145,7 @@ function fetchPresetFromJson(filePath){
     .then(data => {
         presetInfo = new PresetInfo(
             data.inverseEle, 
-            data.brightnessEle, 
+            // data.brightnessEle, 
             data.contrastEle, 
             data.gradientInfo, 
             data.fontSize, 
@@ -693,11 +693,11 @@ fontSize.oninput = (e) => {
 }
 
 // this does not change that fast 
-brightnessEle.oninput = (e) => {
-    brightnessValue.textContent =e.target.value;
-    brightnessValue.value =e.target.value;
-    updateAsset("brightness");
-}
+// brightnessEle.oninput = (e) => {
+//     brightnessValue.textContent =e.target.value;
+//     brightnessValue.value =e.target.value;
+//     updateAsset("brightness");
+// }
 
 contrastEle.onchange=(e)=>{
     contrastValue.textContent=e.target.value;
@@ -831,9 +831,9 @@ function displayForGradientOrColor(displayGradient){
 }
 
 function updatePreset(){
-    if(brightnessEle.value!=presetInfo.brightnessEle){
-        brightnessEle.value = presetInfo.brightnessEle;
-    }
+    // if(brightnessEle.value!=presetInfo.brightnessEle){
+    //     brightnessEle.value = presetInfo.brightnessEle;
+    // }
     if(contrastEle.value!=presetInfo.contrastEle){
         contrastEle.value = presetInfo.contrastEle;
     }
@@ -884,10 +884,10 @@ function saveGradient() {
 function loadPreset(){
     console.log("load preset");
     inverseEle.checked = presetInfo.inverseEle;
-    brightnessEle.value = presetInfo.brightnessEle;
+    // brightnessEle.value = presetInfo.brightnessEle;
     contrastEle.value = presetInfo.contrastEle;
     gradientInfo = presetInfo.gradientInfo;
-    brightnessValue.innerHTML = presetInfo.brightnessEle;
+    // brightnessValue.innerHTML = presetInfo.brightnessEle;
     contrastValue.innerHTML = presetInfo.contrastEle;
     fontSize.value = presetInfo.fontSize;
     charsetSelector.value = presetInfo.charset;
@@ -903,7 +903,7 @@ function loadPreset(){
 function savePreset(){
     console.log("save preset ", presetInfo);
     presetInfo.inverseEle = inverseEle.checked;
-    presetInfo.brightnessEle = brightnessEle.value;
+    // presetInfo.brightnessEle = brightnessEle.value;
     presetInfo.contrastEle = contrastEle.value;
     presetInfo.gradientInfo = gradientInfo;
     presetInfo.fontSize = fontSize.value;
@@ -936,7 +936,7 @@ function loadPresetFromFile(file){
     const reader = new FileReader();
     reader.onload = function(event){
         const data = JSON.parse(event.target.result);
-        presetInfo.brightnessEle = data.brightnessEle;
+        // presetInfo.brightnessEle = data.brightnessEle;
         presetInfo.contrastEle = data.contrastEle;
         presetInfo.inverseEle = data.inverseEle;
         presetInfo.gradientInfo = data.gradientInfo;
