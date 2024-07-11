@@ -1,6 +1,6 @@
 import aalib from "../dist/aalib.js";
-// import { ASCII_CHARSET } from "../src/renderers/HTMLRenderer";
-// const charset_ascii = ASCII_CHARSET;
+import { ASCII_CHARSET } from "../src/renderers/HTMLRenderer";
+const charset_ascii = ASCII_CHARSET;
 const charset_sia = "SIA/-.><!*()   ";
 const resource = filename => `../resources/${ filename }`;
 const imageDropdown = document.getElementById('image-dropdown');
@@ -134,7 +134,7 @@ startRecordingButton.onclick = recordAndDownloadVideo;
 imageInput.addEventListener('change', handleImageInputChange);
 
 function fetchPresetFromJson(filePath){
-    fetch(resource(filePath))
+   return fetch(resource(filePath))
     .then(response => response.json())
     .then(data => {
         presetInfo = new PresetInfo(
@@ -143,7 +143,10 @@ function fetchPresetFromJson(filePath){
             data.contrastEle, 
             data.gradientInfo, 
             data.fontSize, 
-            data.charset
+            data.charset,
+            data.currentGradientAngle,
+            data.currentSaturationForGradient,
+            data.currentimageExportRatio
         );
         loadPreset();
     })
@@ -415,7 +418,7 @@ function processVideo(video){
         fontFamily: "Sora",
         lineHeight: lineHeightValue,
         charWidth: charWidthValue,
-        charset: presetInfo.charset,
+        charset: charset_sia,
         width: processedWidth,
         height: processedHeight,
         background: backgroundColor,
@@ -493,7 +496,7 @@ function processImage(img){
         fontFamily: "Sora",
         lineHeight: lineHeightValue,
         charWidth: charWidthValue,
-        charset: presetInfo.charset,
+        charset: charset_sia,
         width: processedWidth,  
         height: processedHeight, 
         background: backgroundColor,
@@ -826,16 +829,24 @@ function updatePreset(){
     if(fontSize.value!=presetInfo.fontSize){
         fontSize.value = presetInfo.fontSize;
     }
-    if (charsetSelector.value != presetInfo.charset) {
-        if (presetInfo.charset.includes("SIA/")) {
-            charsetSelector.value = "SIA/";
-        } else {
-            charsetSelector.value = "ASCII";
-        }
-    }
+    
+    // if (charsetSelector.value != presetInfo.charset) {
+    //     if (presetInfo.charset.includes("SIA/")) {
+    //         charsetSelector.value = "SIA/";
+    //     } else {
+    //         charsetSelector.value = "ASCII";
+    //     }
+    // }
     if(gradientInfo!=presetInfo.gradientInfo){
         gradientInfo = presetInfo.gradientInfo;
     }
+
+    gradientAngleValue.textContent = currentGradientAngle; 
+    gradientAngle.value = currentGradientAngle; 
+    saturationForGradient.value = currentSaturationForGradient; 
+    saturationForGradientValue.textContent = currentSaturationForGradient; 
+    imageExportRatio.value =currentimageExportRatio; 
+
 }
 
 function loadGradient(){
@@ -845,8 +856,6 @@ function loadGradient(){
     currentColor1 = gradientInfo.color1;
     currentColor2 = gradientInfo.color2;
     currentColor3 = gradientInfo.color3;
-    // saturationForGradient = gradientInfo.saturation;
-    // gradientAngle = gradientInfo.angle;
 }
 
 function saveGradient() {
@@ -856,8 +865,6 @@ function saveGradient() {
     gradientInfo.color1 = currentColor1;
     gradientInfo.color2= currentColor2;
     gradientInfo.color3 = currentColor3;
-    // gradientInfo.saturation = saturationForGradient;
-    // gradientInfo.angle = gradientAngle;
 }
 
 function loadPreset(){
@@ -870,7 +877,10 @@ function loadPreset(){
     contrastValue.innerHTML = presetInfo.contrastEle;
     fontSize.value = presetInfo.fontSize;
     charsetSelector.value = presetInfo.charset;
-    charsetSelector.dispatchEvent(new Event('change'));
+    currentGradientAngle = presetInfo.currentGradientAngle; 
+    currentSaturationForGradient = presetInfo.currentSaturationForGradient;
+    currentimageExportRatio = presetInfo.currentimageExportRatio;
+    // charsetSelector.dispatchEvent(new Event('change'));
     loadGradient();
     updateGradient();
     updatePreset();
@@ -922,6 +932,11 @@ function loadPresetFromFile(file){
         currentGradientAngle = data.currentGradientAngle || currentGradientAngle; // Use existing value as fallback
         currentSaturationForGradient = data.currentSaturationForGradient || currentSaturationForGradient; // Use existing value as fallback
         currentimageExportRatio = data.currentimageExportRatio || currentimageExportRatio; // Use existing value as fallback
+       
+   
+
+        
+        
         console.log("preset loaded from file: ",presetInfo);
         loadPreset();
     }
