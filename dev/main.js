@@ -667,22 +667,24 @@ imageExportRatio.oninput=(e)=>{
     updateAsset("imageExportRatio");
 }
 
+document.addEventListener('DOMContentLoaded', function() {
+    console.log("DOM fully loaded and parsed");
+    fetchPresetFromJson("Presets/presetInfo.json"); 
+});
+
 window.onload = function() {
     console.log("PHASE 2");
     popupBackground.style.display = "none";
-    fetchPresetFromJson("Presets/presetInfo.json").then(() => {
-        enableInputs();
-        currentimageExportRatio = imageExportRatio.value;
-        charsetSelector.value = "SIA/";
-        presetInfo.fontFamily = "Sora"; 
-        videoStatus.textContent = videoInitialStatus;
-        currentPos1 = 1;
-        currentPos2 = 50;
-        currentPos3 = 100;
-        updateAsset("onload");
-    }).catch(error => {
-        console.error("Error loading presets:", error);
-    });
+    enableInputs();
+    currentimageExportRatio = imageExportRatio.value;
+    charsetSelector.value = "SIA/";
+    presetInfo.fontFamily = "Sora"; 
+    videoStatus.textContent = videoInitialStatus;
+    currentPos1 = 1;
+    currentPos2 = 50;
+    currentPos3 = 100;
+    updateAsset("onload");
+
 };
 
 fontSize.oninput = (e) => {
@@ -881,7 +883,6 @@ function saveGradient() {
 
 function loadPreset(){
     console.log("load preset");
-    loadGradient();
     inverseEle.checked = presetInfo.inverseEle;
     brightnessEle.value = presetInfo.brightnessEle;
     contrastEle.value = presetInfo.contrastEle;
@@ -894,6 +895,7 @@ function loadPreset(){
     currentSaturationForGradient = presetInfo.currentSaturationForGradient;
     currentimageExportRatio = presetInfo.currentimageExportRatio;
     // charsetSelector.dispatchEvent(new Event('change'));
+    loadGradient();
     updateGradient();
     updatePreset();
 }
@@ -944,11 +946,6 @@ function loadPresetFromFile(file){
         currentGradientAngle = data.currentGradientAngle || currentGradientAngle; // Use existing value as fallback
         currentSaturationForGradient = data.currentSaturationForGradient || currentSaturationForGradient; // Use existing value as fallback
         currentimageExportRatio = data.currentimageExportRatio || currentimageExportRatio; // Use existing value as fallback
-       
-   
-
-        
-        
         console.log("preset loaded from file: ",presetInfo);
         loadPreset();
     }
