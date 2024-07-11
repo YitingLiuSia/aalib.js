@@ -548,19 +548,19 @@ function loadImageAndProcess(url) {
     img.src = url;        
     img.onload = function () {
         // updateImageSizeWithWidth(img,1000);
-        let existingElement = document.getElementById('imported-image');
-        if (existingElement) {
+        // let existingElement = document.getElementById('imported-image');
+        if (imageImport) {
             console.log("loadImageAndProcess - replace child image");
-            existingElement.src = img.src; 
+            imageImport.src = img.src; 
             currentImage = img;
         } else {
             console.log("loadImageAndProcess - append child image");
             img.id = 'imported-image'; 
             document.body.appendChild(img); 
         }
+        
         updateAsset("idle");
 
-        // throttle(updateAsset("idle"),throttleDelay);
     };
     img.onerror = function () {
         console.error('Error loading the image');
@@ -658,7 +658,7 @@ window.onload = function() {
     console.log("PHASE 2");
     enableInputs();
     currentimageExportRatio = imageExportRatio.value;
-    charsetSelector.value = presetInfo.charset;
+    charsetSelector.value = "SIA/";
     presetInfo.fontFamily = "Sora"; // fontDropdown.value;
     videoStatus.textContent = videoInitialStatus;
     currentPos1 = 1;
@@ -673,7 +673,8 @@ fontSize.oninput = (e) => {
     updateAsset("fontSize");
 }
 
-brightnessEle.onchange = (e) => {
+// this does not change that fast 
+brightnessEle.oninput = (e) => {
     brightnessValue.textContent =e.target.value;
     brightnessValue.value =e.target.value;
     updateAsset("brightness");
@@ -739,8 +740,19 @@ function updateGradient(){
     let sliderAngle = 90;
     updateSaturation();
     updateGradientFromCanvas(gradientSliderCanvasCTX, sliderAngle, gscWidth, gscHeight);
+    
+    gradientSliderCanvasCTX.clearRect(0, 0, gscWidth, gscHeight);
+    gradientSliderCanvasCTX.fillStyle = gradient;
+    gradientSliderCanvasCTX.fillRect(0, 0, gscWidth, gscHeight);
+    
     updateGradientFromCanvas(gradientCanvasCTX, currentGradientAngle, gcWidth, gcHeight);
+    
+    gradientCanvasCTX.clearRect(0, 0, gcWidth, gcHeight);
+    gradientCanvasCTX.fillStyle = gradient;
+    gradientCanvasCTX.fillRect(0, 0, gcWidth, gcHeight);
+    
     updateAsset("gradient");
+
 }
 
 function updateGradientFromCanvas(ctx, angle, width, height) {
@@ -770,9 +782,7 @@ function updateGradientFromCanvas(ctx, angle, width, height) {
     gradient.addColorStop(pos2, currentColor2);
     gradient.addColorStop(pos3, currentColor3);
 
-    ctx.clearRect(0, 0, width, height);
-    ctx.fillStyle = gradient;
-    ctx.fillRect(0, 0, width, height);
+  
 
 }
 function updateColor(color){
@@ -927,7 +937,6 @@ function calculateAsciiDimensionsForImageSize(pixelWidth, pixelHeight, charPixel
         height: asciiHeight
     };}
 }
-
 
 //Use throttling when you want to ensure that your function is called at regular intervals. For example, updating a UI element in response to a scroll event.
 function throttle(func, limit) {
