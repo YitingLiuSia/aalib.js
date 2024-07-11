@@ -74,16 +74,16 @@ let currentvideoExportRatio = 1;
 savePresetButton.onclick= savePresetToFile;
 saveImageButton.onclick = downloadImageWithRatio;
 
-// const throttledProcessVideo = throttle(processVideo, 200); // Adjust the 200ms to your needs
-
+const throttledProcessVideo = throttle(processVideo(currentVideo), throttleDelay); // Adjust the 200ms to your needs
 
 inputs.forEach(e => {
     e.disabled = true;
 });
+
 function enableInputs() {
-inputs.forEach(e => {
-    e.disabled = false;
-});
+    inputs.forEach(e => {
+        e.disabled = false;
+    });
 }
 
 // gradient
@@ -316,7 +316,8 @@ function stopRecording() {
 
 function downloadRecordedVideo(videoType) {
     const blob = new Blob(recordedChunks, {
-        type: 'video/webm'
+        // type: 'video/webm'
+        type: 'video/mp4'// to see if mac user can do so 
     });
 
     console.log("recorded chunks are ", recordedChunks.length);
@@ -419,12 +420,11 @@ function downloadImageWithRatio(){
 let videoProcessingPipeline;
 
 function processVideo(video){
-    clearCanvas();
     if (!video || typeof video.videoWidth === 'undefined' || typeof video.videoHeight === 'undefined') {
         console.error('Video is not loaded or undefined');
         return; // Exit the function to avoid further errors
-    }
-
+    }    
+    clearCanvas();
     videoStatus.textContent=videoProcessing;
     const videoWidth = video.videoWidth * currentvideoExportRatio;
     const videoHeight = video.videoHeight * currentvideoExportRatio;
@@ -639,13 +639,13 @@ colorSelectionDropdown.onchange = (e) => {
     }
 }
 
-saturationForGradient.addEventListener('input',(e)=>{
+saturationForGradient.addEventListener('change',(e)=>{
     saturationForGradientValue.textContent = e.target.value;
     currentSaturationForGradient = e.target.value;
     updateGradient();
 })
 
-gradientAngle.addEventListener('input', (e) => { 
+gradientAngle.addEventListener('change', (e) => { 
     gradientAngleValue.textContent = e.target.value+`°`;
     currentGradientAngle = parseInt(e.target.value, 10);
     updateGradient(); 
@@ -668,12 +668,28 @@ noUiSlider.create(slider, {
     }
 });
 
-slider.noUiSlider.on('update', function(values) {
+let sliderUpdated = false;
+
+slider.noUiSlider.on('set', function(values) {
     currentPos1 = values[0];
     currentPos2= values[1];
     currentPos3= values[2];
+//    sliderUpdated = true;
     updateGradient();
+
 });
+
+
+
+
+setInterval(() => {
+    if(sliderUpdated)
+    {   
+        updateGradient();
+        sliderUpdated=false;
+    }
+}, 2000);
+
 
 imageExportRatio.oninput=(e)=>{
     imageExportRatio.value = e.target.value;
@@ -689,6 +705,9 @@ window.onload = function() {
     charsetSelector.value = presetInfo.charset;
     presetInfo.fontFamily = "Sora"; // fontDropdown.value;
     videoStatus.textContent = videoInitialStatus;
+    currentPos1 = 1;
+    currentPos2= 50;
+    currentPos3= 100;
     updateGradient();
     updateAsset("charset");
     // requestAnimationFrame(() => {
@@ -701,13 +720,13 @@ fontSize.oninput = (e) => {
     updateAsset("fontSize");
 }
 
-brightnessEle.oninput = (e) => {
+brightnessEle.onchange = (e) => {
     brightnessValue.textContent =e.target.value;
     brightnessValue.value =e.target.value;
     updateAsset("brightness");
 }
 
-contrastEle.oninput=(e)=>{
+contrastEle.onchange=(e)=>{
     contrastValue.textContent=e.target.value;
     contrastValue.value=e.target.value;
     console.log("contrast value ", contrastValue.value);
@@ -746,8 +765,7 @@ function updateAssetBeforeDebounce(funcName){
     }else{
         if(currentVideo){
             console.log(`${funcName} - update VIDEO`);
-            throttle(processVideo(currentVideo),throttleDelay);
-        }
+            throttledProcessVideo();        }
     }
 }
 function updateAsset(funcName){
