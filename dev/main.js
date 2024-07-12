@@ -466,10 +466,11 @@ function processVideo(video){
 }
 
 function processImage(img){
-    if (!img || typeof img.width === 'undefined' || typeof img.height === 'undefined') {
-        console.error('Image is not loaded or undefined');
-        return; // Exit the function to avoid further errors
-    }
+    return new Promise((resolve, reject) => {
+        if (!img || typeof img.width === 'undefined' || typeof img.height === 'undefined') {
+            reject('Image is not loaded or undefined');
+            return;
+        }
 
     console.log("Process image ");
     let imageWidth, imageHeight;
@@ -480,19 +481,12 @@ function processImage(img){
     const lineHeightValue = fontSize.value*lineHeightOffsetRatio;//0.8;
     const asciiDimensions = calculateAsciiDimensionsForImageSize(imageWidth, imageHeight, Number(fontSize.value) , Number(fontSize.value)/charWidthOffsetRatio*lineHeightOffsetRatio);
     const aaReq = { width:asciiDimensions.width  , height: asciiDimensions.height, colored: false};
-
-    // console.log(`IMAGE dimension is ${img.width}x${img.height}`);
-    // console.log(`ascii dimension is ${aaReq.width}x${aaReq.height}`);
-    // console.log(`AFTER CONVERSION IMAGE dimension is ${imageWidth}x${imageHeight}`);
     
     processedWidth = asciiDimensions.width * charWidthValue;
     processedHeight = asciiDimensions.height * lineHeightValue;
 
     processedAssetCanvas.width = processedWidth;
     processedAssetCanvas.height = processedHeight;
-
-    // console.log(`processed Size ${processedWidth}x${processedHeight}`);
-    // console.log(`processed Asset Canvas ${processedAssetCanvas.width}x${processedAssetCanvas.height}` );
     
     let backgroundColor = "rgba(0,0,0,0)"
     if(colorSelectionDropdown.value==="white"){
@@ -530,7 +524,10 @@ function processImage(img){
     imageProcessingPipeline.map(aalib.render.canvas(canvasOptions))
     .do(function (el) {
         console.log("el dimension is ", `${el.width}x${el.height}`);
-        replaceAssetToDiv(el,'processed-asset');}).subscribe(); 
+        replaceAssetToDiv(el, 'processed-asset');
+        resolve(el); // Resolve the promise with the processed element
+    }).subscribe();
+});
 }
 
 function replaceAssetToDiv(el, targetDivId ){
@@ -566,14 +563,20 @@ function loadImageAndProcess(url) {
             console.log("loadImageAndProcess - replace child image");
             imageImport.src = img.src; 
             currentImage = img;
+            updateAsset("imageLoaded");
+
         } else {
             console.log("loadImageAndProcess - append child image");
             img.id = 'imported-image'; 
             document.body.appendChild(img); 
+            // currentImage = img;
+            // updateAsset("imageLoaded");
         }
-        
-        updateAsset("idle");
 
+        setTimeout(() => {
+            fontSize.dispatchEvent(new Event('input'));
+            console.log("font size dispatch event of input");
+        }, 2500);
     };
     img.onerror = function () {
         console.error('Error loading the image');
@@ -585,9 +588,8 @@ function handleImageInputChange(event) {
     if (file && file.type.startsWith('image/')) {
         const reader = new FileReader();
         reader.onload = function (e) {
-           loadImageAndProcess(e.target.result);
+            loadImageAndProcess(e.target.result);
         };
-
         reader.onerror = function () {
             console.error('Error loading the image');
         };
