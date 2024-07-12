@@ -6,14 +6,6 @@
     font-family: 'SoraFont';
     src: url('../resources/sora-ttf/Sora-Regular.ttf') format('truetype');
 }
-@font-face {
-    font-family: 'Kode';
-    src: url('../resources/kode-mono/KodeMono-Regular.ttf') format('truetype');
-}
-@font-face {
-    font-family: 'OpenSans';
-    src: url('../resources/open-sans/OpenSans-Regular.ttf') format('truetype');
-}
 
  .sliderContainer > p{
     margin: 8px 0;
@@ -218,7 +210,6 @@ hr{
 }
 
 #popup-bg{
-    display: none;
     position:absolute;
     width: 100vw;
     height: 100vh;
