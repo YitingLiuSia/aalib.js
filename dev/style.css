@@ -261,12 +261,28 @@ hr{
 
 #close-button {
     position: absolute;
-    top: 10px;
-    right: 10px;
+    width: 20px; /* Increased width for a larger button */
+    height: 20px; /* Increased height for a larger button */
     background: none;
-    border: none;
+    border: 1.5px solid black;
+    border-radius: 15px; /* Adjusted for a larger button */
     cursor: pointer;
     padding: 0;
+    text-align: center;
+    display: flex; /* Added for centering content */
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+}
+
+#close-button p {
+    margin: 0; /* Ensure the text is centered with no margin */
+    font-weight: 500; /* Moved from inline style */
+    font-size: 15px;
+}
+
+#close-button:hover {
+    border: 1.5px solid #8796A9;
+    color: #8796A9;
 }
 
 /* Edit: Adjusted styles for the close button image */
