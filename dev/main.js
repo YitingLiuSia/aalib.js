@@ -90,6 +90,7 @@ const throttledProcessVideo =()=>({
     }
 });
 
+
 inputs.forEach(e => {
     e.disabled = true;
 });
@@ -521,12 +522,21 @@ function processImage(img){
     }
     imageProcessingPipeline = imageProcessingPipeline.map(aalib.aa(aaReq));
 
-    imageProcessingPipeline.map(aalib.render.canvas(canvasOptions))
-    .do(function (el) {
-        console.log("el dimension is ", `${el.width}x${el.height}`);
-        replaceAssetToDiv(el, 'processed-asset');
-        resolve(el); // Resolve the promise with the processed element
-    }).subscribe();
+    if(isCanvas){
+        imageProcessingPipeline.map(aalib.render.canvas(canvasOptions))
+        .do(function (el) {
+            console.log("el dimension is ", `${el.width}x${el.height}`);
+            replaceAssetToDiv(el, 'processed-asset');
+            resolve(el); // Resolve the promise with the processed element
+        }).subscribe();
+    }else{
+        imageProcessingPipeline.map(aalib.render.html(canvasOptions))
+        .do(function (el) {
+            console.log("el dimension is ", `${el.width}x${el.height}`);
+            replaceAssetToDiv(el, 'processed-asset');
+            resolve(el); // Resolve the promise with the processed element
+        }).subscribe();
+    }
 });
 }
 
