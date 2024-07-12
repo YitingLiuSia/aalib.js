@@ -261,27 +261,29 @@ hr{
 
 #close-button {
     position: absolute;
-    width: 20px; /* Increased width for a larger button */
     height: 20px; /* Increased height for a larger button */
+    width: 20px; /* Increased width for a larger button */
     background: none;
-    border: 1.5px solid black;
-    border-radius: 15px; /* Adjusted for a larger button */
+    border: 1px solid black;
+    border-radius: 20px; /* Adjusted for a larger button */
+    margin: 0 auto;
     cursor: pointer;
-    padding: 0;
-    text-align: center;
     display: flex; /* Added for centering content */
     justify-content: center; /* Center horizontally */
-    align-items: center; /* Center vertically */
+    align-items: center; /* Center vertically */ 
+    padding: 0; /* Remove padding to prevent offsetting the content */
 }
 
 #close-button p {
-    margin: 0; /* Ensure the text is centered with no margin */
     font-weight: 500; /* Moved from inline style */
-    font-size: 15px;
+    font-size: 10px;
+    border-radius: 10px;
+    height: 100%;
+    width: 100%;
 }
 
 #close-button:hover {
-    border: 1.5px solid #8796A9;
+    border: 1px solid #8796A9;
     color: #8796A9;
 }
 
