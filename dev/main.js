@@ -381,7 +381,7 @@ function downloadImageWithRatio(){
     let newHeight = canvas.height * currentimageExportRatio;
     if(newWidth>=imageWidthLimit){
         popupBackground.style.display = "block";
-        console.error("File size too big. Refuse to download");
+        console.log("File size too big. Refuse to download");
     }else{
         tempCanvas.width = newWidth;
         tempCanvas.height = newHeight;
