@@ -376,6 +376,7 @@ videoInput.addEventListener('change', function (event) {
 });
 
 function downloadImageWithRatio(){
+    if(isCanvas){
     let canvas = document.getElementById('processed-asset');
     let tempCanvas = document.createElement('canvas');
     let tempCtx = tempCanvas.getContext('2d');
@@ -384,18 +385,27 @@ function downloadImageWithRatio(){
     if(newWidth>=imageWidthLimit){
         popupBackground.style.display = "block";
         console.log("File size too big. Refuse to download");
-    }else{
+    
         tempCanvas.width = newWidth;
         tempCanvas.height = newHeight;
         tempCtx.drawImage(canvas, 0, 0, newWidth, newHeight);
-        let dataUrl = tempCanvas.toDataURL('image/png');
+        let dataUrl= tempCanvas.toDataURL('image/png');
         let link = document.createElement('a');
         link.href = dataUrl;
         link.download = 'image.png';
         link.click();    
         tempCanvas.remove();
+        }
+    }else{
+        const link = document.createElement("a");
+        let container = document.getElementById("canvas-container");
+        const content = container.textContent;
+        const file = new Blob([content], { type: 'text/plain' });
+        link.href = URL.createObjectURL(file);
+        link.download = "sample.txt";
+        link.click();
+        URL.revokeObjectURL(link.href);
     }
-
 }
 
 function processVideo(video){
@@ -534,8 +544,8 @@ function processImage(img){
         }).subscribe();
     }
     else{
-        const aaReq = { width:asciiDimensions.width  , height: asciiDimensions.height, colored: true};
-        
+        const aaReq = { width:asciiDimensions.width  , height: asciiDimensions.height, colored: false};
+        cssGradient =colorBlack;
         const canvasOptions = {
             fontSize: fontSize.value,
             fontFamily: "Sora",
@@ -545,7 +555,8 @@ function processImage(img){
             width: processedWidth,  
             height: processedHeight, 
             background: backgroundColor,
-            color: cssGradient
+            color: cssGradient,
+            gradient: cssGradient
         };
      
         console.log("css gradient is ",cssGradient);
