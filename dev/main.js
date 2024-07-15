@@ -74,6 +74,7 @@ let processedWidth,processedHeight;
 let videoProcessingPipeline;
 let imageWidthLimit = 15000;
 
+let cssGradient;
 
 let popupBackground = document.getElementById("popup-bg");
 let closeButtonForPopup = document.getElementById('close-button');
@@ -481,7 +482,6 @@ function processImage(img){
     const charWidthValue = fontSize.value*charWidthOffsetRatio;//*0.8;
     const lineHeightValue = fontSize.value*lineHeightOffsetRatio;//0.8;
     const asciiDimensions = calculateAsciiDimensionsForImageSize(imageWidth, imageHeight, Number(fontSize.value) , Number(fontSize.value)/charWidthOffsetRatio*lineHeightOffsetRatio);
-    const aaReq = { width:asciiDimensions.width  , height: asciiDimensions.height, colored: false};
     
     processedWidth = asciiDimensions.width * charWidthValue;
     processedHeight = asciiDimensions.height * lineHeightValue;
@@ -497,7 +497,10 @@ function processImage(img){
     {
         updateGradientFromCanvas(processedAssetCanvasCTX, currentGradientAngle, processedWidth, processedHeight);
     }
+
     if(isCanvas){
+        const aaReq = { width:asciiDimensions.width  , height: asciiDimensions.height, colored: false};
+
     const canvasOptions = {
         fontSize: fontSize.value,
         fontFamily: "Sora",
@@ -531,6 +534,8 @@ function processImage(img){
         }).subscribe();
     }
     else{
+        const aaReq = { width:asciiDimensions.width  , height: asciiDimensions.height, colored: true};
+        
         const canvasOptions = {
             fontSize: fontSize.value,
             fontFamily: "Sora",
@@ -540,9 +545,10 @@ function processImage(img){
             width: processedWidth,  
             height: processedHeight, 
             background: backgroundColor,
-            color: "#000"
+            color: cssGradient
         };
      
+        console.log("css gradient is ",cssGradient);
         let imageProcessingPipeline = aalib.read.image.fromURL(img.src);
            
         if (inverseEle.checked) {
@@ -558,8 +564,18 @@ function processImage(img){
 
         imageProcessingPipeline.map(aalib.render.html(canvasOptions))
         .do(function (el) {
-            console.log(`readning in html`);
-            replaceAssetToDiv(el, 'canvas-container');
+            console.log(`reading in html`);
+            console.log("el is ",el);
+            // replaceAssetToDiv(el, 'canvas-container');
+            let targetDivId = "canvas-container";
+            el.id = targetDivId;
+            const existingElement = document.getElementById(targetDivId);
+            if (existingElement) {
+                existingElement.parentNode.replaceChild(el, existingElement);
+            } else {
+                el.id = targetDivId; 
+                document.body.appendChild(el);
+        }
             resolve(el); // Resolve the promise with the processed element
         }).subscribe();
     }
@@ -567,6 +583,8 @@ function processImage(img){
 }
 
 function replaceAssetToDiv(el, targetDivId ){
+    console.log("replace asset to div");
+
     el.id = targetDivId;
     const existingElement = document.getElementById(targetDivId);
     if (existingElement) {
@@ -645,6 +663,7 @@ colorSelectionDropdown.onchange = (e) => {
         case 'Sia Gradient':
             displayForGradientOrColor(true);
             updateGradient(); 
+            
             break;
         case 'black':
             updateColor(colorBlack);
@@ -792,6 +811,9 @@ function updateSaturation(){
     currentColor2 = getColorFromSaturation( currentSaturationForGradient)[1];
     currentColor3 = getColorFromSaturation( currentSaturationForGradient)[2];
 }
+function updateGradientToCSS(){
+    cssGradient = `linear-gradient(${currentGradientAngle}deg, ${currentColor1} ${currentPos1}%, ${currentColor2} ${currentPos2}%, ${currentColor3} ${currentPos3}%)`;
+}
 
 function updateGradient(){
     let sliderAngle = 90;
@@ -807,6 +829,8 @@ function updateGradient(){
     gradientCanvasCTX.clearRect(0, 0, gcWidth, gcHeight);
     gradientCanvasCTX.fillStyle = gradient;
     gradientCanvasCTX.fillRect(0, 0, gcWidth, gcHeight);
+    
+    updateGradientToCSS();
     
     updateAsset("gradient");
 
@@ -850,6 +874,8 @@ function updateColor(color){
     gradientCanvasCTX.fillStyle = gradient;
     gradientCanvasCTX.fillRect(0, 0, gcWidth, gcHeight);
     updateAsset("color");
+    cssGradient=color;
+    // updateColorToCSS(color);
 }
 
 
