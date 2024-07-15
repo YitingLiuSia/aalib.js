@@ -497,6 +497,7 @@ function processImage(img){
     {
         updateGradientFromCanvas(processedAssetCanvasCTX, currentGradientAngle, processedWidth, processedHeight);
     }
+    if(isCanvas){
     const canvasOptions = {
         fontSize: fontSize.value,
         fontFamily: "Sora",
@@ -521,19 +522,44 @@ function processImage(img){
         imageProcessingPipeline = imageProcessingPipeline.map(aalib.filter.contrast(contrastValue.value));
     }
     imageProcessingPipeline = imageProcessingPipeline.map(aalib.aa(aaReq));
-
-    if(isCanvas){
-        imageProcessingPipeline.map(aalib.render.canvas(canvasOptions))
+    
+    imageProcessingPipeline.map(aalib.render.canvas(canvasOptions))
         .do(function (el) {
             console.log("el dimension is ", `${el.width}x${el.height}`);
             replaceAssetToDiv(el, 'processed-asset');
             resolve(el); // Resolve the promise with the processed element
         }).subscribe();
-    }else{
+    }
+    else{
+        const canvasOptions = {
+            fontSize: fontSize.value,
+            fontFamily: "Sora",
+            lineHeight: lineHeightValue,
+            charWidth: charWidthValue,
+            charset: charset_sia,
+            width: processedWidth,  
+            height: processedHeight, 
+            background: backgroundColor,
+            color: "#000"
+        };
+     
+        let imageProcessingPipeline = aalib.read.image.fromURL(img.src);
+           
+        if (inverseEle.checked) {
+            imageProcessingPipeline = imageProcessingPipeline.map(aalib.filter.inverse());
+        }
+        if (brightnessValue.value !== undefined) {
+            imageProcessingPipeline = imageProcessingPipeline.map(aalib.filter.brightness(brightnessValue.value));
+        }
+        if (contrastValue.value !== undefined) {
+            imageProcessingPipeline = imageProcessingPipeline.map(aalib.filter.contrast(contrastValue.value));
+        }
+        imageProcessingPipeline = imageProcessingPipeline.map(aalib.aa(aaReq));
+
         imageProcessingPipeline.map(aalib.render.html(canvasOptions))
         .do(function (el) {
-            console.log("el dimension is ", `${el.width}x${el.height}`);
-            replaceAssetToDiv(el, 'processed-asset');
+            console.log(`readning in html`);
+            replaceAssetToDiv(el, 'canvas-container');
             resolve(el); // Resolve the promise with the processed element
         }).subscribe();
     }
