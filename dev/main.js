@@ -166,15 +166,15 @@ imageDropdown.onchange = function(){
     isCanvas = this.value === "canvas";
     updateAsset("canvasORHTML");
     if (isCanvas) {
-        processedAssetCanvas.style.display = "block";
-        htmlContainer.style.display = "none";
-        imageExportRatio.style.display="block";
+        processedAssetCanvas.style.visibility = "visible";
+        htmlContainer.style.visibility = "hidden";
+        imageExportRatio.style.display="flex";
         imageImportContainer.children[0].textContent = "Image Export";
         saveImageButton.textContent = "Save Image";
 
     } else {
-        processedAssetCanvas.style.display = "none";
-        htmlContainer.style.display = "block";
+        processedAssetCanvas.style.visibility = "hidden";
+        htmlContainer.style.visibility = "visible";
         imageExportRatio.style.display="none";
         imageImportContainer.children[0].textContent = "HTML Export";
         saveImageButton.textContent = "Save File";
@@ -413,7 +413,7 @@ function downloadImageWithRatio(){
         }
     }else{
         const link = document.createElement("a");
-        let container = document.getElementById("canvas-container");
+        let container = document.getElementById("html-content-container");
         const content = container.textContent;
         const file = new Blob([content], { type: 'text/plain' });
         link.href = URL.createObjectURL(file);
@@ -554,13 +554,10 @@ function processImage(img){
         .do(function (el) {
             console.log("el dimension is ", `${el.width}x${el.height}`);
             replaceAssetToDiv(el, 'processed-asset');
-            resolve(el); // Resolve the promise with the processed element
+            resolve(el); 
         }).subscribe();
     }
     else{
-        // clearCanvas();
-        // processedAssetCanvas.style.display="none";
-        // htmlContainer.style.display="block";
         const canvasOptions = {
             fontSize: fontSize.value,
             fontFamily: "Sora",
@@ -589,7 +586,6 @@ function replaceAssetToDiv(el, targetDivId ){
     // el.style.width = '100%';
     // el.style.height = '100%';
     // el.style.objectFit = 'contain';
-    
     const existingElement = document.getElementById(targetDivId);
     existingElement.innerHTML="";
     if (existingElement) {
@@ -598,7 +594,6 @@ function replaceAssetToDiv(el, targetDivId ){
         el.id = targetDivId; 
         document.body.appendChild(el);
     }
-
 }
 
 function updateImageSizeWithWidth(img, newWidth) {
