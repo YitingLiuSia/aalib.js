@@ -136,26 +136,35 @@ p{
 
 }
 #canvas-container {
-    position: relative; /* Ensure the container is positioned relatively */
-    width: 100%; /* Fixed width */
-    height: auto; /* Fixed height */
-    overflow: auto; /* Enable scroll bars when content overflows */
+    width: 100%; 
+    height: 600px; /* Set a fixed height or use vh units */
+    overflow: auto; 
     padding-bottom: 30px;
-}
+    position: relative; /* Add this */
 
-#background-setup {
-    position: absolute; /* Position it absolutely within the container */
-    top: 0;
-    left: 0;
-    z-index: 1; /* Ensure it is behind the processed-asset canvas */
+}
+#canvas-container .html-content {
+    width: 100%;
+    height: 100%;
+    position: absolute; /* Add this */
+    top: 0; /* Add this */
+    left: 0; /* Add this */
 }
 
 #processed-asset {
-    position: relative; /* Ensure it is positioned relative to the container */
-    display: block; /* Ensures the canvas is treated as a block-level element */  
-    max-width: 100%; /* Make the image stretch to fill the container */  
-    max-height: 100%; /* used to be auto */
-    z-index: 2; /* Ensure it is in front of the background-setup canvas */
+    position: absolute; /* Change to absolute */
+    top: 0;
+    left: 0;
+    max-width: 100%;
+    max-height: 100%; /* Change to 100% */
+    z-index: 2;
+}
+
+#background-setup {
+    position: absolute; 
+    top: 0;
+    left: 0;
+    z-index: 1;
 }
 
 .container {

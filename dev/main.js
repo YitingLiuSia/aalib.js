@@ -44,9 +44,8 @@ let videoInput = document.getElementById('videoInput');
 let imageInput = document.getElementById("imageInput");
 let imageImportContainer = document.getElementById("image-container");
 let imageImport = document.getElementById('imported-image');
-let canvasContainer = document.getElementById('canvas-container');
-let processedAssetCanvas = document.getElementById('processed-asset');//document.getElementById('video-scene');
-let processedAssetCanvasCTX = processedAssetCanvas.getContext("2d");//document.getElementById('video-scene');
+let processedAssetCanvas = document.getElementById('processed-asset');
+let processedAssetCanvasCTX = processedAssetCanvas.getContext("2d");
 let mediaRecorder;
 let recordedChunks = [];
 let startRecordingButton=document.getElementById('startRecording');
@@ -78,6 +77,8 @@ let cssGradient;
 
 let popupBackground = document.getElementById("popup-bg");
 let closeButtonForPopup = document.getElementById('close-button');
+let htmlContainer= document.getElementById('html-content-container');
+
 closeButtonForPopup.onclick = ()=>{
     popupBackground.style.display = "none";
 }
@@ -164,6 +165,20 @@ function fetchPresetFromJson(filePath){
 imageDropdown.onchange = function(){
     isCanvas = this.value === "canvas";
     updateAsset("canvasORHTML");
+    if (isCanvas) {
+        processedAssetCanvas.style.display = "block";
+        htmlContainer.style.display = "none";
+        imageExportRatio.style.display="block";
+        imageImportContainer.children[0].textContent = "Image Export";
+        saveImageButton.textContent = "Save Image";
+
+    } else {
+        processedAssetCanvas.style.display = "none";
+        htmlContainer.style.display = "block";
+        imageExportRatio.style.display="none";
+        imageImportContainer.children[0].textContent = "HTML Export";
+        saveImageButton.textContent = "Save File";
+    }
     console.log("iscanvas", isCanvas);
 }
 
@@ -451,7 +466,7 @@ function processVideo(video){
 
     console.log(`video dimension is ${video.videoWidth}x${video.videoHeight}`);
     console.log(`canvas dimension is ${canvasOptions.width}x${canvasOptions.height}`);
-    // Adjust the canvas size to match the ASCII dimensions
+
     processedAssetCanvas.width = canvasOptions.width;
     processedAssetCanvas.height = canvasOptions.height;
 
@@ -492,13 +507,15 @@ function processImage(img){
     const charWidthValue = fontSize.value*charWidthOffsetRatio;//*0.8;
     const lineHeightValue = fontSize.value*lineHeightOffsetRatio;//0.8;
     const asciiDimensions = calculateAsciiDimensionsForImageSize(imageWidth, imageHeight, Number(fontSize.value) , Number(fontSize.value)/charWidthOffsetRatio*lineHeightOffsetRatio);
-    
+    const aaReq = { width:asciiDimensions.width  , height: asciiDimensions.height, colored: false};
+
     processedWidth = asciiDimensions.width * charWidthValue;
     processedHeight = asciiDimensions.height * lineHeightValue;
 
     processedAssetCanvas.width = processedWidth;
     processedAssetCanvas.height = processedHeight;
     
+    console.log(`processed dimension: ${processedWidth}x${processedHeight}`);
     let backgroundColor = "rgba(0,0,0,0)"
     if(colorSelectionDropdown.value==="white"){
         backgroundColor = colorGray;
@@ -508,21 +525,6 @@ function processImage(img){
         updateGradientFromCanvas(processedAssetCanvasCTX, currentGradientAngle, processedWidth, processedHeight);
     }
 
-    if(isCanvas){
-        const aaReq = { width:asciiDimensions.width  , height: asciiDimensions.height, colored: false};
-
-    const canvasOptions = {
-        fontSize: fontSize.value,
-        fontFamily: "Sora",
-        lineHeight: lineHeightValue,
-        charWidth: charWidthValue,
-        charset: charset_sia,
-        width: processedWidth,  
-        height: processedHeight, 
-        background: backgroundColor,
-        color: gradient
-    };
- 
     let imageProcessingPipeline = aalib.read.image.fromURL(img.src);
        
     if (inverseEle.checked) {
@@ -535,17 +537,8 @@ function processImage(img){
         imageProcessingPipeline = imageProcessingPipeline.map(aalib.filter.contrast(contrastValue.value));
     }
     imageProcessingPipeline = imageProcessingPipeline.map(aalib.aa(aaReq));
-    
-    imageProcessingPipeline.map(aalib.render.canvas(canvasOptions))
-        .do(function (el) {
-            console.log("el dimension is ", `${el.width}x${el.height}`);
-            replaceAssetToDiv(el, 'processed-asset');
-            resolve(el); // Resolve the promise with the processed element
-        }).subscribe();
-    }
-    else{
-        const aaReq = { width:asciiDimensions.width  , height: asciiDimensions.height, colored: false};
-        cssGradient =colorBlack;
+
+    if(isCanvas){
         const canvasOptions = {
             fontSize: fontSize.value,
             fontFamily: "Sora",
@@ -555,38 +548,35 @@ function processImage(img){
             width: processedWidth,  
             height: processedHeight, 
             background: backgroundColor,
-            color: cssGradient,
-            gradient: cssGradient
+            color: gradient
         };
-     
-        console.log("css gradient is ",cssGradient);
-        let imageProcessingPipeline = aalib.read.image.fromURL(img.src);
-           
-        if (inverseEle.checked) {
-            imageProcessingPipeline = imageProcessingPipeline.map(aalib.filter.inverse());
-        }
-        if (brightnessValue.value !== undefined) {
-            imageProcessingPipeline = imageProcessingPipeline.map(aalib.filter.brightness(brightnessValue.value));
-        }
-        if (contrastValue.value !== undefined) {
-            imageProcessingPipeline = imageProcessingPipeline.map(aalib.filter.contrast(contrastValue.value));
-        }
-        imageProcessingPipeline = imageProcessingPipeline.map(aalib.aa(aaReq));
-
+           imageProcessingPipeline.map(aalib.render.canvas(canvasOptions))
+        .do(function (el) {
+            console.log("el dimension is ", `${el.width}x${el.height}`);
+            replaceAssetToDiv(el, 'processed-asset');
+            resolve(el); // Resolve the promise with the processed element
+        }).subscribe();
+    }
+    else{
+        // clearCanvas();
+        // processedAssetCanvas.style.display="none";
+        // htmlContainer.style.display="block";
+        const canvasOptions = {
+            fontSize: fontSize.value,
+            fontFamily: "Sora",
+            lineHeight: lineHeightValue,
+            charWidth: charWidthValue,
+            charset: charset_sia,
+            background: backgroundColor,
+            color: cssGradient
+        }; 
+        
         imageProcessingPipeline.map(aalib.render.html(canvasOptions))
+
         .do(function (el) {
             console.log(`reading in html`);
             console.log("el is ",el);
-            // replaceAssetToDiv(el, 'canvas-container');
-            let targetDivId = "canvas-container";
-            el.id = targetDivId;
-            const existingElement = document.getElementById(targetDivId);
-            if (existingElement) {
-                existingElement.parentNode.replaceChild(el, existingElement);
-            } else {
-                el.id = targetDivId; 
-                document.body.appendChild(el);
-        }
+            replaceAssetToDiv(el, 'html-content-container');
             resolve(el); // Resolve the promise with the processed element
         }).subscribe();
     }
@@ -595,15 +585,20 @@ function processImage(img){
 
 function replaceAssetToDiv(el, targetDivId ){
     console.log("replace asset to div");
-
     el.id = targetDivId;
+    // el.style.width = '100%';
+    // el.style.height = '100%';
+    // el.style.objectFit = 'contain';
+    
     const existingElement = document.getElementById(targetDivId);
+    existingElement.innerHTML="";
     if (existingElement) {
         existingElement.parentNode.replaceChild(el, existingElement);
     } else {
         el.id = targetDivId; 
-         document.body.appendChild(el);
+        document.body.appendChild(el);
     }
+
 }
 
 function updateImageSizeWithWidth(img, newWidth) {
