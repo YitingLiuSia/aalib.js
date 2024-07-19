@@ -6,6 +6,7 @@ const resource = filename => `../resources/${ filename }`;
 const imageDropdown = document.getElementById('image-dropdown');
 let isCanvas = true; 
 let currentImage, currentVideo;
+let gradientContainer = document.getElementById("gradient-container");
 let gradientCanvas = document.getElementById("gradient-canvas");
 let gradientSliderCanvas = document.getElementById("gradient-slider-canvas");
 let gradientSliderCanvasCTX = gradientSliderCanvas.getContext('2d');
@@ -44,7 +45,7 @@ let videoInput = document.getElementById('videoInput');
 let imageInput = document.getElementById("imageInput");
 let imageImportContainer = document.getElementById("image-container");
 let imageImport = document.getElementById('imported-image');
-let processedAssetCanvas = document.getElementById('processed-asset');
+let processedAssetCanvas = document.getElementById('processed-asset').children[0];
 let processedAssetCanvasCTX = processedAssetCanvas.getContext("2d");
 let mediaRecorder;
 let recordedChunks = [];
@@ -165,21 +166,18 @@ function fetchPresetFromJson(filePath){
 imageDropdown.onchange = function(){
     isCanvas = this.value === "canvas";
     updateAsset("canvasORHTML");
+    gradientContainer.hidden =!isCanvas;
+    console.log("iscanvas", isCanvas);
     if (isCanvas) {
-        processedAssetCanvas.style.visibility = "visible";
-        htmlContainer.style.visibility = "hidden";
-        imageExportRatio.style.display="flex";
+         imageExportRatio.style.display="flex";
         imageImportContainer.children[0].textContent = "Image Export";
         saveImageButton.textContent = "Save Image";
-
     } else {
-        processedAssetCanvas.style.visibility = "hidden";
-        htmlContainer.style.visibility = "visible";
         imageExportRatio.style.display="none";
         imageImportContainer.children[0].textContent = "HTML Export";
         saveImageButton.textContent = "Save File";
+        clearCanvas();
     }
-    console.log("iscanvas", isCanvas);
 }
 
 assetSelector.onchange = (e) => {
@@ -573,7 +571,9 @@ function processImage(img){
         .do(function (el) {
             console.log(`reading in html`);
             console.log("el is ",el);
-            replaceAssetToDiv(el, 'html-content-container');
+            clearCanvas();
+            replaceAssetToDiv(el, 'processed-asset');
+
             resolve(el); // Resolve the promise with the processed element
         }).subscribe();
     }
