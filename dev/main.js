@@ -395,10 +395,12 @@ function downloadImageWithRatio(){
     let tempCtx = tempCanvas.getContext('2d');
     let newWidth = canvas.width * currentimageExportRatio;
     let newHeight = canvas.height * currentimageExportRatio;
+
     if(newWidth>=imageWidthLimit){
         popupBackground.style.display = "block";
         console.log("File size too big. Refuse to download");
-    
+       
+    }else{
         tempCanvas.width = newWidth;
         tempCanvas.height = newHeight;
         tempCtx.drawImage(canvas, 0, 0, newWidth, newHeight);
@@ -408,7 +410,9 @@ function downloadImageWithRatio(){
         link.download = 'image.png';
         link.click();    
         tempCanvas.remove();
-        }
+        console.log("download image");
+    }
+
     }else{
         const link = document.createElement("a");
         let container = document.getElementById("html-content-container");
@@ -573,7 +577,6 @@ function processImage(img){
             console.log("el is ",el);
             clearCanvas();
             replaceAssetToDiv(el, 'processed-asset');
-
             resolve(el); // Resolve the promise with the processed element
         }).subscribe();
     }
