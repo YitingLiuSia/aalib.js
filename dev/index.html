@@ -2,6 +2,17 @@
 <html>
 
 <head lang="en">
+    <!-- Google Tag Manager -->
+    <script>(function (w, d, s, l, i) {
+            w[l] = w[l] || []; w[l].push({
+                'gtm.start':
+                    new Date().getTime(), event: 'gtm.js'
+            }); var f = d.getElementsByTagName(s)[0],
+                j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.async = true; j.src =
+                    'https://www.googletagmanager.com/gtm.js?id=' + i + dl; f.parentNode.insertBefore(j, f);
+        })(window, document, 'script', 'dataLayer', 'GTM-W93MZ69K');</script>
+    <!-- End Google Tag Manager -->
+     
     <meta charset="UTF-8">
     <title>Sia Data Art Generator</title>
     <link href="https://cdn.jsdelivr.net/npm/nouislider@14.6.3/distribute/nouislider.min.css" rel="stylesheet">
@@ -14,171 +25,176 @@
 </head>
 
 <body>
-    
-<div hidden id="popup-bg">
-    <div id="popup-container">
-        <div id="popup">
-            <div class="warning-header">
-                <!-- <img src="/resources/icons/warning.png" alt=""> -->
-                <h2 style="color: #DF0050;">Warning: file size exceeded</h2>
-               </div>
-           <p style="margin-top: 0; line-height: 1.5;">The file size of your image export has exceeded the maximum allowed limit of 20MB. Please export the image at a lower resolution to reduce the file size and try again.</p>
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-W93MZ69K" height="0" width="0"
+            style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+    <div hidden id="popup-bg">
+        <div id="popup-container">
+            <div id="popup">
+                <div class="warning-header">
+                    <!-- <img src="/resources/icons/warning.png" alt=""> -->
+                    <h2 style="color: #DF0050;">Warning: file size exceeded</h2>
+                </div>
+                <p style="margin-top: 0; line-height: 1.5;">The file size of your image export has exceeded the maximum
+                    allowed limit of 20MB. Please export the image at a lower resolution to reduce the file size and try
+                    again.</p>
+            </div>
+            <button id="close-button">
+                <p>x</p>
+                <!-- <img src="/resources/icons/close.png" alt=""> -->
+            </button>
         </div>
-        <button id="close-button">
-            <p>x</p>
-            <!-- <img src="/resources/icons/close.png" alt=""> -->
-        </button>    
     </div>
-</div>
 
-    <div  class = "container" id="preset-container">
+    <div class="container" id="preset-container">
         <h1 style="margin-bottom: 0;">Sia Data Art Generator</h1>
         <h2 hidden>Preset</h2>
         <div hidden style="justify-content: start;" class="sliderContainer" style="margin-top: -10px;">
             <input hidden type="file" id="load-preset" accept="application/json">
-       <button hidden id="save-preset">Save preset</button>
-    </div>
-    <!-- <h3></h3>
+            <button hidden id="save-preset">Save preset</button>
+        </div>
+        <!-- <h3></h3>
     <hr> -->
 
-    <h3>Filters</h3>
-    <div class="sliderContainer" >
-        <p style="margin-top: 0;">Inverse</p>
-        <input id="inverse" type="checkbox" >
-    </div>
-
-    <div class="sliderContainer">
-            <p >Brightness</p>
-            <input type="range" id="brightness" min="0.5" max="10" step="0.1" value="0.5" class="myRange">
-            <div class="slider-values" >
-                <span class="sliderValue">0.5</span>
-        </div>
-    </div>
-
-    <div class="sliderContainer" >
-            <p >Contrast</p>
-            <input type="range" id="contrast" min="0" max="1" step="0.1" value="0.5" class="myRange" >
-            <div class="slider-values">
-            <span class="sliderValue">0.5</span>
-    </div>
-    </div>
-<div>
-    <div id="gradient-container">
-        <hr>
-        <h3>Colors</h3>
-    <select name="" id="color-selection">
-        <option value="Sia Gradient">Sia Gradient</option>
-        <option value="black" >Cool Black</option>
-        <option value="white"> White</option>
-        <option value="gray" >Medium Gray</option>
-    </select>
-
-    <div id="saturation" class="sliderContainer" >
-        <p >Saturation</p>
-        <input type="range" min="1" max="5" step="1" value="1" class="myRange">
-        <div class="slider-values" >
-            <span class="sliderValue">1</span>
-    </div>
-</div>
-<div id="gradient-picker">
-    <canvas id="gradient-canvas"></canvas>
-    <div class="gradient-selection-container">
-        <div>
-            <div id="color1" > </div>
-            <div id="color2" > </div>
-            <div id="color3" > </div>
-        </div>
-        <canvas id="gradient-slider-canvas"></canvas>
-        <div style="display: block; " id="color-slider"></div>
-    </div>  
-</div>
-<div id="gradient-angle" class="sliderContainer">
-    <p>Angle</p>
-    <input type="range" value="0" min="0" max="360">
-    <div class="slider-values" >
-        <span class="sliderValue">0°</span>
-    </div> 
-</div>
-</div>
-<!-- intentional spacer -->
-   
-<div>
-    <h3></h3>
-    <hr>
-        <h3>Character Setting</h3>
+        <h3>Filters</h3>
         <div class="sliderContainer">
-            <p style="margin: 0;">Font size</p>
-            <input id="fontSize" type="number"  value="">
+            <p style="margin-top: 0;">Inverse</p>
+            <input id="inverse" type="checkbox">
         </div>
 
-        <div hidden class="sliderContainer">
-            <p hidden>Charset</p>
-            <select hidden id="charset-selector">
-                <option hidden selected value="SIA/">SIA/</option>
-                <option hidden value="ASCII">ASCII</option>
-            </select>
-        </div>
-    </div>
-</div>
-</div>
-<div style="overflow-y: scroll;"class="container">
-
-<div class="import-container" id="image-import">
-    <div>
-        <h2 style="margin-top: 0;">Import Image</h2>
-        <select hidden id="asset-selector">
-            <option value="image">Image</option>
-            <option value="video">Video</option>
-        </select>
-        <div id="generated-image"></div>
-        <div style="display: flex; justify-content: flex-start; width: 400px; "class="sliderContainer">
-            <input type="file" id="imageInput" accept="image/*">
-            <input hidden type="file" id="videoInput" accept="video/*">
-            <select id="image-dropdown">
-                <option value="canvas">Canvas</option>
-                <option value="html">HTML</option>
-            </select>
+        <div class="sliderContainer">
+            <p>Brightness</p>
+            <input type="range" id="brightness" min="0.5" max="10" step="0.1" value="0.5" class="myRange">
+            <div class="slider-values">
+                <span class="sliderValue">0.5</span>
+            </div>
         </div>
 
-        <div id="video-container" hidden>
-            <p>Video export</p>
-            <select id="video-type-selector">
-                <option value="mp4">MP4</option>
-                <option value="mov">MOV</option>
-            </select>
-            <p>Export Ratio</p>
-            <input type="number" id="videoExportRatio" value="1" max="3" min="1">
-            <p id="video-status"> </p>
-            <button id="startRecording">Download Video</button>
-         
-            <canvas hidden id="video-scene"></canvas>
+        <div class="sliderContainer">
+            <p>Contrast</p>
+            <input type="range" id="contrast" min="0" max="1" step="0.1" value="0.5" class="myRange">
+            <div class="slider-values">
+                <span class="sliderValue">0.5</span>
+            </div>
         </div>
+        <div>
+            <div id="gradient-container">
+                <hr>
+                <h3>Colors</h3>
+                <select name="" id="color-selection">
+                    <option value="Sia Gradient">Sia Gradient</option>
+                    <option value="black">Cool Black</option>
+                    <option value="white"> White</option>
+                    <option value="gray">Medium Gray</option>
+                </select>
 
+                <div id="saturation" class="sliderContainer">
+                    <p>Saturation</p>
+                    <input type="range" min="1" max="5" step="1" value="1" class="myRange">
+                    <div class="slider-values">
+                        <span class="sliderValue">1</span>
+                    </div>
+                </div>
+                <div id="gradient-picker">
+                    <canvas id="gradient-canvas"></canvas>
+                    <div class="gradient-selection-container">
+                        <div>
+                            <div id="color1"> </div>
+                            <div id="color2"> </div>
+                            <div id="color3"> </div>
+                        </div>
+                        <canvas id="gradient-slider-canvas"></canvas>
+                        <div style="display: block; " id="color-slider"></div>
+                    </div>
+                </div>
+                <div id="gradient-angle" class="sliderContainer">
+                    <p>Angle</p>
+                    <input type="range" value="0" min="0" max="360">
+                    <div class="slider-values">
+                        <span class="sliderValue">0°</span>
+                    </div>
+                </div>
+            </div>
+            <!-- intentional spacer -->
 
-        <div id="image-container">
-            <p>Image export</p>
-            <div id="slidercontainer">
-                <input type="number" id="imageExportRatio" value="1" max="10" min="1">
-                <button id="save-image">Save image</button>
+            <div>
+                <h3></h3>
+                <hr>
+                <h3>Character Setting</h3>
+                <div class="sliderContainer">
+                    <p style="margin: 0;">Font size</p>
+                    <input id="fontSize" type="number" value="">
+                </div>
+
+                <div hidden class="sliderContainer">
+                    <p hidden>Charset</p>
+                    <select hidden id="charset-selector">
+                        <option hidden selected value="SIA/">SIA/</option>
+                        <option hidden value="ASCII">ASCII</option>
+                    </select>
+                </div>
             </div>
         </div>
     </div>
+    <div style="overflow-y: scroll;" class="container">
+
+        <div class="import-container" id="image-import">
+            <div>
+                <h2 style="margin-top: 0;">Import Image</h2>
+                <select hidden id="asset-selector">
+                    <option value="image">Image</option>
+                    <option value="video">Video</option>
+                </select>
+                <div id="generated-image"></div>
+                <div style="display: flex; justify-content: flex-start; width: 400px; " class="sliderContainer">
+                    <input type="file" id="imageInput" accept="image/*">
+                    <input hidden type="file" id="videoInput" accept="video/*">
+                    <select id="image-dropdown">
+                        <option value="canvas">Canvas</option>
+                        <option value="html">HTML</option>
+                    </select>
+                </div>
+
+                <div id="video-container" hidden>
+                    <p>Video export</p>
+                    <select id="video-type-selector">
+                        <option value="mp4">MP4</option>
+                        <option value="mov">MOV</option>
+                    </select>
+                    <p>Export Ratio</p>
+                    <input type="number" id="videoExportRatio" value="1" max="3" min="1">
+                    <p id="video-status"> </p>
+                    <button id="startRecording">Download Video</button>
+
+                    <canvas hidden id="video-scene"></canvas>
+                </div>
 
 
-    <div id="imported-image-frame">
-        <img id="imported-image"> </img>
-        <div id="video-import"></div>
+                <div id="image-container">
+                    <p>Image export</p>
+                    <div id="slidercontainer">
+                        <input type="number" id="imageExportRatio" value="1" max="10" min="1">
+                        <button id="save-image">Save image</button>
+                    </div>
+                </div>
+            </div>
+
+
+            <div id="imported-image-frame">
+                <img id="imported-image"> </img>
+                <div id="video-import"></div>
+            </div>
+        </div>
+
+        <div id="canvas-container">
+            <div id="processed-asset" >
+                <canvas></canvas>
+            </div>
+            <div id="html-content-container"></div>
+
+        </div>
     </div>
-</div>
-
-<div id="canvas-container">
-    <div id="processed-asset">
-        <canvas></canvas>
-    </div>
-    <div id="html-content-container"></div>
-
-</div>
-</div>
 
 </body>
 
